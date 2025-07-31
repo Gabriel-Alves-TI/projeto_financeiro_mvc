@@ -2,6 +2,10 @@ html {
   font-size: 14px;
 }
 
+body {
+    overflow-y: hidden;
+}
+
 a {
     text-decoration: none;
 }
