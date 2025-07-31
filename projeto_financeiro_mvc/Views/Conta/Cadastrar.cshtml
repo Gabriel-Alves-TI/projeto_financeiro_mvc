@@ -1,0 +1,49 @@
+@using projeto_financeiro_mvc.DTOs
+@model ContaCadastrarDTO
+@{
+    ViewData["Title"] = "Cadastrar";
+}
+
+<h1 class="d-flex justify-content-center text-primary fw-bold mt-2">@ViewData["Title"]</h1>
+
+<div class="container d-flex align-items-center justify-content-center border border-2 border-primary rounded rounded-3 bg-opacity-25 w-50 p-2">
+    <form method="post" asp-controller="Conta" asp-action="Cadastrar">
+        <div class="row g-2 align-items-center p-1">
+            <div class="col-auto">
+                <label for="Banco" class="col-form-label fs-4 text-primary">Banco:</label>
+            </div>
+            <div class="col-auto form-control">
+                <input type="text" asp-for="Banco" class="border-1 w-75 fs-5">
+            </div>
+        </div>
+        <div class="row g-2 align-items-center p-1">
+            <div class="col-auto">
+                <label for="Agencia" class="col-form-label fs-5 text-primary">Agência:</label>
+            </div>
+            <div class="col-auto form-control">
+                <input type="number" asp-for="Agencia" class="rounded border-1 w-25 fs-5">
+            </div>
+        </div>
+        <div class="row g-2 align-items-center p-1">
+            <div class="col-auto">
+                <label for="NumeroConta" class="col-form-label fs-5 text-primary">Nº Conta:</label>
+            </div>
+            <div class="col-auto form-control">
+                <input type="number" asp-for="NumeroConta" class="rounded border-1 w-50 fs-5">
+            </div>
+        </div>
+        <div class="row g-2 align-items-center p-1">
+            <div class="col-auto">
+                <label for="NumeroConta" class="col-form-label fs-5 text-primary">Saldo Inicial:</label>
+            </div>
+            <div class="col-auto form-control">
+                <input type="number" asp-for="SaldoInicial" class="rounded border-1 w-50 fs-5">
+            </div>
+        </div>
+        <div class="d-flex justify-content-between align-items-center w-100 p-2 mt-4">
+            <button class="btn btn-success rounded rounded-3">Confirmar</button>
+            <a class="btn btn-danger rounded rounded-3" asp-controller="Conta" asp-action="ListarContas">Cancelar</a>
+        </div>
+    </form>            
+</div>
+

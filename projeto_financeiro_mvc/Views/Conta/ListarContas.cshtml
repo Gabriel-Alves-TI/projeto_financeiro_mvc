@@ -1,0 +1,50 @@
+@using projeto_financeiro_mvc.DTOs
+@model IEnumerable<ContaModel>
+@{
+    ViewData["Title"] = "Contas";
+}
+
+<h1 class="d-flex justify-content-center text-primary fw-bold mt-2">@ViewData["Title"]</h1>
+
+
+<div class="d-flex flex-column align-items-center justify-content-center">
+    <div class="mt-2 mb-4">
+        <a type="button" asp-controller="Conta" asp-action="Cadastrar" class="btn btn-primary rounded rounded-3" style="width: 200px;"><i class="bi bi-plus-square me"></i><br>Nova Conta</a>
+    </div>
+    
+
+    <div class="container w-50">
+    <table class="table table-dark table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Banco</th>
+                <th scope="col">Agencia</th>
+                <th scope="col">Nº Conta</th>
+                <th scope="col">Saldo</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @if (Model != null)
+            {
+                @foreach(var conta in Model)
+                {
+                <tr>
+                    <th scope="row">@conta.Banco</th>
+                    <td>@conta.Agencia</td>
+                    <td>@conta.NumeroConta</td>
+                    <td>@conta.Saldo</td>
+                    <td>
+                        <a asp-controller="Conta" asp-action="Editar" asp-route-id="@conta.Id" class="btn btn-warning btn-sm me-2"><i class="bi bi-pencil-square"></i> Editar</a>
+                        <a asp-controller="Conta" asp-action="Excluir" asp-route-id="@conta.Id" class="btn btn-danger btn-sm"><i class="bi bi-trash3-fill"></i> Excluir</a>
+                    </td>
+                </tr>
+                }
+            }
+            
+        </tbody>
+    </table>
+</div>
+</div>
+

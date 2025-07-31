@@ -1,0 +1,35 @@
+# Build artifacts
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio settings
+.vs/
+
+# Rider settings
+.idea/
+*.sln.iml
+
+# ASP.NET Core logs
+*.log
+
+# Secrets e configs locais
+appsettings.Development.json
+appsettings.Local.json
+.env
+
+# Test results
+TestResults/
+
+# Arquivos de publicação
+*.Publish.xml
+publish/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db

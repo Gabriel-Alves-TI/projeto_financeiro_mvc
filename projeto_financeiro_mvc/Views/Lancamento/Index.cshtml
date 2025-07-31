@@ -1,0 +1,149 @@
+
+@{
+    ViewData["Title"] = "Lançamentos";
+}
+
+<h1 class="d-flex justify-content-center text-primary fw-bold mt-2">@ViewData["Title"]</h1>
+
+<div class="d-flex flex-wrap align-items-center justify-content-center w-100">
+
+    <div class="mt-2 mb-4">
+        <div class="d-flex text-start w-100">
+            <button type="button" class="btn btn-primary rounded rounded-3 me-4" style="width: 200px;"><i class="bi bi-plus-square me"></i><br>Novo Lançamento</button>
+            <button type="button" class="btn btn-warning rounded rounded-3 me-4" style="width: 200px;"><i class="bi bi-repeat"></i><br>Recorrente</button>
+            <button type="button" class="btn btn-info rounded rounded-3 me-4" style="width: 200px;"><i class="bi bi-arrow-down-up"></i><br>Transferência</button>
+            <button type="button" class="btn btn-light rounded rounded-3" style="width: 200px;"><i class="bi bi-download"></i><br>Exportar</button>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center mt-2 w-100">
+            <div class="d-flex flex-column container border border-2 p-2 mx-2 rounded rounded-3">
+                <h5 class="title text-dark p-2"><i class="bi bi-card-list me-2"></i>Lançamentos Recentes</h5>
+
+                <div class="d-flex justify-content-between border border-2 rounded rounded-3">
+
+
+                    <div class="row g-2 align-items-center p-2">
+                        <div class="col-auto">
+                            <label for="selectTipo" class="col-form-label text-primary">Tipo:</label>
+                        </div>
+                        <div class="col-auto">
+                            <select class="form-select-sm" aria-label="Default select example">
+                                <option selected>Selecione...</option>
+                                <option value="receita">Receita</option>
+                                <option value="despesa">Despesa</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row g-2 align-items-center p-2">
+                        <div class="col-auto">
+                            <label for="selectCategoria" class="col-form-label text-primary"">Categoria:</label>
+                        </div>
+                        <div class="col-auto">
+                            <select class="form-select-sm" aria-label="Default select example">
+                                <option selected>Selecione...</option>
+                                <option value="1">Água</option>
+                                <option value="2">Aluguel</option>
+                                <option value="3">Energia</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row g-2 align-items-center p-2">
+                        <div class="col-auto">
+                            <label for="selectCategoria" class="col-form-label text-primary"">Período:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="date" style="width: 120px;" id="dataInicial">
+                            -
+                        </div>
+                        <div class="col-auto">
+                            <input type="date" style="width: 120px;" id="dataFinal">
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="d-flex justify-content-center align-items-center">
+                    <div class="loading-wave" id="spinner">
+                        <div class="loading-bar"></div>
+                        <div class="loading-bar"></div>
+                        <div class="loading-bar"></div>
+                        <div class="loading-bar"></div>
+                    </div>
+                </div>
+
+                <div class="container" id="container_lancamentos">
+
+                    <div class="card rounded rounded-3 border-warning bg-warning bg-opacity-25 d-flex flex-row align-items-center justify-content-between text-center mb-2 mt-2">
+                        <i class="bi bi-repeat ms-3 fs-4 text-warning"></i>
+                        <div class="d-flex flex-column flex-grow-1 p-0">
+                            <h5 class="card-title text-dark fs-6">Aluguel</h5>
+                            <span class="card-text text-dark-emphasis" style="font-size: 12px;">14, Abril - 2025</span>
+                        </div>
+                        <p class="text-danger fs-6 fw-bold mb-0 me-1"><i class="bi bi-dash"></i> R$1000,00</p>
+                        <div class="d-flex align-items-center justify-content-end ms-2 border-start border-2 border-dark" style="cursor: pointer">
+                            <a class="text-center ms-2 me-3 fw-bold"><i class="bi bi-pencil-square text-dark"></i></a>
+                            <a class="text-center me-2"><i class="bi bi-x-square-fill text-danger"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="card rounded rounded-3 border-warning bg-warning bg-opacity-25 d-flex flex-row align-items-center justify-content-between text-center mb-2 mt-2">
+                        <i class="bi bi-repeat ms-3 fs-4 text-warning"></i>
+                        <div class="d-flex flex-column flex-grow-1 p-0">
+                            <h5 class="card-title text-dark fs-6">Aluguel</h5>
+                            <span class="card-text text-dark-emphasis" style="font-size: 12px;">14, Abril - 2025</span>
+                        </div>
+                        <p class="text-success fs-6 fw-bold mb-0 me-1"><i class="bi bi-plus"></i> R$1000,00</p>
+                        <div class="d-flex align-items-center justify-content-end ms-2 border-start border-2 border-dark" style="cursor: pointer">
+                            <a class="text-center ms-2 me-3 fw-bold"><i class="bi bi-pencil-square text-dark"></i></a>
+                            <a class="text-center me-2"><i class="bi bi-x-square-fill text-danger"></i></a>
+                        </div>
+                    </div>
+                        
+                    <!-- QUANDO NÃO EXISTE LANCAMENTOS -->
+                    
+                    <div class="d-flex align-items-center justify-content-center mt-4 p-2 d-none">
+                        <h5 class="text-primary">Nenhum lançamento encontrado dentro do período!</h5>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="container border border-2 p-2 mx-2 rounded rounded-3">
+                <h5 class="title text-dark p-2"><i class="bi bi-calendar me-2"></i>Próximos Lançamentos</h5>
+
+                <div class="card rounded rounded-3 border-warning bg-warning bg-opacity-25 d-flex flex-row align-items-center justify-content-between text-center mb-2">
+                    <i class="bi bi-repeat ms-3 fs-4 text-warning"></i>
+                    <div class="d-flex flex-column flex-grow-1 p-0">
+                        <h5 class="card-title text-dark fs-6">Salário</h5>
+                        <span class="card-text text-dark-emphasis" style="font-size: 12px;">14, Abril - 2025</span>
+                    </div>
+                    <p class="text-success fs-6 fw-bold mb-0 me-1"><i class="bi bi-plus"></i> R$1000,00</p>
+                </div>
+                <div class="card rounded rounded-3 border-warning bg-warning bg-opacity-25 d-flex flex-row align-items-center justify-content-between text-center mb-2">
+                    <i class="bi bi-repeat ms-3 fs-4 text-warning"></i>
+                    <div class="d-flex flex-column flex-grow-1 p-0">
+                        <h5 class="card-title text-dark fs-6">Aluguel</h5>
+                        <span class="card-text text-dark-emphasis" style="font-size: 12px;">14, Abril - 2025</span>
+                    </div>
+                    <p class="text-danger fs-6 fw-bold mb-0 me-1"><i class="bi bi-dash"></i> R$1000,00</p>
+                </div>
+                <div class="card rounded rounded-3 border-info bg-info bg-opacity-25 d-flex flex-row align-items-center justify-content-between text-center mb-2">
+                    <i class="bi bi-arrow-down-up ms-3 fs-4 text-info"></i>
+                    <div class="d-flex flex-column flex-grow-1 p-0">
+                        <div class="d-flex align-items-center justify-content-center flex-row">
+                            <i class="bi bi-caret-down-fill text-danger me-1"></i>
+                            <h5 class="card-title text-dark fs-6 me-4"> Bradesco</h5>
+                            <h5 class="card-title text-dark fs-6">Nubank</h5>
+                            <i class="bi bi-caret-up-fill text-success ms-1"></i>
+                        </div>
+                        <span class="card-text text-dark-emphasis" style="font-size: 12px;">14, Abril - 2025</span>
+                    </div>
+                    <p class="text-info fs-6 fw-bold mb-0 me-1"> R$1000,00</p>
+                </div>
+            </div>
+        </div>
+</div>
