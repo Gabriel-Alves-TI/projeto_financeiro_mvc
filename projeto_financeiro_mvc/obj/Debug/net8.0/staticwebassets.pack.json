@@ -21,8 +21,20 @@
       "PackagePath": "staticwebassets\\img\\bank-statement.jpg"
     },
     {
+      "Id": "C:\\Users\\user\\Documents\\Gabriel-arquivos\\projeto_financeiro_mvc\\projeto_financeiro_mvc\\wwwroot\\img\\cofre.png",
+      "PackagePath": "staticwebassets\\img\\cofre.png"
+    },
+    {
       "Id": "C:\\Users\\user\\Documents\\Gabriel-arquivos\\projeto_financeiro_mvc\\projeto_financeiro_mvc\\wwwroot\\img\\finances.jpg",
       "PackagePath": "staticwebassets\\img\\finances.jpg"
+    },
+    {
+      "Id": "C:\\Users\\user\\Documents\\Gabriel-arquivos\\projeto_financeiro_mvc\\projeto_financeiro_mvc\\wwwroot\\img\\lancamentos.jpg",
+      "PackagePath": "staticwebassets\\img\\lancamentos.jpg"
+    },
+    {
+      "Id": "C:\\Users\\user\\Documents\\Gabriel-arquivos\\projeto_financeiro_mvc\\projeto_financeiro_mvc\\wwwroot\\img\\metas.jpg",
+      "PackagePath": "staticwebassets\\img\\metas.jpg"
     },
     {
       "Id": "C:\\Users\\user\\Documents\\Gabriel-arquivos\\projeto_financeiro_mvc\\projeto_financeiro_mvc\\wwwroot\\js\\site.js",

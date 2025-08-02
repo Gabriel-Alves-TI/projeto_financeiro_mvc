@@ -48,7 +48,31 @@
                 </li>
             </ul>
             <div class="d-flex justify-content-end align-items-end">
-                <img src="/img/finances.jpg" class="w-100">
+                @{
+                    var tituloView = ViewData["Title"]?.ToString();
+                }
+                
+                @if (tituloView == "Dashboard")
+                {
+                    <img src="img/finances.jpg" class="w-100">
+                }
+                else if (tituloView == "Metas")
+                {
+                    <img src="img/metas.jpg" alt="Metas">
+                }
+                else if (tituloView == "Lançamentos")
+                {
+                    <img src="img/lancamentos.jpg" class="w-100" alt="Lançamentos">
+                }
+                else if(tituloView == "Extrato")
+                {
+                    <img src="img/bank-statement.jpg" alt="Lançamentos">
+                }
+                else if(tituloView == "Contas")
+                {
+                    <img src="/img/cofre.png" class="w-100" alt="Contas">
+                }
+                
             </div>
         </div>
     </nav>

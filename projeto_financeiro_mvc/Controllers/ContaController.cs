@@ -22,6 +22,7 @@ namespace projeto_financeiro_mvc.Controllers
 
         public IActionResult ListarContas()
         {
+            ViewData["Title"] = "Contas";
             IEnumerable<ContaModel> contas = _context.Contas;
 
             return View(contas);
