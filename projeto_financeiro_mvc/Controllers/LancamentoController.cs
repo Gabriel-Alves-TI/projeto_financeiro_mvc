@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Logging;
 using projeto_financeiro_mvc.Data;
@@ -22,14 +23,37 @@ namespace projeto_financeiro_mvc.Controllers
         }
         public IActionResult Index()
         {
-            return View();
+            var lancamentos = _context.Lancamentos
+                .Include(lanc => lanc.Conta)
+                .OrderBy(lanc => lanc.Data)
+                .Select(lanc => new LancamentoModel
+                {
+                    Id = lanc.Id,
+                    Descricao = lanc.Descricao,
+                    Valor = lanc.Valor,
+                    Categoria = lanc.Categoria,
+                    Tipo = lanc.Tipo,
+                    Data = lanc.Data,
+                    Previsao = lanc.Previsao,
+                    Parcelas = lanc.Parcelas,
+                    Pago = lanc.Pago,
+                    Recorrente = lanc.Recorrente,
+                    ContaId = lanc.ContaId,
+                    Conta = lanc.Conta
+                }).ToList();
+
+            return View(lancamentos);
         }
 
         public IActionResult Cadastrar()
         {
             var viewModel = new LancamentoViewModel
             {
-                Lancamento = new LancamentoDTO(),
+                Lancamento = new LancamentoDTO()
+                {
+                    Data = DateTime.Today,
+                    Previsao = DateTime.Today
+                },
                 Contas = _context.Contas.ToList(),
             };
 
@@ -83,9 +107,9 @@ namespace projeto_financeiro_mvc.Controllers
                     return View(viewModel);
                 }
 
+                // Lógica para Ajuste de Saldo da Conta
                 if (viewModel.Lancamento.Categoria?.Trim().Equals("Saldo Inicial", StringComparison.OrdinalIgnoreCase) == true)
                 {
-                    Console.Write("Entrou aqui");
 
                     if (viewModel.Lancamento.Tipo.ToLower() == "despesa")
                     {
@@ -117,8 +141,10 @@ namespace projeto_financeiro_mvc.Controllers
 
                     TempData["MensagemSucesso"] = "Saldo inicial da conta corrigido com sucesso!";
                     return RedirectToAction("Index", "Lancamento");
-                };
+                }
+                ;
 
+                // Lógica para Lançamento único
                 if (viewModel.Lancamento.Parcelas == 1)
                 {
                     var lancamento = new LancamentoModel()
@@ -141,10 +167,110 @@ namespace projeto_financeiro_mvc.Controllers
                     TempData["MensagemSucesso"] = "Lançamento efetuado com sucesso!";
                     return RedirectToAction("Index", "Lancamento");
                 }
+
+                
+                var listaLancamentos = new List<LancamentoModel>();
+                DateTime dataParcela = viewModel.Lancamento.Data;
+
+                double valorParcela = Math.Round(viewModel.Lancamento.Valor / viewModel.Lancamento.Parcelas, 2);
+
+                // Lógica para Recorrente
+                if (viewModel.Lancamento.Recorrente == true)
+                {
+                    for (int i = 1; i <= viewModel.Lancamento.Parcelas; i++)
+                    {
+                        var lancamento = new LancamentoModel()
+                        {
+                            Descricao = $"{viewModel.Lancamento.Descricao} - Recorrente({i}/{viewModel.Lancamento.Parcelas})",
+                            Valor = viewModel.Lancamento.Valor,
+                            Categoria = viewModel.Lancamento.Categoria,
+                            Tipo = viewModel.Lancamento.Tipo,
+                            Data = dataParcela,
+                            Previsao = viewModel.Lancamento.Previsao,
+                            Parcelas = viewModel.Lancamento.Parcelas,
+                            Pago = false,
+                            Recorrente = viewModel.Lancamento.Recorrente,
+                            ContaId = viewModel.Lancamento.ContaId
+                        };
+
+                        listaLancamentos.Add(lancamento);
+
+                        dataParcela = dataParcela.AddMonths(1);
+                    }
+
+                    _context.AddRange(listaLancamentos);
+                    _context.SaveChanges();
+
+                    TempData["MensagemSucesso"] = "Lançamento recorrente efetuado com sucesso!";
+                    return RedirectToAction("Index", "Lancamento");
+                }
+                else
+                {
+                    // Lógica para Parcelamento
+                    for (int i = 1; i <= viewModel.Lancamento.Parcelas; i++)
+                    {
+                        var lancamento = new LancamentoModel()
+                        {
+                            Descricao = $"{viewModel.Lancamento.Descricao} - Parcelamento({i}/{viewModel.Lancamento.Parcelas})",
+                            Valor = valorParcela,
+                            Categoria = viewModel.Lancamento.Categoria,
+                            Tipo = viewModel.Lancamento.Tipo,
+                            Data = dataParcela,
+                            Previsao = viewModel.Lancamento.Previsao,
+                            Parcelas = viewModel.Lancamento.Parcelas,
+                            Pago = false,
+                            Recorrente = viewModel.Lancamento.Recorrente,
+                            ContaId = viewModel.Lancamento.ContaId
+                        };
+
+                        listaLancamentos.Add(lancamento);
+
+                        dataParcela = dataParcela.AddMonths(1);
+                    }
+
+                    _context.AddRange(listaLancamentos);
+                    _context.SaveChanges();
+
+                    TempData["MensagemSucesso"] = "Parcelamento efetuado com sucesso!";
+                    return RedirectToAction("Index", "Lancamento");
+                }
             }
 
             viewModel.Contas = _context.Contas.ToList();
             return View(viewModel);
+        }
+
+        public IActionResult Excluir(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+
+            LancamentoModel lancamento = _context.Lancamentos.FirstOrDefault(lanc => lanc.Id == id);
+
+            if (lancamento == null)
+            {
+                return NotFound();
+            }
+
+            return View(lancamento);
+        }
+
+        [HttpPost]
+        public IActionResult Excluir(LancamentoModel lancamento)
+        {
+            Console.Write("Lancamento Id recebido: ", lancamento.Id);
+            if (lancamento == null)
+            {
+                return NotFound();
+            }
+
+            _context.Lancamentos.Remove(lancamento);
+            _context.SaveChanges();
+
+            TempData["MensagemSucesso"] = "Lançamento excluído com sucesso!";
+            return RedirectToAction("Index");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

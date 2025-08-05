@@ -1,0 +1,110 @@
+@model LancamentoModel
+@{
+    ViewData["Title"] = "Excluir Lançamento";
+}
+
+<h1 class="d-flex justify-content-center text-primary fw-bold mt-2">@ViewData["Title"]</h1>
+
+<div class="container">
+    <div class="card mb-3 rounded-3 border-danger">
+        <form asp-controller="Lancamento" asp-action="Excluir" method="post">
+            <input type="hidden" asp-for="Id">
+
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-end bg-white w-100 border border-primary border-1 rounded-bottom rounded-3">
+                        <div class="row g-1 align-items-center p-1">
+                            <div class="col-auto">
+                                <label asp-for="Recorrente" class="col-form-label fs-6 text-primary me-2">Recorrente?</label>
+                            </div>
+                            <div class="col-auto">
+                                <input class="form-check-input bg-primary" asp-for="Recorrente" type="radio" name="Recorrente" id="fixoSim"
+                                    value="true" disabled>
+                                <label class="form-check-label text-dark">
+                                    Sim
+                                </label>
+                            </div>
+                            <div class="col-auto">
+                                <input class="form-check-input bg-primary" asp-for="Recorrente" type="radio" name="Recorrente" id="fixoNao"
+                                    value="false" checked disabled>
+                                <label class="form-check-label text-dark" for="fixoNao">
+                                    Não
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between bg-primary bg-opacity-25 rounded">
+                    <div class="row g-2 align-items-center p-2">
+                        <div class="col-auto">
+                            <label asp-for="Valor" class="col-form-label fs-4 text-primary">Valor:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="text" asp-for="Valor" class="rounded border-1 w-50 fs-5" style="height: 35px;" disabled>
+                        </div>
+                    </div>
+                    <div class="row g-2 align-items-center p-2">
+                        <div class="col-auto">
+                            <label for="parcelas" asp-for="Parcelas" class="col-form-label fs-5 text-primary">Parcelas:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="number" asp-for="Parcelas" name="Parcelas" id="parcelas" class="rounded border-1 p-1 w-25" disabled>
+                        </div>
+                    </div>
+                    <div class="row g-2 align-items-center p-2">
+                        <div class="col-auto">
+                            <label for="selectTipo" asp-for="Data" class="col-form-label fs-5 text-primary">Data:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="date" asp-for="Data" name="Data" class="rounded border-1 p-1" id="dataLancamento" disabled>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between bg-primary bg-opacity-25 rounded mt-1">
+                    <div class="row g-2 align-items-center p-2">
+                        <div class="col-auto">
+                            <label for="selectTipo" asp-for="Tipo" class="col-form-label fs-5 text-primary">Tipo:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input class="rounded border-1 p-1" asp-for="Tipo" disabled>
+                        </div>
+                    </div>
+                    <div class="row g-2 align-items-center p-2">
+                        <div class="col-auto">
+                            <label for="selectTipo" asp-for="Previsao" class="col-form-label fs-5 text-primary">Prev. Pagamento:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="date" asp-for="Previsao" class="rounded border-1 p-1" disabled>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-2 mb-1">
+                    <label asp-for="Descricao" class="form-label fs-5 text-primary">Descrição:</label>
+                    <input class="rounded border-1 p-1" asp-for="Descricao" name="Descricao" rows="1" style="max-height: 80px;" disabled>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <div class="row g-2 align-items-center p-2">
+                        <div class="col-auto">
+                            <label asp-for="Categoria" class="col-form-label fs-5 text-primary">Categoria:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input class="rounded border-1 p-1" asp-for="Categoria" name="Categoria" disabled>
+                        </div>
+                    </div>
+                    <div class="row g-2 align-items-center p-2">
+                        <div class="col-auto">
+                            <label asp-for="ContaId" class="col-form-label fs-5 text-primary">Conta:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input class="rounded border-1 p-1" asp-for="ContaId" value="Conta.Banco" disabled>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center w-100 p-3">
+                <button type="submit" class="btn btn-danger w-25" id="btnConfirmar">Confirmar</button>
+                <a asp-controller="Lancamento" asp-action="Index" class="btn btn-primary w-25" id="btn-cancelar">Voltar</a>
+            </div>
+        </form>
+    </div>
+</div>

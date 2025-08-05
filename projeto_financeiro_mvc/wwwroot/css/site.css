@@ -33,7 +33,11 @@ input[type="number"]::-webkit-inner-spin-button {
 
 @media (min-width: 1500px) {
     body {
-    overflow-y: hidden;
+        overflow-y: hidden;
+    }
+
+    main {
+        overflow-y: visible !important;
     }
 }
 

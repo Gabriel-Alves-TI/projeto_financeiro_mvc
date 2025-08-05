@@ -54,7 +54,7 @@
                             <label for="selectTipo" asp-for="Lancamento.Data" class="col-form-label fs-5 text-primary">Data:</label>
                         </div>
                         <div class="col-auto">
-                            <input type="date" asp-for="Lancamento.Data" name="Lancamento.Data" class="rounded border-1 p-1" id="dataLancamento">
+                            <input type="date" asp-for="Lancamento.Data" class="rounded border-1 p-1" id="dataLancamento">
                         </div>
                     </div>
                 </div>
@@ -66,7 +66,7 @@
                         <div class="col-auto">
                             <select class="form-select border-2 bg-white text-primary" asp-for="Lancamento.Tipo" name="Lancamento.Tipo">
                                 <option selected>Receita</option>
-                                <option value="despesa">Despesa</option>
+                                <option value="Despesa">Despesa</option>
                             </select>
                         </div>
                     </div>
@@ -75,7 +75,7 @@
                             <label for="selectTipo" asp-for="Lancamento.Previsao" class="col-form-label fs-5 text-primary">Prev. Pagamento:</label>
                         </div>
                         <div class="col-auto">
-                            <input type="date" asp-for="Lancamento.Previsao" name="Lancamento.Previsao" class="rounded border-1 p-1">
+                            <input type="date" asp-for="Lancamento.Previsao" class="rounded border-1 p-1">
                         </div>
                     </div>
                 </div>
@@ -137,7 +137,7 @@
             </div>
             <div class="d-flex justify-content-between align-items-center w-100 p-3">
                 <button type="submit" class="btn btn-success w-25" id="btnConfirmar">Confirmar</button>
-                <a asp-controller="Lancamento" asp-action="Cadastrar" class="btn btn-danger w-25" id="btn-cancelar">Cancelar</a>
+                <a asp-controller="Lancamento" asp-action="Index" class="btn btn-danger w-25" id="btn-cancelar">Cancelar</a>
             </div>
         </form>
     </div>

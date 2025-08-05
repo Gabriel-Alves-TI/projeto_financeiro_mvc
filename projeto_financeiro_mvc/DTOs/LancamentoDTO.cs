@@ -14,8 +14,8 @@ namespace projeto_financeiro_mvc.DTOs
         public double Valor { get; set; }
         public string Categoria { get; set; }
         public string Tipo { get; set; }
-        public DateTime Data => DateTime.Now;
-        public DateTime Previsao => DateTime.Now;
+        public DateTime Data { get; set; }
+        public DateTime Previsao { get; set; }
         public int Parcelas { get; set; }
         public bool Pago { get; set; }
         public bool Recorrente { get; set; }
