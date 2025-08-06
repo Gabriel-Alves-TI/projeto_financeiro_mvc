@@ -10,6 +10,7 @@ namespace projeto_financeiro_mvc.DTOs
 {
     public class LancamentoDTO
     {
+        public int? Id { get; set; }
         public string Descricao { get; set; }
         public double Valor { get; set; }
         public string Categoria { get; set; }

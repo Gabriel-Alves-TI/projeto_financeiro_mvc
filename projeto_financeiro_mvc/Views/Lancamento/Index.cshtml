@@ -53,7 +53,7 @@
 
                     <div class="row g-2 align-items-center p-2">
                         <div class="col-auto">
-                            <label for="selectCategoria" class="col-form-label text-primary"">Categoria:</label>
+                            <label for="selectCategoria" class="col-form-label text-primary">Categoria:</label>
                         </div>
                         <div class="col-auto">
                             <select class="form-select-sm" aria-label="Default select example">
@@ -67,11 +67,11 @@
 
                     <div class="row g-2 align-items-center p-2">
                         <div class="col-auto">
-                            <label for="selectCategoria" class="col-form-label text-primary"">Período:</label>
+                            <label for="Periodo" class="col-form-label text-primary">Período:</label>
                         </div>
                         <div class="col-auto">
                             <input type="date" style="width: 120px;" id="dataInicial">
-                            -
+                            <span class="text-primary ms-1">-</span>
                         </div>
                         <div class="col-auto">
                             <input type="date" style="width: 120px;" id="dataFinal">
@@ -119,7 +119,7 @@
                                         <p class="text-success text-success-emphasis fs-6 fw-bold mb-0 me-1"><i class="bi bi-plus"></i> R$@lanc.Valor</p> 
                                     } 
                                     <div class="d-flex align-items-center justify-content-end ms-2 border-start border-2 border-dark" style="cursor: pointer">
-                                        <a class="text-center ms-2 me-3 fw-bold"><i class="bi bi-pencil-square text-dark"></i></a>
+                                        <a asp-controller="Lancamento" asp-action="Editar" asp-route-id="@lanc.Id" class="text-center ms-2 me-3 fw-bold"><i class="bi bi-pencil-square text-dark"></i></a>
                                         <a asp-controller="Lancamento" asp-action="Excluir" asp-route-id="@lanc.Id" class="text-center me-2"><i class="bi bi-x-square-fill text-danger"></i></a>
                                     </div>
                                 </div>
@@ -134,7 +134,7 @@
                                     </div>
                                     <p class="text-danger fs-6 fw-bold mb-0 me-1"><i class="bi bi-dash"></i> R$@lanc.Valor</p>
                                     <div class="d-flex align-items-center justify-content-end ms-2 border-start border-2 border-dark" style="cursor: pointer">
-                                        <a class="text-center ms-2 me-3 fw-bold"><i class="bi bi-pencil-square text-dark"></i></a>
+                                        <a asp-controller="Lancamento" asp-action="Editar" asp-route-id="@lanc.Id" class="text-center ms-2 me-3 fw-bold"><i class="bi bi-pencil-square text-dark"></i></a>
                                         <a asp-controller="Lancamento" asp-action="Excluir" asp-route-id="@lanc.Id" class="text-center me-2"><i class="bi bi-x-square-fill text-danger"></i></a>
                                     </div>
                                 </div>
@@ -149,7 +149,7 @@
                                     </div>
                                     <p class="text-success text-success-emphasis fs-6 fw-bold mb-0 me-1"><i class="bi bi-plus"></i> R$@lanc.Valor</p>
                                     <div class="d-flex align-items-center justify-content-end ms-2 border-start border-2 border-dark" style="cursor: pointer">
-                                        <a class="text-center ms-2 me-3 fw-bold"><i class="bi bi-pencil-square text-dark"></i></a>
+                                        <a asp-controller="Lancamento" asp-action="Editar" asp-route-id="@lanc.Id" class="text-center ms-2 me-3 fw-bold"><i class="bi bi-pencil-square text-dark"></i></a>
                                         <a asp-controller="Lancamento" asp-action="Excluir" asp-route-id="@lanc.Id" class="text-center me-2"><i class="bi bi-x-square-fill text-danger"></i></a>
                                     </div>
                                 </div>
@@ -195,10 +195,6 @@
                                     {
                                         <p class="text-success text-success-emphasis fs-6 fw-bold mb-0 me-1"><i class="bi bi-plus"></i> R$@lanc.Valor</p> 
                                     } 
-                                    <div class="d-flex align-items-center justify-content-end ms-2 border-start border-2 border-dark" style="cursor: pointer">
-                                        <a class="text-center ms-2 me-3 fw-bold"><i class="bi bi-pencil-square text-dark"></i></a>
-                                        <a asp-controller="Lancamento" asp-action="Excluir" asp-route-id="@lanc.Id" class="text-center me-2"><i class="bi bi-x-square-fill text-danger"></i></a>
-                                    </div>
                                 </div>
                             }
                             else if (lanc.Tipo.ToLower() == "despesa")
@@ -210,10 +206,6 @@
                                         <span class="card-text text-dark-emphasis" style="font-size: 12px;">@lanc.Data.ToString("dd/MM/yyyy - hh:mm")</span>
                                     </div>
                                     <p class="text-danger fs-6 fw-bold mb-0 me-1"><i class="bi bi-dash"></i> R$@lanc.Valor</p>
-                                    <div class="d-flex align-items-center justify-content-end ms-2 border-start border-2 border-dark" style="cursor: pointer">
-                                        <a class="text-center ms-2 me-3 fw-bold"><i class="bi bi-pencil-square text-dark"></i></a>
-                                        <a asp-controller="Lancamento" asp-action="Excluir" asp-route-id="@lanc.Id" class="text-center me-2"><i class="bi bi-x-square-fill text-danger"></i></a>
-                                    </div>
                                 </div>
                             }
                             else if (lanc.Tipo.ToLower() == "receita")
@@ -225,10 +217,6 @@
                                         <span class="card-text text-dark-emphasis" style="font-size: 12px;">@lanc.Data.ToString("dd/MM/yyyy - hh:mm")</span>
                                     </div>
                                     <p class="text-success text-success-emphasis fs-6 fw-bold mb-0 me-1"><i class="bi bi-plus"></i> R$@lanc.Valor</p>
-                                    <div class="d-flex align-items-center justify-content-end ms-2 border-start border-2 border-dark" style="cursor: pointer">
-                                        <a class="text-center ms-2 me-3 fw-bold"><i class="bi bi-pencil-square text-dark"></i></a>
-                                        <a asp-controller="Lancamento" asp-action="Excluir" asp-route-id="@lanc.Id" class="text-center me-2"><i class="bi bi-x-square-fill text-danger"></i></a>
-                                    </div>
                                 </div>
                             }
                         }

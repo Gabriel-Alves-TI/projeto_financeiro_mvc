@@ -141,8 +141,7 @@ namespace projeto_financeiro_mvc.Controllers
 
                     TempData["MensagemSucesso"] = "Saldo inicial da conta corrigido com sucesso!";
                     return RedirectToAction("Index", "Lancamento");
-                }
-                ;
+                };                ;
 
                 // Lógica para Lançamento único
                 if (viewModel.Lancamento.Parcelas == 1)
@@ -236,6 +235,76 @@ namespace projeto_financeiro_mvc.Controllers
                 }
             }
 
+            viewModel.Contas = _context.Contas.ToList();
+            return View(viewModel);
+        }
+
+        public IActionResult Editar(int? id)
+        {
+            var lancamento = _context.Lancamentos.FirstOrDefault(lanc => lanc.Id == id);
+            if (lancamento == null)
+            {
+                return NotFound();
+            }
+
+            var viewModel = new LancamentoViewModel
+            {
+                Lancamento = new LancamentoDTO
+                {
+                    Id = lancamento.Id,
+                    Descricao = lancamento.Descricao,
+                    Valor = lancamento.Valor,
+                    Categoria = lancamento.Categoria,
+                    Tipo = lancamento.Tipo,
+                    Data = lancamento.Data,
+                    Previsao = lancamento.Previsao,
+                    Parcelas = lancamento.Parcelas,
+                    Pago = lancamento.Pago,
+                    Recorrente = lancamento.Recorrente,
+                    ContaId = lancamento.ContaId
+                },
+                Contas = _context.Contas.ToList()
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public IActionResult Editar(LancamentoViewModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var conta = _context.Contas.Find(viewModel.Lancamento.ContaId);
+                if (conta == null)
+                {
+                    TempData["MensagemErro"] = "Conta não localizada.";
+                    return NotFound(viewModel);
+                }
+
+                var lancamento = _context.Lancamentos.Find(viewModel.Lancamento.Id);
+                if (lancamento == null)
+                {
+                    TempData["MensagemErro"] = "Lançamento não encontrado.";
+                    return NotFound();
+                }
+
+                lancamento.Descricao = viewModel.Lancamento.Descricao;
+                lancamento.Valor = viewModel.Lancamento.Valor;
+                lancamento.Categoria = viewModel.Lancamento.Categoria;
+                lancamento.Tipo = viewModel.Lancamento.Tipo;
+                lancamento.Data = viewModel.Lancamento.Data;
+                lancamento.Previsao = viewModel.Lancamento.Previsao;
+                lancamento.Parcelas = viewModel.Lancamento.Parcelas;
+                lancamento.Pago = viewModel.Lancamento.Pago;
+                lancamento.Recorrente = viewModel.Lancamento.Recorrente;
+                lancamento.ContaId = viewModel.Lancamento.ContaId;
+
+                _context.Lancamentos.Update(lancamento);
+                _context.SaveChanges();
+
+                TempData["MensagemSucesso"] = "Lançamento atualizado com sucesso!";
+                return RedirectToAction("Index", "Lancamento");
+            }
             viewModel.Contas = _context.Contas.ToList();
             return View(viewModel);
         }
