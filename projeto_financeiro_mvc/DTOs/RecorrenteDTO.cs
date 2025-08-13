@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using projeto_financeiro_mvc.Models;
 
 namespace projeto_financeiro_mvc.DTOs
 {
-    public class LancamentoDTO
+    public class RecorrenteDTO
     {
         public int? Id { get; set; }
         public string Descricao { get; set; }
@@ -19,6 +17,7 @@ namespace projeto_financeiro_mvc.DTOs
         public DateTime Previsao { get; set; }
         public int Parcelas { get; set; }
         public bool Pago { get; set; }
+        public bool IsRecorrente { get; set; }
         public int ContaId { get; set; }
     }
 }

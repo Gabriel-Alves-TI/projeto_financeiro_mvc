@@ -34,16 +34,16 @@ namespace projeto_financeiro_mvc.Controllers
         }
 
         [HttpPost]
-        public IActionResult Cadastrar(ContaCadastrarDTO contaCadastrarDTO)
+        public IActionResult Cadastrar(ContaDTO contaDTO)
         {
             if (ModelState.IsValid)
             {
                 var conta = new ContaModel()
                 {
-                    Banco = contaCadastrarDTO.Banco,
-                    Agencia = contaCadastrarDTO.Agencia,
-                    NumeroConta = contaCadastrarDTO.NumeroConta,
-                    Saldo = contaCadastrarDTO.SaldoInicial ?? 0,
+                    Banco = contaDTO.Banco,
+                    Agencia = contaDTO.Agencia,
+                    NumeroConta = contaDTO.NumeroConta,
+                    Saldo = contaDTO.SaldoInicial ?? 0,
                 };
 
                 _context.Contas.Add(conta);
@@ -53,6 +53,40 @@ namespace projeto_financeiro_mvc.Controllers
             }
 
             return View();
+        }
+
+        public IActionResult Editar(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+
+            ContaModel conta = _context.Contas.FirstOrDefault(c => c.Id == id);
+
+            if (conta == null)
+            {
+                return NotFound();
+            }
+
+            return View(conta);
+        }
+
+        public IActionResult Excluir(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+
+            ContaModel conta = _context.Contas.FirstOrDefault(c => c.Id == id);
+
+            if (conta == null)
+            {
+                return NotFound();
+            }
+
+            return View(conta);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

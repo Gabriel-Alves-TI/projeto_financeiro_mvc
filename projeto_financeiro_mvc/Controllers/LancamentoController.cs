@@ -11,6 +11,7 @@ using projeto_financeiro_mvc.Data;
 using projeto_financeiro_mvc.DTOs;
 using projeto_financeiro_mvc.Models;
 using projeto_financeiro_mvc.ViewModels;
+using projeto_financeiro_mvc.Views.Lancamento;
 
 namespace projeto_financeiro_mvc.Controllers
 {
@@ -23,26 +24,26 @@ namespace projeto_financeiro_mvc.Controllers
         }
         public IActionResult Index()
         {
-            var lancamentos = _context.Lancamentos
-                .Include(lanc => lanc.Conta)
-                .OrderBy(lanc => lanc.Data)
-                .Select(lanc => new LancamentoModel
-                {
-                    Id = lanc.Id,
-                    Descricao = lanc.Descricao,
-                    Valor = lanc.Valor,
-                    Categoria = lanc.Categoria,
-                    Tipo = lanc.Tipo,
-                    Data = lanc.Data,
-                    Previsao = lanc.Previsao,
-                    Parcelas = lanc.Parcelas,
-                    Pago = lanc.Pago,
-                    Recorrente = lanc.Recorrente,
-                    ContaId = lanc.ContaId,
-                    Conta = lanc.Conta
-                }).ToList();
+            var viewModel = new MovimentosFinanceirosViewModel
+            {
+                Lancamentos = _context.Lancamentos
+                    .Include(l => l.Conta)
+                    .OrderBy(l => l.Data)
+                    .ToList(),
 
-            return View(lancamentos);
+                Transferencias = _context.Transferencias
+                    .Include(t => t.ContaOrigem)
+                    .Include(t => t.ContaDestino)
+                    .OrderBy(t => t.DataTransferencia)
+                    .ToList(),
+
+                Recorrentes = _context.Recorrentes
+                    .Include(r => r.Conta)
+                    .OrderBy(r => r.Data)
+                    .ToList(),
+            };
+
+            return View(viewModel);
         }
 
         public IActionResult Cadastrar()
@@ -91,7 +92,6 @@ namespace projeto_financeiro_mvc.Controllers
                 Console.WriteLine($"Tipo: {viewModel.Lancamento.Tipo}");
                 Console.WriteLine($"Data: {viewModel.Lancamento.Data}");
                 Console.WriteLine($"Parcelas: {viewModel.Lancamento.Parcelas}");
-                Console.WriteLine($"Recorrente: {viewModel.Lancamento.Recorrente}");
                 Console.WriteLine($"Previsao: {viewModel.Lancamento.Previsao}");
 
                 var conta = _context.Contas.Find(viewModel.Lancamento.ContaId);
@@ -111,11 +111,11 @@ namespace projeto_financeiro_mvc.Controllers
                 if (viewModel.Lancamento.Categoria?.Trim().Equals("Saldo Inicial", StringComparison.OrdinalIgnoreCase) == true)
                 {
 
-                    if (viewModel.Lancamento.Tipo.ToLower() == "despesa")
+                    if (viewModel.Lancamento.Tipo == TipoLancamento.Despesa)
                     {
                         conta.Saldo -= viewModel.Lancamento.Valor;
                     }
-                    if (viewModel.Lancamento.Tipo.ToLower() == "receita")
+                    if (viewModel.Lancamento.Tipo == TipoLancamento.Receita)
                     {
                         conta.Saldo += viewModel.Lancamento.Valor;
                     }
@@ -130,7 +130,6 @@ namespace projeto_financeiro_mvc.Controllers
                         Previsao = viewModel.Lancamento.Previsao,
                         Parcelas = viewModel.Lancamento.Parcelas,
                         Pago = true,
-                        Recorrente = viewModel.Lancamento.Recorrente,
                         ContaId = viewModel.Lancamento.ContaId
                     };
 
@@ -156,7 +155,6 @@ namespace projeto_financeiro_mvc.Controllers
                         Previsao = viewModel.Lancamento.Previsao,
                         Parcelas = viewModel.Lancamento.Parcelas,
                         Pago = false,
-                        Recorrente = viewModel.Lancamento.Recorrente,
                         ContaId = viewModel.Lancamento.ContaId
                     };
 
@@ -166,45 +164,13 @@ namespace projeto_financeiro_mvc.Controllers
                     TempData["MensagemSucesso"] = "Lançamento efetuado com sucesso!";
                     return RedirectToAction("Index", "Lancamento");
                 }
-
-                
-                var listaLancamentos = new List<LancamentoModel>();
-                DateTime dataParcela = viewModel.Lancamento.Data;
-
-                double valorParcela = Math.Round(viewModel.Lancamento.Valor / viewModel.Lancamento.Parcelas, 2);
-
-                // Lógica para Recorrente
-                if (viewModel.Lancamento.Recorrente == true)
-                {
-                    for (int i = 1; i <= viewModel.Lancamento.Parcelas; i++)
-                    {
-                        var lancamento = new LancamentoModel()
-                        {
-                            Descricao = $"{viewModel.Lancamento.Descricao} - Recorrente({i}/{viewModel.Lancamento.Parcelas})",
-                            Valor = viewModel.Lancamento.Valor,
-                            Categoria = viewModel.Lancamento.Categoria,
-                            Tipo = viewModel.Lancamento.Tipo,
-                            Data = dataParcela,
-                            Previsao = viewModel.Lancamento.Previsao,
-                            Parcelas = viewModel.Lancamento.Parcelas,
-                            Pago = false,
-                            Recorrente = viewModel.Lancamento.Recorrente,
-                            ContaId = viewModel.Lancamento.ContaId
-                        };
-
-                        listaLancamentos.Add(lancamento);
-
-                        dataParcela = dataParcela.AddMonths(1);
-                    }
-
-                    _context.AddRange(listaLancamentos);
-                    _context.SaveChanges();
-
-                    TempData["MensagemSucesso"] = "Lançamento recorrente efetuado com sucesso!";
-                    return RedirectToAction("Index", "Lancamento");
-                }
                 else
                 {
+                    var listaLancamentos = new List<LancamentoModel>();
+                    DateTime dataParcela = viewModel.Lancamento.Data;
+
+                    double valorParcela = Math.Round(viewModel.Lancamento.Valor / viewModel.Lancamento.Parcelas, 2);
+                    
                     // Lógica para Parcelamento
                     for (int i = 1; i <= viewModel.Lancamento.Parcelas; i++)
                     {
@@ -218,7 +184,6 @@ namespace projeto_financeiro_mvc.Controllers
                             Previsao = viewModel.Lancamento.Previsao,
                             Parcelas = viewModel.Lancamento.Parcelas,
                             Pago = false,
-                            Recorrente = viewModel.Lancamento.Recorrente,
                             ContaId = viewModel.Lancamento.ContaId
                         };
 
@@ -260,7 +225,6 @@ namespace projeto_financeiro_mvc.Controllers
                     Previsao = lancamento.Previsao,
                     Parcelas = lancamento.Parcelas,
                     Pago = lancamento.Pago,
-                    Recorrente = lancamento.Recorrente,
                     ContaId = lancamento.ContaId
                 },
                 Contas = _context.Contas.ToList()
@@ -296,7 +260,6 @@ namespace projeto_financeiro_mvc.Controllers
                 lancamento.Previsao = viewModel.Lancamento.Previsao;
                 lancamento.Parcelas = viewModel.Lancamento.Parcelas;
                 lancamento.Pago = viewModel.Lancamento.Pago;
-                lancamento.Recorrente = viewModel.Lancamento.Recorrente;
                 lancamento.ContaId = viewModel.Lancamento.ContaId;
 
                 _context.Lancamentos.Update(lancamento);

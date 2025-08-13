@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace projeto_financeiro_mvc.DTOs
 {
-    public class ContaCadastrarDTO
+    public class ContaDTO
     {
         public string Banco { get; set; }
         public int Agencia { get; set; }

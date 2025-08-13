@@ -1,47 +1,70 @@
-@model projeto_financeiro_mvc.ViewModels.LancamentoViewModel
+@model projeto_financeiro_mvc.ViewModels.RecorrenteViewModel
 @{
-    ViewData["Title"] = "Novo Lançamento";
+    ViewData["Title"] = "Recorrente";
 }
 
 <h1 class="d-flex justify-content-center text-primary fw-bold mt-2">@ViewData["Title"]</h1>
 
 <div class="container">
-    <div class="card mb-3 rounded-3 border-primary">
-        <form asp-controller="Lancamento" asp-action="Cadastrar" method="post">
+    <div class="card mb-3 rounded-3 border-warning">
+        <form asp-controller="Recorrente" asp-action="Cadastrar" method="post">
             <div class="card-body">
-                <div class="d-flex justify-content-between bg-primary bg-opacity-25 rounded">
-                    <div class="row g-2 align-items-center p-2">
-                        <div class="col-auto">
-                            <label asp-for="Lancamento.Valor" class="col-form-label fs-4 text-primary">Valor:</label>
-                        </div>
-                        <div class="col-auto">
-                            <input type="text" name="Lancamento.Valor" asp-for="Lancamento.Valor" class="rounded border-1 w-50 fs-5" style="height: 35px;" id="valorLancamento">
-                        </div>
-                    </div>
-                    <div class="row g-2 align-items-center p-2">
-                        <div class="col-auto">
-                            <label for="parcelas" asp-for="Lancamento.Parcelas" class="col-form-label fs-5 text-primary">Parcelas:</label>
-                        </div>
-                        <div class="col-auto">
-                            <input type="number" asp-for="Lancamento.Parcelas" name="Lancamento.Parcelas" id="parcelas" class="rounded border-1 p-1 w-25">
-                        </div>
-                    </div>
-                    <div class="row g-2 align-items-center p-2">
-                        <div class="col-auto">
-                            <label for="selectTipo" asp-for="Lancamento.Data" class="col-form-label fs-5 text-primary">Data:</label>
-                        </div>
-                        <div class="col-auto">
-                            <input type="date" asp-for="Lancamento.Data" class="rounded border-1 p-1" id="dataLancamento">
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-end bg-white w-100 border border-primary border-1 rounded-bottom rounded-3">
+                        <div class="row g-1 align-items-center p-1">
+                            <div class="col-auto">
+                                <label asp-for="Recorrente.IsRecorrente" class="col-form-label fs-6 text-primary me-2">Recorrente?</label>
+                            </div>
+                            <div class="col-auto">
+                                <input class="form-check-input bg-primary" asp-for="Recorrente.IsRecorrente" type="radio" name="Recorrente.IsRecorrente" id="fixoSim"
+                                    value="true" checked="checked">
+                                <label class="form-check-label text-dark">
+                                    Sim
+                                </label>
+                            </div>
+                            <div class="col-auto">
+                                <input class="form-check-input bg-primary" asp-for="Recorrente.IsRecorrente" type="radio" name="Recorrente.IsRecorrente" id="fixoNao"
+                                    value="false">
+                                <label class="form-check-label text-dark" for="fixoNao">
+                                    Não
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="d-flex justify-content-between bg-primary bg-opacity-25 rounded mt-1">
+                <div class="d-flex justify-content-between bg-warning bg-opacity-25 rounded">
                     <div class="row g-2 align-items-center p-2">
                         <div class="col-auto">
-                            <label for="selectTipo" asp-for="Lancamento.Tipo" class="col-form-label fs-5 text-primary">Tipo:</label>
+                            <label asp-for="Recorrente.Valor" class="col-form-label fs-4 text-primary">Valor:</label>
                         </div>
                         <div class="col-auto">
-                            <select class="form-select border-2 bg-white text-primary" asp-for="Lancamento.Tipo" name="Lancamento.Tipo">
+                            <input type="text" name="Recorrente.Valor" asp-for="Recorrente.Valor" class="rounded border-1 w-50 fs-5" style="height: 35px;" id="valorRecorrente">
+                        </div>
+                    </div>
+                    <div class="row g-2 align-items-center p-2">
+                        <div class="col-auto">
+                            <label for="parcelas" asp-for="Recorrente.Parcelas" class="col-form-label fs-5 text-primary">Parcelas:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="number" asp-for="Recorrente.Parcelas" name="Recorrente.Parcelas" id="parcelas" class="rounded border-1 p-1 w-25">
+                        </div>
+                    </div>
+                    <div class="row g-2 align-items-center p-2">
+                        <div class="col-auto">
+                            <label for="selectTipo" asp-for="Recorrente.Data" class="col-form-label fs-5 text-primary">Data:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="date" asp-for="Recorrente.Data" class="rounded border-1 p-1" id="dataRecorrente">
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between bg-warning bg-opacity-25 rounded mt-1">
+                    <div class="row g-2 align-items-center p-2">
+                        <div class="col-auto">
+                            <label for="selectTipo" asp-for="Recorrente.Tipo" class="col-form-label fs-5 text-primary">Tipo:</label>
+                        </div>
+                        <div class="col-auto">
+                            <select class="form-select border-2 bg-white text-primary" asp-for="Recorrente.Tipo" name="Recorrente.Tipo">
                                 <option value="0" selected>Receita</option>
                                 <option value="1">Despesa</option>
                             </select>
@@ -49,24 +72,24 @@
                     </div>
                     <div class="row g-2 align-items-center p-2">
                         <div class="col-auto">
-                            <label for="selectTipo" asp-for="Lancamento.Previsao" class="col-form-label fs-5 text-primary">Prev. Pagamento:</label>
+                            <label for="selectTipo" asp-for="Recorrente.Previsao" class="col-form-label fs-5 text-primary">Prev. Pagamento:</label>
                         </div>
                         <div class="col-auto">
-                            <input type="date" asp-for="Lancamento.Previsao" class="rounded border-1 p-1">
+                            <input type="date" asp-for="Recorrente.Previsao" class="rounded border-1 p-1">
                         </div>
                     </div>
                 </div>
                 <div class="p-2 mb-1">
-                    <label asp-for="Lancamento.Descricao" class="form-label fs-5 text-primary">Descrição:</label>
-                    <textarea class="form-control bg-white border-1 border-dark text-primary" asp-for="Lancamento.Descricao" name="Lancamento.Descricao" rows="1" style="max-height: 80px;"></textarea>
+                    <label asp-for="Recorrente.Descricao" class="form-label fs-5 text-primary">Descrição:</label>
+                    <textarea class="form-control bg-white border-1 border-dark text-primary" asp-for="Recorrente.Descricao" name="Recorrente.Descricao" rows="1" style="max-height: 80px;"></textarea>
                 </div>
                 <div class="d-flex justify-content-between">
                     <div class="row g-2 align-items-center p-2">
                         <div class="col-auto">
-                            <label asp-for="Lancamento.Categoria" class="col-form-label fs-5 text-primary">Categoria:</label>
+                            <label asp-for="Recorrente.Categoria" class="col-form-label fs-5 text-primary">Categoria:</label>
                         </div>
                         <div class="col-auto">
-                            <select class="form-select bg-white text-primary border border-dark border-1" asp-for="Lancamento.Categoria" name="Lancamento.Categoria">
+                            <select class="form-select bg-white text-primary border border-dark border-1" asp-for="Recorrente.Categoria" name="Recorrente.Categoria">
                                 <option selected>Selecione...</option>
                                 <option value="Água">Água</option>
                                 <option value="Alimentação VA">Alimentação VA</option>
@@ -98,10 +121,10 @@
                     </div>
                     <div class="row g-2 align-items-center p-2">
                         <div class="col-auto">
-                            <label asp-for="Lancamento.ContaId" class="col-form-label fs-5 text-primary">Conta:</label>
+                            <label asp-for="Recorrente.ContaId" class="col-form-label fs-5 text-primary">Conta:</label>
                         </div>
                         <div class="col-auto">
-                            <select class="form-select bg-white text-primary border border-dark border-1" asp-for="Lancamento.ContaId">
+                            <select class="form-select bg-white text-primary border border-dark border-1" asp-for="Recorrente.ContaId">
                                 <option value="">Selecione...</option>
                                 @foreach (var conta in (Model.Contas))
                                 {
