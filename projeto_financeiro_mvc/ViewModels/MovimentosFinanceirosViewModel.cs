@@ -11,5 +11,6 @@ namespace projeto_financeiro_mvc.ViewModels
         public List<LancamentoModel> Lancamentos { get; set; }
         public List<TransferenciaModel> Transferencias { get; set; }
         public List<RecorrenteModel> Recorrentes { get; set; }
+        public List<ContaModel> Contas { get; set; }
     }
 }

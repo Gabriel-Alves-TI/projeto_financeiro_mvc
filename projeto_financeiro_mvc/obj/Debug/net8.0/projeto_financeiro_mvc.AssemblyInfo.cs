@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("projeto_financeiro_mvc")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f25517a931fa6bb9c59b96057dcc405d61b9e8fb")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e73e0132c6dcd93b2c01a95379888f3948e8ccd4")]
 [assembly: System.Reflection.AssemblyProductAttribute("projeto_financeiro_mvc")]
 [assembly: System.Reflection.AssemblyTitleAttribute("projeto_financeiro_mvc")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
