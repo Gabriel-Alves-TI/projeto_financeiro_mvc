@@ -249,7 +249,30 @@ namespace projeto_financeiro_mvc.Controllers
                 if (lancamento == null)
                 {
                     TempData["MensagemErro"] = "Lançamento não encontrado.";
-                    return NotFound();
+                    return NotFound(viewModel);
+                }
+
+                if (viewModel.Lancamento.Pago == true)
+                {
+                    if (viewModel.Lancamento.Tipo == TipoLancamento.Receita)
+                    {
+                        conta.Saldo += viewModel.Lancamento.Valor;
+                    }
+                    if (viewModel.Lancamento.Tipo == TipoLancamento.Despesa)
+                    {
+                        conta.Saldo -= viewModel.Lancamento.Valor;
+                    }
+                }
+                if (viewModel.Lancamento.Pago == false)
+                {
+                    if (viewModel.Lancamento.Tipo == TipoLancamento.Receita)
+                    {
+                        conta.Saldo -= viewModel.Lancamento.Valor;
+                    }
+                    if (viewModel.Lancamento.Tipo == TipoLancamento.Despesa)
+                    {
+                        conta.Saldo += viewModel.Lancamento.Valor;
+                    }
                 }
 
                 lancamento.Descricao = viewModel.Lancamento.Descricao;
@@ -262,6 +285,8 @@ namespace projeto_financeiro_mvc.Controllers
                 lancamento.Pago = viewModel.Lancamento.Pago;
                 lancamento.ContaId = viewModel.Lancamento.ContaId;
 
+                _context.Contas.Update(conta);
+
                 _context.Lancamentos.Update(lancamento);
                 _context.SaveChanges();
 
@@ -269,6 +294,45 @@ namespace projeto_financeiro_mvc.Controllers
                 return RedirectToAction("Index", "Lancamento");
             }
             viewModel.Contas = _context.Contas.ToList();
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public IActionResult Pagar(LancamentoViewModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var conta = _context.Contas.Find(viewModel.Lancamento.ContaId);
+                if (conta == null)
+                {
+                    TempData["MensagemErro"] = "Conta não localizada.";
+                    return NotFound(viewModel);
+                }
+
+                var lancamento = _context.Lancamentos.Find(viewModel.Lancamento.Id);
+                if (lancamento == null)
+                {
+                    TempData["MensagemErro"] = "Lançamento não localizado.";
+                    return NotFound(viewModel);
+                }
+
+                lancamento.Pago = true;
+
+                if (viewModel.Lancamento.Tipo == TipoLancamento.Receita)
+                {
+                    conta.Saldo += viewModel.Lancamento.Valor;
+                }
+                if (viewModel.Lancamento.Tipo == TipoLancamento.Despesa)
+                {
+                    conta.Saldo -= viewModel.Lancamento.Valor;
+                }
+
+                _context.Contas.Update(conta);
+                _context.Lancamentos.Update(lancamento);
+                _context.SaveChanges();
+                return RedirectToAction("Index", "Lancamento");
+            }
+
             return View(viewModel);
         }
 
