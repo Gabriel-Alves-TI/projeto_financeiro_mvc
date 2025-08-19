@@ -30,7 +30,7 @@
     
 
     <div class="container w-50">
-    <table class="table table-dark table-hover">
+    <table class="table table-primary table-hover">
         <thead>
             <tr>
                 <th scope="col">Banco</th>
@@ -46,7 +46,7 @@
             {
                 @foreach(var conta in Model)
                 {
-                <tr>
+                <tr class="table-custom border border-2">
                     <th scope="row">@conta.Banco</th>
                     <td>@conta.Agencia</td>
                     <td>@conta.NumeroConta</td>

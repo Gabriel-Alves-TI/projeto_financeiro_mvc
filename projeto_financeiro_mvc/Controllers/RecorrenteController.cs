@@ -155,7 +155,7 @@ namespace projeto_financeiro_mvc.Controllers
                     Data = recorrente.Data,
                     Previsao = recorrente.Previsao,
                     Parcelas = recorrente.Parcelas,
-                    Pago = false,
+                    Pago = recorrente.Pago,
                     IsRecorrente = recorrente.IsRecorrente,
                     ContaId = recorrente.ContaId
                 },

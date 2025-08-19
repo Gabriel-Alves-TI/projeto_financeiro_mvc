@@ -1,0 +1,120 @@
+@model projeto_financeiro_mvc.ViewModels.ListExtratoViewModel
+@{
+    ViewData["Title"] = "Extrato";
+}
+
+<h1 class="d-flex justify-content-center text-primary fw-bold mt-2">@ViewData["Title"]</h1>
+
+<div class="container">
+    <div class="d-flex border border-2 p-2 rounded rounded-2 mb-2">
+        <div class="row g-2 align-items-center p-2">
+            <div class="col-auto">
+                <label for="selectTipo" class="col-form-label text-primary">Tipo:</label>
+            </div>
+            <div class="col-auto">
+                <select class="form-select-sm" aria-label="Default select example">
+                    <option selected>Selecione...</option>
+                    <option value="receita">Receita</option>
+                    <option value="despesa">Despesa</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row g-2 align-items-center p-2">
+            <div class="col-auto">
+                <label for="selectCategoria" class="col-form-label text-primary">Categoria:</label>
+            </div>
+            <div class="col-auto">
+                <select class="form-select-sm" aria-label="Default select example">
+                    <option selected>Selecione...</option>
+                    <option value="1">Água</option>
+                    <option value="2">Aluguel</option>
+                    <option value="3">Energia</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row g-2 align-items-center p-2">
+            <div class="col-auto">
+                <label for="Periodo" class="col-form-label text-primary">Período:</label>
+            </div>
+            <div class="col-auto">
+                <input type="date" style="width: 120px;" id="dataInicial">
+                <span class="text-primary ms-1">-</span>
+            </div>
+            <div class="col-auto">
+                <input type="date" style="width: 120px;" id="dataFinal">
+            </div>
+        </div>
+    </div>
+    <table class="table table-primary border border-2 table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Data</th>
+                <th scope="col">Descrição</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Categoria</th>
+                <th scope="col">Conta</th>
+                <th scope="col">Valor</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @{
+                if (!Model.Movimentos.Any())
+                {
+                    //QUANDO NÃO EXISTIR LANÇAMENTOS
+                    <div class="d-flex align-items-center justify-content-center mt-4 p-2">
+                        <h5 class="text-primary">Nenhum lançamento encontrado!</h5>
+                    </div>
+                }
+
+                foreach(var item in Model.Movimentos)
+                {
+                    @* var rowClass = item.Origem switch
+                    {
+                        "Recorrente" => "table-warning",
+                        "Transferencia" => "table-info",
+                        _ => item.Tipo == "Receita" ? "table-success" : "table-danger"
+                    }; *@
+
+                    <tr class="table-custom border border-1">
+                        <th scope="row">@item.Data.ToString("dd/MM/yyyy")</th>
+                        <td>@item.Descricao</td>
+                            @if (item.Tipo == "Receita")
+                            {
+                                <td class="text-success-emphasis">@item.Tipo</td>
+                            }
+                            else if(item.Tipo == "Despesa")
+                            {
+                                <td class="text-danger">@item.Tipo</td>
+                            }
+                            else if(item.Tipo == "Transferencia")
+                            {
+                                <td class="text-info">@item.Tipo</td>
+                            }
+                        <td>@item.Categoria</td>
+                        <td>@item.Conta</td>
+                        <td>@item.Valor</td>
+                        <td>
+                            @if (item.Origem == "Lancamento")
+                            {
+                                <a asp-controller="Lancamento" asp-action="Editar" asp-route-id="@item.Id"><i class="bi bi-eye-fill text-info"></i></a>
+                            }
+                            else if (item.Origem == "Recorrente")
+                            {
+                                <a asp-controller="Recorrente" asp-action="Editar" asp-route-id="@item.Id"><i class="bi bi-eye-fill text-info"></i></a>
+                            }
+                            else if (item.Origem == "Transferencia")
+                            {
+                                <a asp-controller="Transferencia" asp-action="Editar" asp-route-id="@item.Id"><i class="bi bi-eye-fill text-info"></i></a>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            
+        </tbody>
+    </table>
+</div>
