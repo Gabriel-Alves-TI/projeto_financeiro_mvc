@@ -1,3 +1,4 @@
+@using System.Text.Json
 @model projeto_financeiro_mvc.ViewModels.MovimentosFinanceirosViewModel
 @{
     ViewData["Title"] = "Dashboard";
@@ -128,11 +129,11 @@
                 var hoje = DateTime.Now;
 
                 var lancamentosFiltrados = Model?.Lancamentos
-                    .Where(l => l.Data.Month == hoje.Month && l.Data > hoje && l.Tipo == TipoLancamento.Despesa)
+                    .Where(l => l.Data.Month == hoje.Month && l.Data > hoje && l.Tipo == TipoLancamento.Despesa && l.Pago == false)
                     .ToList() ?? new List<LancamentoModel>();
 
                 var recorrentesFiltrados = Model?.Recorrentes
-                    .Where(r => r.Data.Month == hoje.Month && r.Data > hoje && r.Tipo == TipoLancamento.Despesa)
+                    .Where(r => r.Data.Month == hoje.Month && r.Data > hoje && r.Tipo == TipoLancamento.Despesa && r.Pago == false)
                     .ToList() ?? new List<RecorrenteModel>();
 
                 var resultados = lancamentosFiltrados.Any() || recorrentesFiltrados.Any();
@@ -141,7 +142,7 @@
                 {
                     //QUANDO NÃO EXISTIR LANÇAMENTOS
                     <div class="d-flex align-items-center justify-content-center mt-4 p-2">
-                        <h5 class="text-primary">Nenhum lançamento encontrado!</h5>
+                        <h5 class="text-primary">Nenhum lançamento próximo do vencimento encontrado!</h5>
                     </div>
                 }
 
@@ -178,7 +179,7 @@
         <div class="d-flex p-4 text-start w-100">
             <div class="card p-3 w-100" style="max-height: min-content;">
                 <div class="d-flex justify-content-between align-items-center">
-                    <canvas id="graficoCategoria" width="600" style="max-width: auto;"></canvas>
+                    <canvas id="graficoCategoria" width="400" style="max-width: auto;"></canvas>
                 </div>
             </div>
         </div>
@@ -189,12 +190,77 @@
         <div class="d-flex p-4 text-start w-100">
             <div class="card p-3 w-100" style="max-height: min-content;">
                 <div class="d-flex justify-content-between align-items-center">
-                    <canvas id="balance" width="600" style="max-width: auto;"></canvas>
+                    <canvas id="balance" width="400" style="max-width: auto;"></canvas>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@{
+    // Gráfico Gastos por Categoria
+    var despesasLancamentos = Model.Lancamentos
+        .Where(l => l.Tipo == TipoLancamento.Despesa && l.Pago == true)
+        .Select(l => new { Categoria = l.Categoria, Valor = l.Valor});
+    
+    var despesasRecorrentes = Model.Recorrentes
+        .Where(r => r.Tipo == TipoLancamento.Despesa && r.Pago == true)
+        .Select(r => new { Categoria = r.Categoria, Valor = r.Valor});
+
+    var despesas = despesasLancamentos.Concat(despesasRecorrentes);
+
+    var gastosPorCategoria = despesas
+        .GroupBy(l => l.Categoria)
+        .Select(g => new {
+            Categoria = g.Key,
+            Total = g.Sum(x => x.Valor)
+        })
+        .ToList();
+
+    var categoriasJson = JsonSerializer.Serialize(gastosPorCategoria.Select(g => g.Categoria));
+    var totaisJson = JsonSerializer.Serialize(gastosPorCategoria.Select(g => g.Total));
+
+    // Gráfico Balanço Semanal
+    var diasSemana = new[] {"Dom", "Seg", "Ter", "Qua", "Quin", "Sex", "Sab"};
+
+    var receitasLancamentos = Model.Lancamentos
+        .Where(l => l.Tipo == TipoLancamento.Receita && l.Pago == true)
+        .Select(l => new {l.Data, l.Valor})
+        .ToList();
+
+    var receitasRecorrentes = Model.Recorrentes
+        .Where(r => r.Tipo == TipoLancamento.Receita && r.Pago == true)
+        .Select(r => new {r.Data, r.Valor})
+        .ToList();
+
+    var receitas = receitasLancamentos.Concat(receitasRecorrentes);
+
+    var receitaSemanal = diasSemana.Select((_, i) =>
+        receitas.Where(l => (int)l.Data.DayOfWeek == i)
+            .Sum(l => l.Valor)
+    ).ToList();
+
+    var despesasLanc = Model.Lancamentos
+        .Where(l => l.Tipo == TipoLancamento.Despesa && l.Pago == true)
+        .Select(l => new {l.Data, l.Valor})
+        .ToList();
+
+    var despesasRec = Model.Recorrentes
+        .Where(r => r.Tipo == TipoLancamento.Despesa && r.Pago == true)
+        .Select(r => new {r.Data, r.Valor})
+        .ToList();
+
+    var despesasSemanais = despesasLanc.Concat(despesasRec);
+
+    var despesaSemanal = diasSemana.Select((_, i) =>
+        despesasSemanais.Where(l => (int)l.Data.DayOfWeek == i)
+            .Sum(l => l.Valor)
+    ).ToList();
+
+    var diasSemanaJson = JsonSerializer.Serialize(diasSemana);
+    var recebidoJson = JsonSerializer.Serialize(receitaSemanal);
+    var pagoJson = JsonSerializer.Serialize(despesaSemanal);
+}
 
 <script>
     window.onload = function () {
@@ -228,22 +294,26 @@
             });
         }
 
+        const dias = @Html.Raw(diasSemanaJson);
+        const recebido = @Html.Raw(recebidoJson);
+        const pago = @Html.Raw(pagoJson);
+
         const balancoSemanal = document.getElementById('balance');
 
         new Chart(balance, {
             type: 'bar',
             data: {
-                labels: ["Dom", "Seg", "Ter", "Qua", "Quin", "Sex", "Sab"],
+                labels: dias,
                 datasets: [
                     {
                         label: 'Recebido',
-                        data: [150, 250, 40, 2500, 0, 260, 200],
+                        data: recebido,
                         backgroundColor: 'green', 
                         borderWidth: 1
                     },
                     {
                         label: 'Pago',
-                        data: [200, 150, 450, 1300, 55, 145, 1000],
+                        data: pago,
                         backgroundColor: 'red', 
                         borderWidth: 1
                     }
@@ -263,16 +333,19 @@
             }
         })
 
+        const categorias = @Html.Raw(categoriasJson);
+        const totais = @Html.Raw(totaisJson);
+
         const graficoCategoria = document.getElementById('graficoCategoria');
 
         new Chart(graficoCategoria, {
             type: 'bar',
             data: {
-                labels: ["Alimentação", "Transporte", "Lazer", "Saúde", "Educação", "Moradia"],
+                labels: categorias,
                 datasets: [
                     {
                         label: 'Total gasto (R$)',
-                        data: [450, 200, 320, 150, 300, 800],
+                        data: totais,
                         backgroundColor: [
                             '#ff6384',
                             '#36a2eb',

@@ -89,16 +89,32 @@
                 </div>
 
                 <div class="container overflow-auto" style="max-height: 450px;" id="container_lancamentos">
-                    @if (Model == null)
-                    {
-                        //QUANDO NÃO EXISTIR LANÇAMENTOS
-                        <div class="d-flex align-items-center justify-content-center mt-4 p-2">
-                            <h5 class="text-primary">Nenhum lançamento encontrado!</h5>
-                        </div>
-                    }
-                    else if (Model != null)
-                    {
-                        foreach (var lanc in Model.Lancamentos)
+                    @{
+                        var mesAtual = DateTime.Now.Month;
+
+                        var lancamentos = Model?.Lancamentos
+                            .Where(l => l.Data.Month == mesAtual)
+                            .ToList();
+                        
+                        var transferencias = Model?.Transferencias
+                            .Where(t => t.DataTransferencia.Month == mesAtual)
+                            .ToList();
+
+                        var recorrentes = Model?.Recorrentes
+                            .Where(r => r.Data.Month == mesAtual)
+                            .ToList();
+
+                        var resultados = lancamentos.Any() || transferencias.Any() || recorrentes.Any();
+
+                        if (!resultados)
+                        {
+                            //QUANDO NÃO EXISTIR LANÇAMENTOS
+                            <div class="d-flex align-items-center justify-content-center mt-4 p-2">
+                                <h5 class="text-primary">Nenhum lançamento encontrado!</h5>
+                            </div>
+                        }        
+
+                        foreach (var lanc in lancamentos)
                         {
                             if (lanc.Tipo == TipoLancamento.Despesa)
                             {
@@ -139,7 +155,7 @@
                                 </div>
                             }
                         }
-                        foreach (var transf in Model.Transferencias)
+                        foreach (var transf in transferencias)
                         {
                             if (transf.Tipo == TipoLancamento.Transferencia)
                             {
@@ -163,7 +179,7 @@
                                 </div>
                             }
                         }
-                        foreach (var recorrente in Model.Recorrentes)
+                        foreach (var recorrente in recorrentes)
                         {
                             <div class="card rounded rounded-3 border-1 border-warning bg-warning bg-opacity-25 d-flex flex-row align-items-center justify-content-between text-center mb-2 mt-2">
                                 <i class="bi bi-repeat ms-3 fs-4 text-warning"></i>

@@ -70,7 +70,11 @@
                     </div>
                 }
 
-                foreach(var item in Model.Movimentos)
+                var lancamentosPorData = Model.Movimentos
+                    .GroupBy(l => l.Data.Date)
+                    .ToList();
+
+                foreach(var grupo in lancamentosPorData)
                 {
                     @* var rowClass = item.Origem switch
                     {
@@ -79,7 +83,11 @@
                         _ => item.Tipo == "Receita" ? "table-success" : "table-danger"
                     }; *@
 
-                    <tr class="table-custom border border-1">
+                    var saldoDia = grupo.Sum(l => l.Tipo == "Receita" ? l.Valor : -l.Valor);
+
+                    foreach (var item in grupo)
+                    {
+                        <tr class="table-custom border border-1">
                         <th scope="row">@item.Data.ToString("dd/MM/yyyy")</th>
                         <td>@item.Descricao</td>
                             @if (item.Tipo == "Receita")
@@ -110,6 +118,13 @@
                             {
                                 <a asp-controller="Transferencia" asp-action="Editar" asp-route-id="@item.Id"><i class="bi bi-eye-fill text-info"></i></a>
                             }
+                        </td>
+                    </tr>
+                    }
+                    // Saldo do dia
+                    <tr class="table-info text-dark">
+                        <td colspan="7">
+                            Saldo do dia: @saldoDia.ToString("C")
                         </td>
                     </tr>
                 }
