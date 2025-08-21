@@ -15,22 +15,57 @@
                     <i class="bi bi-arrow-up text-success fs-5"></i>
                 </div>
                 
-                @if (Model != null)
-                {
+                @{
+                    var lancamentosReceita = Model?.Lancamentos
+                        .Where(l => l.Tipo == TipoLancamento.Receita && l.Pago == true)
+                        .Select(l => new { l.Tipo, l.Data, l.Valor })
+                        .ToList();
+
+                    var recorrentesReceita = Model?.Recorrentes
+                        .Where(r => r.Tipo == TipoLancamento.Receita && r.Pago == true)
+                        .Select(r => new { r.Tipo, r.Data, r.Valor })
+                        .ToList();
+
+                    var listaReceitas = lancamentosReceita.Concat(recorrentesReceita);
+
                     double receita = 0;
 
                     var dataAtual = DateTime.Now;
 
-                    foreach(var lancamento in Model.Lancamentos)
+                    foreach(var itemLista in listaReceitas)
                     {
-                        if (lancamento.Tipo == TipoLancamento.Receita && lancamento.Data.Month == dataAtual.Month)
-                        {
-                            receita += lancamento.Valor;
-                        }
+                        receita += itemLista.Valor;
                     }
-                    <p class="card-text fw-medium fs-3 mt-4 text-dark">R$@receita</p>
+                    
+                    var mesAnterior = DateTime.Now.Month - 1;
+
+                    var lancMesAnterior = Model?.Lancamentos
+                        .Where(l => l.Data.Month == mesAnterior && l.Tipo == TipoLancamento.Receita && l.Pago == true)
+                        .Select(l => new { l.Data, l.Tipo, l.Valor})
+                        .ToList();
+                    
+                    var recMesAnterior = Model?.Recorrentes
+                        .Where(r => r.Data.Month == mesAnterior && r.Tipo == TipoLancamento.Receita && r.Pago == true)
+                        .Select(r => new { r.Data, r.Tipo, r.Valor})
+                        .ToList();
+                    
+                    var receitaMesAnterior = lancMesAnterior.Concat(recMesAnterior);
+
+                    var receitaMesAtual = listaReceitas.Where(l => l.Data.Month == dataAtual.Month).ToList();
+
+                    double valorMesAnterior = receitaMesAnterior.Sum(x => x.Valor);
+                    double valorMesAtual = receitaMesAtual.Sum(x => x.Valor);
+
+                    double comparativo = 0;
+
+                    if (valorMesAnterior > 0)
+                    {
+                        comparativo = (valorMesAtual / valorMesAnterior)* 100;
+                    }
+
+                    <p class="card-text fw-medium fs-3 mt-4 text-dark">R$@valorMesAtual</p>
+                    <p class="card-text fw-light text-secondary">@comparativo.ToString("N2")% - Comparado ao mês anterior</p>
                 }
-                <p class="card-text fw-light text-secondary">Comparado ao mês anterior</p>
             </div>
         </div>
     </div>
@@ -41,16 +76,26 @@
                     <h5 class="card-title fs-5 text-dark">Despesas</h5>
                     <i class="bi bi-arrow-down text-danger fs-5"></i>
                 </div>
-                @if (Model != null)
-                {
+                @{
+                    var lancamentos = Model?.Lancamentos
+                        .Where(l => l.Tipo == TipoLancamento.Despesa && l.Pago == true)
+                        .Select(l => new { l.Tipo, l.Valor })
+                        .ToList();
+
+                    var recorrentes = Model?.Recorrentes
+                        .Where(r => r.Tipo == TipoLancamento.Despesa && r.Pago == true)
+                        .Select(l => new { l.Tipo, l.Valor })
+                        .ToList();
+
+                    var lista = lancamentos.Concat(recorrentes);
+
                     double despesa = 0;
 
-                    foreach(var lancamento in Model.Lancamentos)
+                    foreach(var itemLista in lista)
                     {
-                        if (lancamento.Tipo == TipoLancamento.Despesa)
-                        {
-                            despesa += lancamento.Valor;
-                        }
+
+                        despesa += itemLista.Valor;
+
                     }
                     <p class="card-text fw-medium fs-3 mt-4 text-dark">R$@despesa</p>
                 }
