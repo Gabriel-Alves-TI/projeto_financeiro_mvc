@@ -356,11 +356,28 @@ namespace projeto_financeiro_mvc.Controllers
         [HttpPost]
         public IActionResult Excluir(LancamentoModel lancamento)
         {
-            Console.Write("Lancamento Id recebido: ", lancamento.Id);
-            if (lancamento == null)
+            var lancamentoDb = _context.Lancamentos
+                .Include(l => l.Conta)
+                .FirstOrDefault(l => l.Id == lancamento.Id);
+
+            if (lancamentoDb == null)
             {
                 return NotFound();
             }
+
+            if (lancamentoDb.Pago == true)
+            {
+                if (lancamentoDb.Tipo == TipoLancamento.Receita)
+                {
+                    lancamentoDb.Conta.Saldo -= lancamentoDb.Valor;
+                }
+                if (lancamentoDb.Tipo == TipoLancamento.Despesa)
+                {
+                    lancamentoDb.Conta.Saldo += lancamentoDb.Valor;
+                }
+
+                _context.Contas.Update(lancamentoDb.Conta);
+            };
 
             _context.Lancamentos.Remove(lancamento);
             _context.SaveChanges();

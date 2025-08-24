@@ -20,5 +20,13 @@ namespace projeto_financeiro_mvc.ViewModels
     public class ListExtratoViewModel
     {
         public List<ExtratoViewModel> Movimentos { get; set; } = [];
+
+        // Filtros
+
+        public string? Tipo { get; set; }
+        public string? Categoria { get; set; }
+
+        public DateTime? DataInicial { get; set; }
+        public DateTime? DataFinal { get; set; }
     }
 }

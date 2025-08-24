@@ -266,83 +266,16 @@
     var totaisJson = JsonSerializer.Serialize(gastosPorCategoria.Select(g => g.Total));
 
     // Gráfico Balanço Semanal
-    var diasSemana = new[] {"Dom", "Seg", "Ter", "Qua", "Quin", "Sex", "Sab"};
-
-    var receitasLancamentos = Model.Lancamentos
-        .Where(l => l.Tipo == TipoLancamento.Receita && l.Pago == true)
-        .Select(l => new {l.Data, l.Valor})
-        .ToList();
-
-    var receitasRecorrentes = Model.Recorrentes
-        .Where(r => r.Tipo == TipoLancamento.Receita && r.Pago == true)
-        .Select(r => new {r.Data, r.Valor})
-        .ToList();
-
-    var receitas = receitasLancamentos.Concat(receitasRecorrentes);
-
-    var receitaSemanal = diasSemana.Select((_, i) =>
-        receitas.Where(l => (int)l.Data.DayOfWeek == i)
-            .Sum(l => l.Valor)
-    ).ToList();
-
-    var despesasLanc = Model.Lancamentos
-        .Where(l => l.Tipo == TipoLancamento.Despesa && l.Pago == true)
-        .Select(l => new {l.Data, l.Valor})
-        .ToList();
-
-    var despesasRec = Model.Recorrentes
-        .Where(r => r.Tipo == TipoLancamento.Despesa && r.Pago == true)
-        .Select(r => new {r.Data, r.Valor})
-        .ToList();
-
-    var despesasSemanais = despesasLanc.Concat(despesasRec);
-
-    var despesaSemanal = diasSemana.Select((_, i) =>
-        despesasSemanais.Where(l => (int)l.Data.DayOfWeek == i)
-            .Sum(l => l.Valor)
-    ).ToList();
-
-    var diasSemanaJson = JsonSerializer.Serialize(diasSemana);
-    var recebidoJson = JsonSerializer.Serialize(receitaSemanal);
-    var pagoJson = JsonSerializer.Serialize(despesaSemanal);
+    
+    
 }
 
 <script>
+    var dias = @Html.Raw(JsonSerializer.Serialize(Model.DiasSemana));
+    var recebido = @Html.Raw(JsonSerializer.Serialize(Model.ReceitaSemanal));
+    var pago = @Html.Raw(JsonSerializer.Serialize(Model.DespesaSemanal));
+
     window.onload = function () {
-        var saldoValor = 1000;
-
-        var xValues = ["Despesas", "Renda"];
-        var yValues = [100, saldoValor];
-
-        var barColors = ["blueviolet", "lightgrey"];
-
-        var myChart = document.getElementById('myChart');
-
-        if (myChart) {
-            new Chart(myChart, {
-                type: "doughnut",
-                data: {
-                    labels: xValues,
-                    datasets: [{
-                        backgroundColor: barColors,
-                        data: yValues
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        }
-                    }
-                }
-            });
-        }
-
-        const dias = @Html.Raw(diasSemanaJson);
-        const recebido = @Html.Raw(recebidoJson);
-        const pago = @Html.Raw(pagoJson);
-
         const balancoSemanal = document.getElementById('balance');
 
         new Chart(balance, {

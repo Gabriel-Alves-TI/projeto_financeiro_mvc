@@ -19,37 +19,38 @@ namespace projeto_financeiro_mvc.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public IActionResult Index(DateTime? dataInicial, DateTime? dataFinal)
         {
             var movimentos = new List<ExtratoViewModel>();
 
             movimentos.AddRange(_context.Lancamentos
                 .Where(l => l.Pago == true)
                 .Select(l => new ExtratoViewModel
-            {
-                Id = l.Id,
-                Data = l.Data,
-                Descricao = l.Descricao,
-                Tipo = l.Tipo.ToString(),
-                Valor = l.Valor,
-                Categoria = l.Categoria,
-                Conta = l.Conta.Banco,
-                Origem = "Lancamento"
-            }));
+                {
+                    Id = l.Id,
+                    Data = l.Data,
+                    Descricao = l.Descricao,
+                    Tipo = l.Tipo.ToString(),
+                    Valor = l.Valor,
+                    Categoria = l.Categoria,
+                    Conta = l.Conta.Banco,
+                    Origem = "Lancamento"
+                }));
 
             movimentos.AddRange(_context.Recorrentes
                 .Where(r => r.Pago == true)
                 .Select(r => new ExtratoViewModel
-            {
-                Id = r.Id,
-                Data = r.Data,
-                Descricao = r.Descricao,
-                Tipo = r.Tipo.ToString(),
-                Valor = r.Valor,
-                Categoria = r.Categoria,
-                Conta = r.Conta.Banco,
-                Origem = "Recorrente"
-            }));
+                {
+                    Id = r.Id,
+                    Data = r.Data,
+                    Descricao = r.Descricao,
+                    Tipo = r.Tipo.ToString(),
+                    Valor = r.Valor,
+                    Categoria = r.Categoria,
+                    Conta = r.Conta.Banco,
+                    Origem = "Recorrente"
+                }));
 
             movimentos.AddRange(_context.Transferencias.Select(t => new ExtratoViewModel
             {
@@ -63,9 +64,26 @@ namespace projeto_financeiro_mvc.Controllers
                 Origem = "Transferencia"
             }));
 
+            if (!dataInicial.HasValue)
+            {
+                dataInicial = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            }
+
+            if (!dataFinal.HasValue)
+            {
+                dataFinal = dataInicial.Value.AddMonths(1).AddDays(-1);
+            }
+
+            movimentos = movimentos
+                .Where(m => m.Data >= dataInicial.Value && m.Data <= dataFinal.Value)
+                .ToList();
+
             var viewModel = new ListExtratoViewModel
             {
-                Movimentos = movimentos.OrderByDescending(m => m.Data).ToList()
+                Movimentos = movimentos.OrderByDescending(m => m.Data).ToList(),
+
+                DataInicial = dataInicial,
+                DataFinal = dataFinal
             };
 
             return View(viewModel);

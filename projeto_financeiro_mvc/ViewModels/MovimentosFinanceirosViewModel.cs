@@ -12,5 +12,10 @@ namespace projeto_financeiro_mvc.ViewModels
         public List<TransferenciaModel> Transferencias { get; set; }
         public List<RecorrenteModel> Recorrentes { get; set; }
         public List<ContaModel> Contas { get; set; }
+
+        //Dados do Gráfico
+        public string[] DiasSemana { get; set; }
+        public List<double> ReceitaSemanal { get; set; }
+        public List<double> DespesaSemanal { get; set; }
     }
 }

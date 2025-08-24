@@ -6,47 +6,31 @@
 <h1 class="d-flex justify-content-center text-primary fw-bold mt-2">@ViewData["Title"]</h1>
 
 <div class="container">
-    <div class="d-flex border border-2 p-2 rounded rounded-2 mb-2">
-        <div class="row g-2 align-items-center p-2">
-            <div class="col-auto">
-                <label for="selectTipo" class="col-form-label text-primary">Tipo:</label>
-            </div>
-            <div class="col-auto">
-                <select class="form-select-sm" aria-label="Default select example">
-                    <option selected>Selecione...</option>
-                    <option value="receita">Receita</option>
-                    <option value="despesa">Despesa</option>
-                </select>
-            </div>
-        </div>
+    <form asp-controller="Extrato" asp-action="Index" method="get">
+        <div class="d-flex justify-content-between align-items-center flex-row border border-2 p-2 rounded rounded-2 mb-2">
+            <select class="form-select-sm">
+            <option value="">Selecione...</option>
+            <option value="receita" selected="@(Model.Tipo == "receita")">Receita</option>
+            <option value="despesa" selected="@(Model.Tipo == "despesa")">Despesa</option>
+        </select>
 
-        <div class="row g-2 align-items-center p-2">
-            <div class="col-auto">
-                <label for="selectCategoria" class="col-form-label text-primary">Categoria:</label>
-            </div>
-            <div class="col-auto">
-                <select class="form-select-sm" aria-label="Default select example">
-                    <option selected>Selecione...</option>
-                    <option value="1">Água</option>
-                    <option value="2">Aluguel</option>
-                    <option value="3">Energia</option>
-                </select>
-            </div>
-        </div>
+        <!-- Categoria -->
+        <select class="form-select-sm">
+            <option value="">Selecione...</option>
+            <option value="Agua">Água</option>
+            <option value="Aluguel">Aluguel</option>
+            <option value="Energia">Energia</option>
+        </select>
 
-        <div class="row g-2 align-items-center p-2">
-            <div class="col-auto">
-                <label for="Periodo" class="col-form-label text-primary">Período:</label>
-            </div>
-            <div class="col-auto">
-                <input type="date" style="width: 120px;" id="dataInicial">
-                <span class="text-primary ms-1">-</span>
-            </div>
-            <div class="col-auto">
-                <input type="date" style="width: 120px;" id="dataFinal">
-            </div>
+        <!-- Período -->
+        <input type="date" name="dataInicial" value="@Model.DataInicial?.ToString("yyyy-MM-dd")" />
+        <input type="date" name="dataFinal" value="@Model.DataFinal?.ToString("yyyy-MM-dd")" />
+
+        <button type="submit" class="btn btn-sm btn-primary">Filtrar</button>      
         </div>
-    </div>
+    </form>
+        
+        
     <table class="table table-primary border border-2 table-hover">
         <thead>
             <tr>
@@ -72,7 +56,10 @@
 
                 var lancamentosPorData = Model.Movimentos
                     .GroupBy(l => l.Data.Date)
+                    .OrderBy(g => g.Key)
                     .ToList();
+
+                double saldoTotal = 0;
 
                 foreach(var grupo in lancamentosPorData)
                 {
@@ -84,6 +71,8 @@
                     }; *@
 
                     var saldoDia = grupo.Sum(l => l.Tipo == "Receita" ? l.Valor : -l.Valor);
+
+                    saldoTotal += saldoDia;
 
                     foreach (var item in grupo)
                     {
@@ -124,7 +113,7 @@
                     // Saldo do dia
                     <tr class="table-info text-dark">
                         <td colspan="7">
-                            Saldo do dia: @saldoDia.ToString("C")
+                            Saldo do dia: @saldoDia.ToString("C") | Saldo Total: @saldoTotal.ToString("C");
                         </td>
                     </tr>
                 }
