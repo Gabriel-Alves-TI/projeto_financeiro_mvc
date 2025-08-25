@@ -8,25 +8,87 @@
 <div class="container">
     <form asp-controller="Extrato" asp-action="Index" method="get">
         <div class="d-flex justify-content-between align-items-center flex-row border border-2 p-2 rounded rounded-2 mb-2">
-            <select class="form-select-sm">
-            <option value="">Selecione...</option>
-            <option value="receita" selected="@(Model.Tipo == "receita")">Receita</option>
-            <option value="despesa" selected="@(Model.Tipo == "despesa")">Despesa</option>
-        </select>
+            <div class="row g-2 align-items-center p-2">
+                <div class="col-auto">
+                    <label for="selectTipo" class="col-form-label text-primary">Tipo:</label>
+                </div>
+                <div class="col-auto">
+                    <select class="form-select-sm" id="tipo">
+                        <option value="" selected>Selecione...</option>
+                        <option value="receita" selected="@(Model.Tipo == "receita")">Receita</option>
+                        <option value="despesa" selected="@(Model.Tipo == "despesa")">Despesa</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row g-2">
+                <div class="col-auto">
+                    <label for="selectCategoria" class="col-form-label text-primary">Categoria:</label>
+                </div>
+                <div class="col-auto">
+                <select class="form-select-sm" id="categoria">
+                        <option value="" selected>Selecione...</option>
+                        <option value="Água">Água</option>
+                        <option value="Alimentação VA">Alimentação VA</option>
+                        <option value="Aluguel">Aluguel</option>
+                        <option value="Carro">Carro</option>
+                        <option value="Casa">Casa</option>
+                        <option value="Combustível">Combustível</option>
+                        <option value="Diversos">Despesas Mayte</option>
+                        <option value="Diversos">Diversos</option>
+                        <option value="Eletrônicos">Eletrônicos</option>
+                        <option value="Empréstimo">Empréstimo</option>
+                        <option value="Energia">Energia</option>
+                        <option value="Estacionamento">Estacionamento</option>
+                        <option value="Estudo">Estudo</option>
+                        <option value="Fast Food">Fast Food</option>
+                        <option value="FGTS">FGTS</option>
+                        <option value="Férias">Férias</option>
+                        <option value="Financiamento">Financiamento</option>
+                        <option value="Internet">Internet</option>
+                        <option value="Móveis">Móveis</option>
+                        <option value="Salário">Salário</option>
+                        <option value="Saldo Inicial">Saldo Inicial</option>
+                        <option value="Telefone">Telefone</option>
+                        <option value="Transferência entre contas">Transferência entre contas</option>
+                        <option value="TV">TV</option>
+                        <option value="Roupas">Roupas</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row g-2">
+                <div class="col-auto">
+                    <label for="periodo" class="col-form-label text-primary">Período:</label>
+                </div>
+                <div class="col-auto">
+                    <input type="date" name="dataInicial" value="@Model.DataInicial?.ToString("yyyy-MM-dd")" id="dataInicial" />
+                    <span class="text-dark"> - </span>
+                    <input type="date" name="dataFinal" value="@Model.DataFinal?.ToString("yyyy-MM-dd")" id="dataFinal" />
+                </div>
+            </div>
+            <div class="row g-2 align-items-center p-2">
+                <div class="col-auto">
+                    <label for="selectTipo" class="col-form-label text-primary">Conta:</label>
+                </div>
+                <div class="col-auto">
+                    <select class="form-select-sm" id="conta">
+                        <option value="" selected>Selecione...</option>
+                        @{
+                            foreach (var conta in Model.Contas)
+                            {
+                                <option value="@conta.Id">@conta.Banco</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
 
-        <!-- Categoria -->
-        <select class="form-select-sm">
-            <option value="">Selecione...</option>
-            <option value="Agua">Água</option>
-            <option value="Aluguel">Aluguel</option>
-            <option value="Energia">Energia</option>
-        </select>
-
-        <!-- Período -->
-        <input type="date" name="dataInicial" value="@Model.DataInicial?.ToString("yyyy-MM-dd")" />
-        <input type="date" name="dataFinal" value="@Model.DataFinal?.ToString("yyyy-MM-dd")" />
-
-        <button type="submit" class="btn btn-sm btn-primary">Filtrar</button>      
+            <div class="">
+                <button type="button" class="btn btn-sm btn-info" id="btnLimpar" 
+                data-datainicial="@Model.DataInicial?.ToString("yyyy-MM-dd")"
+                data-datafinal="@Model.DataFinal?.ToString("yyyy-MM-dd")">Limpar</button>
+                <button type="submit" class="btn btn-sm btn-primary">Filtrar</button>  
+            </div>
+                
         </div>
     </form>
         

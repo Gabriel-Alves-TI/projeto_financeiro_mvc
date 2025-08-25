@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using projeto_financeiro_mvc.Models;
 
 namespace projeto_financeiro_mvc.ViewModels
 {
@@ -20,6 +21,7 @@ namespace projeto_financeiro_mvc.ViewModels
     public class ListExtratoViewModel
     {
         public List<ExtratoViewModel> Movimentos { get; set; } = [];
+        public List<ContaModel> Contas { get; set; }
 
         // Filtros
 

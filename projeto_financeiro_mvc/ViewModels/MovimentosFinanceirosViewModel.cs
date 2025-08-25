@@ -17,5 +17,13 @@ namespace projeto_financeiro_mvc.ViewModels
         public string[] DiasSemana { get; set; }
         public List<double> ReceitaSemanal { get; set; }
         public List<double> DespesaSemanal { get; set; }
+
+        // Filtros
+
+        public string? Tipo { get; set; }
+        public string? Categoria { get; set; }
+
+        public DateTime? DataInicial { get; set; }
+        public DateTime? DataFinal { get; set; }
     }
 }

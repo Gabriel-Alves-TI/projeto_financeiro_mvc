@@ -22,25 +22,51 @@ namespace projeto_financeiro_mvc.Controllers
         {
             _context = context;
         }
-        public IActionResult Index()
+        [HttpGet]
+        public IActionResult Index(DateTime? dataInicial, DateTime? dataFinal)
         {
+            var lancamentos = _context.Lancamentos
+                .Include(l => l.Conta)
+                .OrderBy(l => l.Data)
+                .ToList();
+
+            var transferencias = _context.Transferencias
+                .Include(t => t.ContaOrigem)
+                .Include(t => t.ContaDestino)
+                .OrderBy(t => t.DataTransferencia)
+                .ToList();
+
+            var recorrentes = _context.Recorrentes
+                .Include(r => r.Conta)
+                .OrderBy(r => r.Data)
+                .ToList();
+
+            var contas = _context.Contas.ToList();
+
+            if (!dataInicial.HasValue)
+            {
+                dataInicial = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            }
+            if (!dataFinal.HasValue)
+            {
+                dataFinal = dataInicial.Value.AddMonths(1).AddDays(-1);
+            }
+
+            lancamentos = lancamentos.Where(l => l.Data >= dataInicial.Value && l.Data <= dataFinal.Value).ToList();
+
+            transferencias = transferencias.Where(t => t.DataTransferencia >= dataInicial.Value && t.DataTransferencia <= dataFinal.Value).ToList();
+
+            recorrentes = recorrentes.Where(r => r.Data >= dataInicial.Value && r.Data <= dataFinal.Value).ToList();
+
             var viewModel = new MovimentosFinanceirosViewModel
             {
-                Lancamentos = _context.Lancamentos
-                    .Include(l => l.Conta)
-                    .OrderBy(l => l.Data)
-                    .ToList(),
+                Lancamentos = lancamentos,
+                Transferencias = transferencias,
+                Recorrentes = recorrentes,
 
-                Transferencias = _context.Transferencias
-                    .Include(t => t.ContaOrigem)
-                    .Include(t => t.ContaDestino)
-                    .OrderBy(t => t.DataTransferencia)
-                    .ToList(),
-
-                Recorrentes = _context.Recorrentes
-                    .Include(r => r.Conta)
-                    .OrderBy(r => r.Data)
-                    .ToList(),
+                DataInicial = dataInicial,
+                DataFinal = dataFinal,
+                Contas = contas
             };
 
             return View(viewModel);

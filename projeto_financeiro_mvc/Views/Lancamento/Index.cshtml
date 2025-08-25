@@ -35,73 +35,119 @@
             <div class="d-flex flex-column container border border-2 p-2 mx-2 rounded rounded-3" style="max-height: 600px;">
                 <h5 class="title text-dark p-2"><i class="bi bi-card-list me-2"></i>Lançamentos Recentes</h5>
 
-                <div class="d-flex justify-content-between border border-2 rounded rounded-3">
-
-
-                    <div class="row g-2 align-items-center p-2">
-                        <div class="col-auto">
-                            <label for="selectTipo" class="col-form-label text-primary">Tipo:</label>
+                <form class="border border-2 rounded rounded-2" asp-controller="Lancamento" asp-action="Index" method="get">
+                    <div class="d-flex justify-content-between align-items-center flex-row p-2 rounded rounded-2 mb-1 me-1">
+                        <div class="row g-1">
+                            <div class="col-auto">
+                                <label for="periodo" class="col-form-label text-primary">Período:</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="date" name="dataInicial" class="mb-1" value="@Model.DataInicial?.ToString("yyyy-MM-dd")" id="dataInicial" />
+                                <input type="date" name="dataFinal" value="@Model.DataFinal?.ToString("yyyy-MM-dd")" id="dataFinal" />
+                            </div>
                         </div>
-                        <div class="col-auto">
-                            <select class="form-select-sm" aria-label="Default select example">
-                                <option selected>Selecione...</option>
-                                <option value="receita">Receita</option>
-                                <option value="despesa">Despesa</option>
-                            </select>
+                        <div class="row g-1 align-items-center p-1">
+                            <div class="col-auto">
+                                <label for="selectTipo" class="col-form-label text-primary">Tipo:</label>
+                            </div>
+                            <div class="col-auto">
+                                <select class="form-select-sm" id="tipo">
+                                    <option value="" selected>Selecione...</option>
+                                    <option value="receita" selected="@(Model.Tipo == "receita")">Receita</option>
+                                    <option value="despesa" selected="@(Model.Tipo == "despesa")">Despesa</option>
+                                </select>
+                            </div>
                         </div>
+                        <div class="row g-1">
+                            <div class="col-auto">
+                                <label for="selectCategoria" class="col-form-label text-primary">Categoria:</label>
+                            </div>
+                            <div class="col-auto">
+                            <select class="form-select-sm" id="categoria">
+                                    <option value="" selected>Selecione...</option>
+                                    <option value="Água">Água</option>
+                                    <option value="Alimentação VA">Alimentação VA</option>
+                                    <option value="Aluguel">Aluguel</option>
+                                    <option value="Carro">Carro</option>
+                                    <option value="Casa">Casa</option>
+                                    <option value="Combustível">Combustível</option>
+                                    <option value="Diversos">Despesas Mayte</option>
+                                    <option value="Diversos">Diversos</option>
+                                    <option value="Eletrônicos">Eletrônicos</option>
+                                    <option value="Empréstimo">Empréstimo</option>
+                                    <option value="Energia">Energia</option>
+                                    <option value="Estacionamento">Estacionamento</option>
+                                    <option value="Estudo">Estudo</option>
+                                    <option value="Fast Food">Fast Food</option>
+                                    <option value="FGTS">FGTS</option>
+                                    <option value="Férias">Férias</option>
+                                    <option value="Financiamento">Financiamento</option>
+                                    <option value="Internet">Internet</option>
+                                    <option value="Móveis">Móveis</option>
+                                    <option value="Salário">Salário</option>
+                                    <option value="Saldo Inicial">Saldo Inicial</option>
+                                    <option value="Telefone">Telefone</option>
+                                    <option value="Transferência entre contas">Transferência entre contas</option>
+                                    <option value="TV">TV</option>
+                                    <option value="Roupas">Roupas</option>
+                                </select>
+                            </div>
+                        </div>
+                        
                     </div>
+                    <div class="d-flex justify-content-between align-items-center flex-row p-1 rounded rounded-2 mb-2 me-1">
+                        <div class="row g-1 align-items-center p-1">
+                            <div class="col-auto">
+                                <label for="selectTipo" class="col-form-label text-primary">Descrição:</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="text">
+                            </div>
+                        </div>
+                        <div class="row g-1 align-items-center p-1">
+                            <div class="col-auto">
+                                <label for="selectTipo" class="col-form-label text-primary">Conta:</label>
+                            </div>
+                            <div class="col-auto">
+                                <select class="form-select-sm" id="conta">
+                                    <option value="" selected>Selecione...</option>
+                                    @{
+                                        foreach (var conta in Model.Contas)
+                                        {
+                                            <option value="@conta.Id">@conta.Banco</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row g-1">
+                            <div class="col-auto">
+                                <label for="selectCategoria" class="col-form-label text-primary">Valor:</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="number" style="max-width: 100px;">
+                            </div>
+                        </div>
 
-                    <div class="row g-2 align-items-center p-2">
-                        <div class="col-auto">
-                            <label for="selectCategoria" class="col-form-label text-primary">Categoria:</label>
+                        <div class="">
+                            <button type="button" class="btn btn-sm btn-info" id="btnLimpar" 
+                            data-datainicial="@Model.DataInicial?.ToString("yyyy-MM-dd")"
+                            data-datafinal="@Model.DataFinal?.ToString("yyyy-MM-dd")">Limpar</button>
+                            <button type="submit" class="btn btn-sm btn-primary">Filtrar</button>  
                         </div>
-                        <div class="col-auto">
-                            <select class="form-select-sm" aria-label="Default select example">
-                                <option selected>Selecione...</option>
-                                <option value="1">Água</option>
-                                <option value="2">Aluguel</option>
-                                <option value="3">Energia</option>
-                            </select>
-                        </div>
+                            
                     </div>
-
-                    <div class="row g-2 align-items-center p-2">
-                        <div class="col-auto">
-                            <label for="Periodo" class="col-form-label text-primary">Período:</label>
-                        </div>
-                        <div class="col-auto">
-                            <input type="date" style="width: 120px;" id="dataInicial">
-                            <span class="text-primary ms-1">-</span>
-                        </div>
-                        <div class="col-auto">
-                            <input type="date" style="width: 120px;" id="dataFinal">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="d-flex justify-content-center align-items-center">
-                    <div class="loading-wave" id="spinner">
-                        <div class="loading-bar"></div>
-                        <div class="loading-bar"></div>
-                        <div class="loading-bar"></div>
-                        <div class="loading-bar"></div>
-                    </div>
-                </div>
+                </form>
 
                 <div class="container overflow-auto" style="max-height: 450px;" id="container_lancamentos">
                     @{
-                        var mesAtual = DateTime.Now.Month;
-
                         var lancamentos = Model?.Lancamentos
-                            .Where(l => l.Data.Month == mesAtual)
                             .ToList();
                         
                         var transferencias = Model?.Transferencias
-                            .Where(t => t.DataTransferencia.Month == mesAtual)
                             .ToList();
 
                         var recorrentes = Model?.Recorrentes
-                            .Where(r => r.Data.Month == mesAtual)
                             .ToList();
 
                         var resultados = lancamentos.Any() || transferencias.Any() || recorrentes.Any();
@@ -120,13 +166,15 @@
                             {
                                 <div class="card rounded rounded-3 border-1 border-danger bg-danger bg-opacity-25 d-flex flex-row align-items-center justify-content-between text-center mb-2 mt-2">
                                     <i class="bi bi-arrow-down text-danger ms-3 fs-5"></i>
+                                    
                                     <div class="d-flex flex-column flex-grow-1 p-0">
                                         <h5 class="card-title text-dark fs-6">@lanc.Descricao</h5>
                                         <span class="card-text text-dark-emphasis" style="font-size: 12px;">@lanc.Data.ToString("dd/MM/yyyy - hh:mm")</span>
                                     </div>
                                     @if (lanc.Pago == true)
                                     {
-                                        <i class="bi bi-check-circle-fill fs-5 text-success-emphasis"></i>
+                                        <h6 class="text-info m-0">@lanc.Conta.Banco</h6>
+                                        <i class="bi bi-check-circle-fill fs-5 text-success-emphasis ms-1"></i>
                                     }
                                     <p class="text-danger fs-6 fw-bold mb-0 me-1"><i class="bi bi-dash"></i> R$@lanc.Valor</p>
                                     <div class="d-flex align-items-center justify-content-end ms-2 border-start border-2 border-dark" style="cursor: pointer">
@@ -145,7 +193,8 @@
                                     </div>
                                     @if (lanc.Pago == true)
                                     {
-                                        <i class="bi bi-check-circle-fill fs-5 text-success-emphasis"></i>
+                                        <h6 class="text-info m-0">@lanc.Conta.Banco</h6>
+                                        <i class="bi bi-check-circle-fill fs-5 text-success-emphasis ms-1"></i>
                                     }
                                     <p class="text-success text-success-emphasis fs-6 fw-bold mb-0 me-1"><i class="bi bi-plus"></i> R$@lanc.Valor</p>
                                     <div class="d-flex align-items-center justify-content-end ms-2 border-start border-2 border-dark" style="cursor: pointer">
@@ -263,50 +312,53 @@
                 </div>
                 
                 <div class="container overflow-auto" style="max-height: 450px;">
-                    @if (Model == null)
-                    {
-                        //QUANDO NÃO EXISTIR LANÇAMENTOS
-                        <div class="d-flex align-items-center justify-content-center mt-4 p-2">
-                            <h5 class="text-primary">Nenhum lançamento encontrado!</h5>
-                        </div>
-                    }
-                    else if (Model != null)
-                    {
-                        var hoje = DateTime.Now;
+                    @{
+                        var lancamentosFiltrados = Model?.Lancamentos
+                            .Where(l => l.Data.Month == dataAtual.Month && l.Data > dataAtual && l.Pago == false)
+                            .ToList();
+                        
+                        var recorrentesFiltrados = Model?.Recorrentes
+                            .Where(r => r.Data.Month == dataAtual.Month && r.Data > dataAtual)
+                            .ToList();
+                        
+                        var resultadosFiltrados = lancamentosFiltrados.Any() || recorrentesFiltrados.Any();
 
-                        foreach (var lanc in Model.Lancamentos)
+                        if (!resultadosFiltrados)
                         {
-                            if (lanc.Data > hoje)
-                            {
-                                if (lanc.Tipo == TipoLancamento.Despesa)
-                                {
-                                    <div class="card rounded rounded-3 border-1 border-danger bg-danger bg-opacity-25 d-flex flex-row align-items-center justify-content-between text-center mb-2 mt-2">
-                                        <i class="bi bi-arrow-down text-danger ms-3 fs-5"></i>
-                                        <div class="d-flex flex-column flex-grow-1 p-0">
-                                            <h5 class="card-title text-dark fs-6">@lanc.Descricao</h5>
-                                            <span class="card-text text-dark-emphasis" style="font-size: 12px;">@lanc.Data.ToString("dd/MM/yyyy - hh:mm")</span>
-                                        </div>
-                                        <p class="text-danger fs-6 fw-bold mb-0 me-1"><i class="bi bi-dash"></i> R$@lanc.Valor</p>
-                                    </div>
-                                }
-                                else if (lanc.Tipo == TipoLancamento.Receita)
-                                {
-                                    <div class="card rounded rounded-3 border-1 border-success bg-success bg-opacity-25 d-flex flex-row align-items-center justify-content-between text-center mb-2 mt-2">
-                                        <i class="bi bi-arrow-up text-success text-success-emphasis ms-3 fs-5"></i>
-                                        <div class="d-flex flex-column flex-grow-1 p-0">
-                                            <h5 class="card-title text-dark fs-6">@lanc.Descricao</h5>
-                                            <span class="card-text text-dark-emphasis" style="font-size: 12px;">@lanc.Data.ToString("dd/MM/yyyy - hh:mm")</span>
-                                        </div>
-                                        <p class="text-success text-success-emphasis fs-6 fw-bold mb-0 me-1"><i class="bi bi-plus"></i> R$@lanc.Valor</p>
-                                    </div>
-                                }
-                            } 
+                            //QUANDO NÃO EXISTIR LANÇAMENTOS
+                            <div class="d-flex align-items-center justify-content-center mt-4 p-2">
+                                <h5 class="text-primary">Nenhum lançamento encontrado!</h5>
+                            </div>
                         }
-                        foreach (var recorrente in Model.Recorrentes)
+
+                        foreach (var lanc in lancamentosFiltrados)
                         {
-                            if (recorrente.Data.Month == hoje.Month)
+                            if (lanc.Tipo == TipoLancamento.Despesa)
                             {
-                                <div class="card rounded rounded-3 border-1 border-warning bg-warning bg-opacity-25 d-flex flex-row align-items-center justify-content-between text-center mb-2 mt-2">
+                                <div class="card rounded rounded-3 border-1 border-danger bg-danger bg-opacity-25 d-flex flex-row align-items-center justify-content-between text-center mb-2 mt-2">
+                                    <i class="bi bi-arrow-down text-danger ms-3 fs-5"></i>
+                                    <div class="d-flex flex-column flex-grow-1 p-0">
+                                        <h5 class="card-title text-dark fs-6">@lanc.Descricao</h5>
+                                        <span class="card-text text-dark-emphasis" style="font-size: 12px;">@lanc.Data.ToString("dd/MM/yyyy - hh:mm")</span>
+                                    </div>
+                                    <p class="text-danger fs-6 fw-bold mb-0 me-1"><i class="bi bi-dash"></i> R$@lanc.Valor</p>
+                                </div>
+                            }
+                            else if (lanc.Tipo == TipoLancamento.Receita)
+                            {
+                                <div class="card rounded rounded-3 border-1 border-success bg-success bg-opacity-25 d-flex flex-row align-items-center justify-content-between text-center mb-2 mt-2">
+                                    <i class="bi bi-arrow-up text-success text-success-emphasis ms-3 fs-5"></i>
+                                    <div class="d-flex flex-column flex-grow-1 p-0">
+                                        <h5 class="card-title text-dark fs-6">@lanc.Descricao</h5>
+                                        <span class="card-text text-dark-emphasis" style="font-size: 12px;">@lanc.Data.ToString("dd/MM/yyyy - hh:mm")</span>
+                                    </div>
+                                    <p class="text-success text-success-emphasis fs-6 fw-bold mb-0 me-1"><i class="bi bi-plus"></i> R$@lanc.Valor</p>
+                                </div>
+                            }
+                        }
+                        foreach (var recorrente in recorrentesFiltrados)
+                        {
+                            <div class="card rounded rounded-3 border-1 border-warning bg-warning bg-opacity-25 d-flex flex-row align-items-center justify-content-between text-center mb-2 mt-2">
                                 <i class="bi bi-repeat ms-3 fs-4 text-warning"></i>
                                 <div class="d-flex flex-column flex-grow-1 p-0">
                                     <h5 class="card-title text-dark fs-6">@recorrente.Descricao</h5>
@@ -321,9 +373,9 @@
                                     <p class="text-success text-success-emphasis fs-6 fw-bold mb-0 me-1"><i class="bi bi-plus"></i> R$@recorrente.Valor</p> 
                                 } 
                             </div>
-                            }
                         }
                     }
+
                 </div>
 
                 

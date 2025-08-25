@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using projeto_financeiro_mvc.Data;
+using projeto_financeiro_mvc.Models;
 using projeto_financeiro_mvc.ViewModels;
 
 namespace projeto_financeiro_mvc.Controllers
@@ -22,6 +23,10 @@ namespace projeto_financeiro_mvc.Controllers
         [HttpGet]
         public IActionResult Index(DateTime? dataInicial, DateTime? dataFinal)
         {
+            var listaContas = new List<ContaModel>();
+
+            var contas = _context.Contas.ToList();
+
             var movimentos = new List<ExtratoViewModel>();
 
             movimentos.AddRange(_context.Lancamentos
@@ -83,7 +88,8 @@ namespace projeto_financeiro_mvc.Controllers
                 Movimentos = movimentos.OrderByDescending(m => m.Data).ToList(),
 
                 DataInicial = dataInicial,
-                DataFinal = dataFinal
+                DataFinal = dataFinal,
+                Contas = contas
             };
 
             return View(viewModel);

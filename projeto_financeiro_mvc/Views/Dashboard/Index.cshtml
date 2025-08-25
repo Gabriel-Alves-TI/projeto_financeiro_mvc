@@ -264,13 +264,10 @@
 
     var categoriasJson = JsonSerializer.Serialize(gastosPorCategoria.Select(g => g.Categoria));
     var totaisJson = JsonSerializer.Serialize(gastosPorCategoria.Select(g => g.Total));
-
-    // Gráfico Balanço Semanal
-    
-    
 }
 
 <script>
+    // Gráfico Balanço Semanal
     var dias = @Html.Raw(JsonSerializer.Serialize(Model.DiasSemana));
     var recebido = @Html.Raw(JsonSerializer.Serialize(Model.ReceitaSemanal));
     var pago = @Html.Raw(JsonSerializer.Serialize(Model.DespesaSemanal));
