@@ -17,7 +17,7 @@
                 
                 @{
                     var lancamentosReceita = Model?.Lancamentos
-                        .Where(l => l.Tipo == TipoLancamento.Receita && l.Pago == true)
+                        .Where(l => l.Tipo == TipoLancamento.Receita && l.Pago == true && l.Categoria != "Saldo Inicial")
                         .Select(l => new { l.Tipo, l.Data, l.Valor })
                         .ToList();
 
@@ -40,7 +40,7 @@
                     var mesAnterior = DateTime.Now.Month - 1;
 
                     var lancMesAnterior = Model?.Lancamentos
-                        .Where(l => l.Data.Month == mesAnterior && l.Tipo == TipoLancamento.Receita && l.Pago == true)
+                        .Where(l => l.Data.Month == mesAnterior && l.Tipo == TipoLancamento.Receita && l.Pago == true && l.Categoria != "Saldo Inicial")
                         .Select(l => new { l.Data, l.Tipo, l.Valor})
                         .ToList();
                     
@@ -63,7 +63,7 @@
                         comparativo = (valorMesAtual / valorMesAnterior)* 100;
                     }
 
-                    <p class="card-text fw-medium fs-3 mt-4 text-dark valor-card">R$@valorMesAtual</p>
+                    <p class="card-text fw-medium fs-3 mt-4 text-dark valor-card">R$@valorMesAtual.ToString("N2")</p>
                     <p class="card-text fw-light text-secondary texto-card">@comparativo.ToString("N2")% - Comparado ao mês anterior</p>
                 }
             </div>
@@ -78,7 +78,7 @@
                 </div>
                 @{
                     var lancamentos = Model?.Lancamentos
-                        .Where(l => l.Tipo == TipoLancamento.Despesa && l.Pago == true)
+                        .Where(l => l.Tipo == TipoLancamento.Despesa && l.Pago == true && l.Categoria != "SaldoInicial")
                         .Select(l => new { l.Tipo, l.Valor })
                         .ToList();
 
@@ -97,7 +97,7 @@
                         despesa += itemLista.Valor;
 
                     }
-                    <p class="card-text fw-medium fs-3 mt-4 text-dark valor-card">R$@despesa</p>
+                    <p class="card-text fw-medium fs-3 mt-4 text-dark valor-card">R$@despesa.ToString("N2")</p>
                 }
                 <p class="card-text fw-light text-secondary texto-card">Comparado ao mês anterior</p>
             </div>
@@ -118,9 +118,19 @@
                     {
                         saldoTotal += contas.Saldo;
                     }
-                    <p class="card-text fw-medium fs-3 mt-4 text-dark valor-card">R$@saldoTotal</p>
+                    <p class="card-text fw-medium fs-3 mt-4 text-dark valor-card">R$@saldoTotal.ToString("N2")</p>
+                    if (saldoTotal == 0)
+                    {
+                        <p class="card-text fw-light text-secondary texto-card">Saldo Zerado</p>
+                    }
+                    else if (saldoTotal < 0)
+                    {
+                        <p class="card-text fw-light text-secondary texto-card">Saldo Negativo</p>
+                    }
+                    else {
+                        <p class="card-text fw-light text-secondary texto-card">Saldo Positivo</p>
+                    }
                 }
-                <p class="card-text fw-light text-secondary texto-card">Saldo Positivo</p>
             </div>
         </div>
     </div>

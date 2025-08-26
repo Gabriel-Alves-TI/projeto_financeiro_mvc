@@ -136,6 +136,7 @@ namespace projeto_financeiro_mvc.Controllers
                 // Lógica para Ajuste de Saldo da Conta
                 if (viewModel.Lancamento.Categoria?.Trim().Equals("Saldo Inicial", StringComparison.OrdinalIgnoreCase) == true)
                 {
+                    conta.Saldo = 0;
 
                     if (viewModel.Lancamento.Tipo == TipoLancamento.Despesa)
                     {

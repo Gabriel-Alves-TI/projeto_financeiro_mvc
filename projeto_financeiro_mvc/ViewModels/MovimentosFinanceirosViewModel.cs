@@ -13,13 +13,12 @@ namespace projeto_financeiro_mvc.ViewModels
         public List<RecorrenteModel> Recorrentes { get; set; }
         public List<ContaModel> Contas { get; set; }
 
-        //Dados do Gráfico
+        //Dados do Gráfico Balanço Semanal
         public string[] DiasSemana { get; set; }
         public List<double> ReceitaSemanal { get; set; }
         public List<double> DespesaSemanal { get; set; }
 
         // Filtros
-
         public string? Tipo { get; set; }
         public string? Categoria { get; set; }
 

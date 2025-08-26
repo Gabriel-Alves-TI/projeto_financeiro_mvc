@@ -31,8 +31,8 @@
         </div>
     </div>
 
-    <div class="d-flex justify-content-center mt-2 w-100">
-            <div class="d-flex flex-column container border border-2 p-2 mx-2 rounded rounded-3" style="max-height: 600px;">
+    <div class="d-flex justify-content-center mt-2 w-100 box-lancamentos">
+            <div class="d-flex flex-column container border border-2 p-2 mx-2 rounded rounded-3 " style="max-height: 600px;">
                 <h5 class="title text-dark p-2"><i class="bi bi-card-list me-2"></i>Lançamentos Recentes</h5>
 
                 <form class="border border-2 rounded rounded-2" asp-controller="Lancamento" asp-action="Index" method="get">
@@ -129,11 +129,11 @@
                             </div>
                         </div>
 
-                        <div class="">
+                        <div class="divBtns">
                             <button type="button" class="btn btn-sm btn-info" id="btnLimpar" 
                             data-datainicial="@Model.DataInicial?.ToString("yyyy-MM-dd")"
                             data-datafinal="@Model.DataFinal?.ToString("yyyy-MM-dd")">Limpar</button>
-                            <button type="submit" class="btn btn-sm btn-primary">Filtrar</button>  
+                            <button type="submit" class="btn btn-sm btn-primary" id="btnFiltrar">Filtrar</button>  
                         </div>
                             
                     </div>

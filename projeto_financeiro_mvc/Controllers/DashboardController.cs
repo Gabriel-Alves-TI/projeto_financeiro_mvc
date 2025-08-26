@@ -24,6 +24,7 @@ namespace projeto_financeiro_mvc.Controllers
         public IActionResult Index()
         {
             var lancamentos = _context.Lancamentos
+                .Where(l => l.Categoria != "Saldo Inicial")
                 .Include(lanc => lanc.Conta)
                 .OrderBy(lanc => lanc.Data)
                 .ToList();
