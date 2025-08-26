@@ -89,6 +89,29 @@ namespace projeto_financeiro_mvc.Controllers
             return View(conta);
         }
 
+        [HttpPost]
+        public IActionResult Excluir(ContaModel conta)
+        {
+            var contaId = _context.Contas.FirstOrDefault(c => c.Id == conta.Id);
+            if (contaId == null)
+            {
+                return NotFound();
+            }
+
+            var lancamentos = _context.Lancamentos.Where(l => l.Conta == contaId);
+            if (lancamentos != null)
+            {
+                TempData["MensagemErro"] = "Não foi possível excluir porque a conta possui lançamentos vinculados.";
+                return RedirectToAction("ListarContas");
+            }
+
+            _context.Contas.Remove(contaId);
+            _context.SaveChanges();
+
+            TempData["MensagemSucesso"] = "Conta excluída com sucesso!";
+            return RedirectToAction("ListarContas");
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

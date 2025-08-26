@@ -63,8 +63,8 @@
                         comparativo = (valorMesAtual / valorMesAnterior)* 100;
                     }
 
-                    <p class="card-text fw-medium fs-3 mt-4 text-dark">R$@valorMesAtual</p>
-                    <p class="card-text fw-light text-secondary">@comparativo.ToString("N2")% - Comparado ao mês anterior</p>
+                    <p class="card-text fw-medium fs-3 mt-4 text-dark valor-card">R$@valorMesAtual</p>
+                    <p class="card-text fw-light text-secondary texto-card">@comparativo.ToString("N2")% - Comparado ao mês anterior</p>
                 }
             </div>
         </div>
@@ -97,9 +97,9 @@
                         despesa += itemLista.Valor;
 
                     }
-                    <p class="card-text fw-medium fs-3 mt-4 text-dark">R$@despesa</p>
+                    <p class="card-text fw-medium fs-3 mt-4 text-dark valor-card">R$@despesa</p>
                 }
-                <p class="card-text fw-light text-secondary">Comparado ao mês anterior</p>
+                <p class="card-text fw-light text-secondary texto-card">Comparado ao mês anterior</p>
             </div>
         </div>
     </div>
@@ -118,9 +118,9 @@
                     {
                         saldoTotal += contas.Saldo;
                     }
-                    <p class="card-text fw-medium fs-3 mt-4 text-dark">R$@saldoTotal</p>
+                    <p class="card-text fw-medium fs-3 mt-4 text-dark valor-card">R$@saldoTotal</p>
                 }
-                <p class="card-text fw-light text-secondary">Saldo Positivo</p>
+                <p class="card-text fw-light text-secondary texto-card">Saldo Positivo</p>
             </div>
         </div>
     </div>

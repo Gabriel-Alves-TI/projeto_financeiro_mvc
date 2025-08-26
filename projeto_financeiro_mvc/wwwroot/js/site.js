@@ -4,20 +4,43 @@
     })
 }, 3500)
 
-const btnLimpar = document.getElementById('btnLimpar');
-const filtros = document.querySelectorAll('#tipo, #categoria, #conta, #dataInicial, #dataFinal');
+document.addEventListener("DOMContentLoaded", () => {
+    const btnLimpar = document.getElementById('btnLimpar');
 
-btnLimpar.addEventListener('click', () => {
-    const dataInicialDefault = btnLimpar.dataset.datainicial;
-    const dataFinalDefault = btnLimpar.dataset.datafinal;
+    if (!btnLimpar) return; // <-- se não existe, sai fora
 
-    filtros.forEach(input => {
-        if (input.id === "dataInicial") {
-            input.value = dataInicialDefault;
-        } else if (input.id === "dataFinal") {
-            input.value = dataFinalDefault;
-        } else {
-            input.value = "";
-        }
+    const filtros = document.querySelectorAll('#tipo, #categoria, #conta, #dataInicial, #dataFinal');
+
+    btnLimpar.addEventListener('click', () => {
+        const dataInicialDefault = btnLimpar.dataset.datainicial;
+        const dataFinalDefault = btnLimpar.dataset.datafinal;
+
+        filtros.forEach(input => {
+            if (input.id === "dataInicial") {
+                input.value = dataInicialDefault;
+            } else if (input.id === "dataFinal") {
+                input.value = dataFinalDefault;
+            } else {
+                input.value = "";
+            }
+        });
     });
-})
+});
+
+const formatarMoeda = (value) => {
+    value = value.replace(/\D/g, '');
+    value = (value / 100).toFixed(2) + '';
+    value = value.replace(".", ",");
+    value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
+    return value;
+}
+
+const formatarInput = (event) => {
+    const input = event.target;
+    input.value = formatarMoeda(input.value);
+}
+
+const inputs = document.querySelectorAll("#valorLancamento, #valorFiltro, #valorRecorrente");
+inputs.forEach(input => {
+    input.addEventListener('input', formatarInput);
+});

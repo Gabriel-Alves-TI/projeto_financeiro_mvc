@@ -34,6 +34,14 @@ input[type="number"]::-webkit-inner-spin-button {
   html {
     font-size: 16px;
   }
+
+  .valor-card {
+    margin-top: 6px !important;
+  }
+
+  .texto-card {
+    font-size: 14px !important;
+  }
 }
 
 @media (min-width: 1500px) {

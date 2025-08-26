@@ -364,12 +364,9 @@ namespace projeto_financeiro_mvc.Controllers
 
         public IActionResult Excluir(int? id)
         {
-            if (id == null || id == 0)
-            {
-                return NotFound();
-            }
-
-            LancamentoModel lancamento = _context.Lancamentos.FirstOrDefault(lanc => lanc.Id == id);
+            var lancamento = _context.Lancamentos
+                .Include(l => l.Conta)
+                .FirstOrDefault(l => l.Id == id);
 
             if (lancamento == null)
             {
@@ -405,7 +402,7 @@ namespace projeto_financeiro_mvc.Controllers
                 _context.Contas.Update(lancamentoDb.Conta);
             };
 
-            _context.Lancamentos.Remove(lancamento);
+            _context.Lancamentos.Remove(lancamentoDb);
             _context.SaveChanges();
 
             TempData["MensagemSucesso"] = "Lançamento excluído com sucesso!";
