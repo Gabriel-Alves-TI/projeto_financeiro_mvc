@@ -167,3 +167,4 @@ C:\Users\user\Documents\Gabriel-arquivos\projeto_financeiro_mvc\projeto_financei
 C:\Users\user\Documents\Gabriel-arquivos\projeto_financeiro_mvc\projeto_financeiro_mvc\obj\Debug\net8.0\projeto_financeiro_mvc.pdb
 C:\Users\user\Documents\Gabriel-arquivos\projeto_financeiro_mvc\projeto_financeiro_mvc\obj\Debug\net8.0\projeto_financeiro_mvc.genruntimeconfig.cache
 C:\Users\user\Documents\Gabriel-arquivos\projeto_financeiro_mvc\projeto_financeiro_mvc\obj\Debug\net8.0\ref\projeto_financeiro_mvc.dll
+C:\Users\user\Documents\Gabriel-arquivos\projeto_financeiro_mvc\projeto_financeiro_mvc\bin\Debug\net8.0\appsettings.Production.json

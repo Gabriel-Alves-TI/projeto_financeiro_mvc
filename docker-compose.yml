@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+    db:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        container_name: financeiro_db
+        environment:
+            - ACCEPT_EULA=Y
+            - SA_PASSWORD=MinhaSenhaSegura123!
+        ports:
+            - "1433:1433"
+        networks:
+            - financeiro-network
+        volumes:
+            - db_data:/var/opt/mssql
+    
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: financeiro_app
+        depends_on:
+            - db
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Production
+            - ASPNETCORE_URLS=http://+:80
+        ports:
+            - "5000:80"
+        networks:
+            - financeiro-network
+
+networks:
+    financeiro-network:
+
+volumes:
+    db_data:
