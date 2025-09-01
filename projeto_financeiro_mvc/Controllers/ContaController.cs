@@ -98,8 +98,8 @@ namespace projeto_financeiro_mvc.Controllers
                 return NotFound();
             }
 
-            var lancamentos = _context.Lancamentos.Where(l => l.Conta == contaId);
-            if (lancamentos != null)
+            var lancamentos = _context.Lancamentos.Where(l => l.ContaId == conta.Id);
+            if (lancamentos.Any())
             {
                 TempData["MensagemErro"] = "Não foi possível excluir porque a conta possui lançamentos vinculados.";
                 return RedirectToAction("ListarContas");

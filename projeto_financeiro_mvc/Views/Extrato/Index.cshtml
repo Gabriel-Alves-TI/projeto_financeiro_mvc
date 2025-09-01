@@ -8,15 +8,33 @@
 <div class="container">
     <form asp-controller="Extrato" asp-action="Index" method="get">
         <div class="d-flex justify-content-between align-items-center flex-row border border-2 p-2 rounded rounded-2 mb-2">
+            <div class="row g-2">
+                <div class="col-auto">
+                    <label for="periodo" class="col-form-label text-primary">Período:</label>
+                </div>
+                <div class="col-auto">
+                    <input type="date" name="dataInicial" value="@Model.DataInicial?.ToString("yyyy-MM-dd")" id="dataInicial" style="width: 120px;"/>
+                    <span class="text-dark"> - </span>
+                    <input type="date" name="dataFinal" value="@Model.DataFinal?.ToString("yyyy-MM-dd")" id="dataFinal" style="width: 120px;"/>
+                </div>
+            </div>
+            <div class="row g-1 align-items-center p-1">
+                <div class="col-auto">
+                    <label for="selectTipo" class="col-form-label text-primary">Descrição:</label>
+                </div>
+                <div class="col-auto">
+                    <input type="text" name="descricao">
+                </div>
+            </div>
             <div class="row g-2 align-items-center p-2">
                 <div class="col-auto">
                     <label for="selectTipo" class="col-form-label text-primary">Tipo:</label>
                 </div>
                 <div class="col-auto">
-                    <select class="form-select-sm" id="tipo">
+                    <select class="form-select-sm" id="tipo" name="tipo">
                         <option value="" selected>Selecione...</option>
-                        <option value="receita" selected="@(Model.Tipo == "receita")">Receita</option>
-                        <option value="despesa" selected="@(Model.Tipo == "despesa")">Despesa</option>
+                        <option value="Receita" selected="@(Model.Tipo == "Receita")">Receita</option>
+                        <option value="Despesa" selected="@(Model.Tipo == "Despesa")">Despesa</option>
                     </select>
                 </div>
             </div>
@@ -25,7 +43,7 @@
                     <label for="selectCategoria" class="col-form-label text-primary">Categoria:</label>
                 </div>
                 <div class="col-auto">
-                <select class="form-select-sm" id="categoria">
+                <select class="form-select-sm" id="categoria" name="categoria">
                         <option value="" selected>Selecione...</option>
                         <option value="Água">Água</option>
                         <option value="Alimentação VA">Alimentação VA</option>
@@ -55,16 +73,7 @@
                     </select>
                 </div>
             </div>
-            <div class="row g-2">
-                <div class="col-auto">
-                    <label for="periodo" class="col-form-label text-primary">Período:</label>
-                </div>
-                <div class="col-auto">
-                    <input type="date" name="dataInicial" value="@Model.DataInicial?.ToString("yyyy-MM-dd")" id="dataInicial" />
-                    <span class="text-dark"> - </span>
-                    <input type="date" name="dataFinal" value="@Model.DataFinal?.ToString("yyyy-MM-dd")" id="dataFinal" />
-                </div>
-            </div>
+            
             <div class="row g-2 align-items-center p-2">
                 <div class="col-auto">
                     <label for="selectTipo" class="col-form-label text-primary">Conta:</label>
@@ -79,6 +88,14 @@
                             }
                         }
                     </select>
+                </div>
+            </div>
+            <div class="row g-1">
+                <div class="col-auto">
+                    <label for="valorFiltro" class="col-form-label text-primary">Valor:</label>
+                </div>
+                <div class="col-auto">
+                    <input type="text" name="valor" />
                 </div>
             </div>
 
@@ -108,14 +125,6 @@
         <tbody>
 
             @{
-                if (!Model.Movimentos.Any())
-                {
-                    //QUANDO NÃO EXISTIR LANÇAMENTOS
-                    <div class="d-flex align-items-center justify-content-center mt-4 p-2">
-                        <h5 class="text-primary">Nenhum lançamento encontrado!</h5>
-                    </div>
-                }
-
                 var lancamentosPorData = Model.Movimentos
                     .GroupBy(l => l.Data.Date)
                     .OrderBy(g => g.Key)
@@ -123,64 +132,74 @@
 
                 double saldoTotal = 0;
 
-                foreach(var grupo in lancamentosPorData)
+                if (lancamentosPorData != null)
                 {
-                    @* var rowClass = item.Origem switch
+                    foreach(var grupo in lancamentosPorData)
                     {
-                        "Recorrente" => "table-warning",
-                        "Transferencia" => "table-info",
-                        _ => item.Tipo == "Receita" ? "table-success" : "table-danger"
-                    }; *@
+                        @* var rowClass = item.Origem switch
+                        {
+                            "Recorrente" => "table-warning",
+                            "Transferencia" => "table-info",
+                            _ => item.Tipo == "Receita" ? "table-success" : "table-danger"
+                        }; *@
 
-                    var saldoDia = grupo.Sum(l => l.Tipo == "Receita" ? l.Valor : -l.Valor);
+                        var saldoDia = grupo.Sum(l => l.Tipo == "Receita" ? l.Valor : -l.Valor);
 
-                    saldoTotal += saldoDia;
+                        saldoTotal += saldoDia;
 
-                    foreach (var item in grupo)
-                    {
-                        <tr class="table-custom border border-1">
-                        <th scope="row">@item.Data.ToString("dd/MM/yyyy")</th>
-                        <td>@item.Descricao</td>
-                            @if (item.Tipo == "Receita")
-                            {
-                                <td class="text-success-emphasis">@item.Tipo</td>
-                            }
-                            else if(item.Tipo == "Despesa")
-                            {
-                                <td class="text-danger">@item.Tipo</td>
-                            }
-                            else if(item.Tipo == "Transferencia")
-                            {
-                                <td class="text-info">@item.Tipo</td>
-                            }
-                        <td>@item.Categoria</td>
-                        <td>@item.Conta</td>
-                        <td>@item.Valor</td>
-                        <td>
-                            @if (item.Origem == "Lancamento")
-                            {
-                                <a asp-controller="Lancamento" asp-action="Editar" asp-route-id="@item.Id"><i class="bi bi-eye-fill text-info"></i></a>
-                            }
-                            else if (item.Origem == "Recorrente")
-                            {
-                                <a asp-controller="Recorrente" asp-action="Editar" asp-route-id="@item.Id"><i class="bi bi-eye-fill text-info"></i></a>
-                            }
-                            else if (item.Origem == "Transferencia")
-                            {
-                                <a asp-controller="Transferencia" asp-action="Editar" asp-route-id="@item.Id"><i class="bi bi-eye-fill text-info"></i></a>
-                            }
-                        </td>
-                    </tr>
+                        foreach (var item in grupo)
+                        {
+                            <tr class="table-custom border border-1">
+                            <th scope="row">@item.Data.ToString("dd/MM/yyyy")</th>
+                            <td>@item.Descricao</td>
+                                @if (item.Tipo == "Receita")
+                                {
+                                    <td class="text-success-emphasis">@item.Tipo</td>
+                                }
+                                else if(item.Tipo == "Despesa")
+                                {
+                                    <td class="text-danger">@item.Tipo</td>
+                                }
+                                else if(item.Tipo == "Transferencia")
+                                {
+                                    <td class="text-info">@item.Tipo</td>
+                                }
+                            <td>@item.Categoria</td>
+                            <td>@item.Conta</td>
+                            <td>@item.Valor.ToString("N2")</td>
+                            <td>
+                                @if (item.Origem == "Lancamento")
+                                {
+                                    <a asp-controller="Lancamento" asp-action="Editar" asp-route-id="@item.Id"><i class="bi bi-eye-fill text-info"></i></a>
+                                }
+                                else if (item.Origem == "Recorrente")
+                                {
+                                    <a asp-controller="Recorrente" asp-action="Editar" asp-route-id="@item.Id"><i class="bi bi-eye-fill text-info"></i></a>
+                                }
+                                else if (item.Origem == "Transferencia")
+                                {
+                                    <a asp-controller="Transferencia" asp-action="Editar" asp-route-id="@item.Id"><i class="bi bi-eye-fill text-info"></i></a>
+                                }
+                            </td>
+                        </tr>
+                        }
+                        // Saldo do dia
+                        <tr class="table-info text-dark">
+                            <td colspan="7">
+                                Saldo do dia: @saldoDia.ToString("C") | Saldo Total: @saldoTotal.ToString("C");
+                            </td>
+                        </tr>
                     }
-                    // Saldo do dia
-                    <tr class="table-info text-dark">
+                }
+                else 
+                {
+                    <tr class="table-custom text-dark">
                         <td colspan="7">
-                            Saldo do dia: @saldoDia.ToString("C") | Saldo Total: @saldoTotal.ToString("C");
+                            <h5 class="text-primary text-center">Nenhum lançamento encontrado!</h5>
                         </td>
                     </tr>
                 }
             }
-            
         </tbody>
     </table>
 </div>

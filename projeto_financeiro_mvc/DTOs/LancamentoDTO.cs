@@ -19,6 +19,6 @@ namespace projeto_financeiro_mvc.DTOs
         public DateTime Previsao { get; set; }
         public int Parcelas { get; set; }
         public bool Pago { get; set; }
-        public int ContaId { get; set; }
+        public int? ContaId { get; set; }
     }
 }

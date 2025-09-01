@@ -27,6 +27,8 @@ namespace projeto_financeiro_mvc.ViewModels
 
         public string? Tipo { get; set; }
         public string? Categoria { get; set; }
+        public string? Descricao { set; get; }
+        public double? Valor { set; get;}
 
         public DateTime? DataInicial { get; set; }
         public DateTime? DataFinal { get; set; }

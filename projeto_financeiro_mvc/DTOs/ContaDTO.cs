@@ -8,8 +8,8 @@ namespace projeto_financeiro_mvc.DTOs
     public class ContaDTO
     {
         public string Banco { get; set; }
-        public int Agencia { get; set; }
-        public int NumeroConta { get; set; }
+        public string Agencia { get; set; }
+        public string NumeroConta { get; set; }
         public double? SaldoInicial { get; set; }
     }
 }

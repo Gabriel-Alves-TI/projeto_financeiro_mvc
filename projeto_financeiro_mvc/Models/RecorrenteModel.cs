@@ -14,7 +14,7 @@ namespace projeto_financeiro_mvc.Models
         public int Parcelas { get; set; }
         public bool Pago { get; set; }
         public bool IsRecorrente { get; set; }
-        public int ContaId { get; set; }
+        public int? ContaId { get; set; }
         [JsonIgnore]
         public ContaModel Conta { get; set; }
     }

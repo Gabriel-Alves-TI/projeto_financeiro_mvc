@@ -121,15 +121,12 @@ namespace projeto_financeiro_mvc.Controllers
                 Console.WriteLine($"Previsao: {viewModel.Lancamento.Previsao}");
 
                 var conta = _context.Contas.Find(viewModel.Lancamento.ContaId);
-                if (conta == null)
-                {
-                    TempData["MensagemErro"] = "Conta não localizada.";
-                    return View(viewModel);
-                }
+                
 
                 if (viewModel.Lancamento.Parcelas <= 0)
                 {
                     TempData["MensagemErro"] = "Número de parcelas deve ser maior que 0.";
+                    viewModel.Contas = _context.Contas.ToList();
                     return View(viewModel);
                 }
 

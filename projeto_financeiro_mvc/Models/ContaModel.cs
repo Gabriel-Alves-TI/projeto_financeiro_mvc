@@ -9,8 +9,8 @@ namespace projeto_financeiro_mvc.Models
     {
         public int Id { get; set; }
         public string Banco { get; set; }
-        public int Agencia { get; set; }
-        public int NumeroConta { get; set; }
+        public string Agencia { get; set; }
+        public string NumeroConta { get; set; }
         public double Saldo { get; set; }
         public ICollection<LancamentoModel> Lancamentos { get; set; }
     }

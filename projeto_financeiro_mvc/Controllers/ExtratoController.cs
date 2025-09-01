@@ -21,14 +21,14 @@ namespace projeto_financeiro_mvc.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index(DateTime? dataInicial, DateTime? dataFinal)
+        public IActionResult Index(DateTime? dataInicial, DateTime? dataFinal, string? tipo, string? categoria, string? descricao, double? valor)
         {
             var listaContas = new List<ContaModel>();
 
             var contas = _context.Contas.ToList();
 
             var movimentos = new List<ExtratoViewModel>();
-
+ 
             movimentos.AddRange(_context.Lancamentos
                 .Where(l => l.Pago == true)
                 .Select(l => new ExtratoViewModel
@@ -77,6 +77,27 @@ namespace projeto_financeiro_mvc.Controllers
             if (!dataFinal.HasValue)
             {
                 dataFinal = dataInicial.Value.AddMonths(1).AddDays(-1);
+            }
+
+            if (!string.IsNullOrEmpty(tipo))
+            {
+                movimentos = movimentos.Where(m => m.Tipo == tipo).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(categoria))
+            {
+                movimentos = movimentos.Where(m => m.Categoria == categoria).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(descricao))
+            {
+                movimentos = movimentos.Where(m => m.Descricao.Equals(descricao, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            if (valor.HasValue)
+            {
+                Console.WriteLine("valor recebido: " + valor.Value);
+                movimentos = movimentos.Where(m => m.Valor == valor.Value).ToList();
             }
 
             movimentos = movimentos

@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!btnLimpar) return; // <-- se não existe, sai fora
 
-    const filtros = document.querySelectorAll('#tipo, #categoria, #conta, #dataInicial, #dataFinal');
+    const filtros = document.querySelectorAll('#tipo, #categoria, #conta, #dataInicial, #dataFinal, #valorFiltro');
 
     btnLimpar.addEventListener('click', () => {
         const dataInicialDefault = btnLimpar.dataset.datainicial;

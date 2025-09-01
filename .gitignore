@@ -19,8 +19,9 @@ obj/
 *.log
 
 # Secrets e configs locais
+appsettings.Production.json
 appsettings.Development.json
-appsettings.Local.json
+appsettings.json
 .env
 
 # Test results
