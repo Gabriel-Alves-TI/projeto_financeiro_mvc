@@ -7,105 +7,108 @@
 
 <div class="container">
     <form asp-controller="Extrato" asp-action="Index" method="get">
-        <div class="d-flex justify-content-between align-items-center flex-row border border-2 p-2 rounded rounded-2 mb-2">
-            <div class="row g-2">
-                <div class="col-auto">
-                    <label for="periodo" class="col-form-label text-primary">Período:</label>
-                </div>
-                <div class="col-auto">
-                    <input type="date" name="dataInicial" value="@Model.DataInicial?.ToString("yyyy-MM-dd")" id="dataInicial" style="width: 120px;"/>
-                    <span class="text-dark"> - </span>
-                    <input type="date" name="dataFinal" value="@Model.DataFinal?.ToString("yyyy-MM-dd")" id="dataFinal" style="width: 120px;"/>
-                </div>
-            </div>
-            <div class="row g-1 align-items-center p-1">
-                <div class="col-auto">
-                    <label for="selectTipo" class="col-form-label text-primary">Descrição:</label>
-                </div>
-                <div class="col-auto">
-                    <input type="text" name="descricao">
+        <div class="d-flex justify-content-between align-items-center flex-column border border-2 p-2 rounded rounded-2 mb-2">
+            <div class="d-flex flex-row w-100 mb-2">
+                <div class="row g-1 align-items-center p-1">
+                    <div class="col-auto">
+                        <label for="periodo" class="col-form-label text-primary">Período:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="date" name="dataInicial" value="@Model.DataInicial?.ToString("yyyy-MM-dd")" id="dataInicial" style="width: 120px;"/>
+                        <span class="text-dark"> - </span>
+                        <input type="date" name="dataFinal" value="@Model.DataFinal?.ToString("yyyy-MM-dd")" id="dataFinal" style="width: 120px;"/>
+                    </div>
                 </div>
             </div>
-            <div class="row g-2 align-items-center p-2">
-                <div class="col-auto">
-                    <label for="selectTipo" class="col-form-label text-primary">Tipo:</label>
+            <div class="d-flex flex-row w-100">
+                <div class="row g-1 align-items-center p-1">
+                    <div class="col-auto">
+                        <label for="selectTipo" class="col-form-label text-primary">Descrição:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" name="descricao">
+                    </div>
                 </div>
-                <div class="col-auto">
-                    <select class="form-select-sm" id="tipo" name="tipo">
-                        <option value="" selected>Selecione...</option>
-                        <option value="Receita" selected="@(Model.Tipo == "Receita")">Receita</option>
-                        <option value="Despesa" selected="@(Model.Tipo == "Despesa")">Despesa</option>
-                    </select>
+                <div class="row g-1 align-items-center p-1">
+                    <div class="col-auto">
+                        <label for="selectTipo" class="col-form-label text-primary">Tipo:</label>
+                    </div>
+                    <div class="col-auto">
+                        <select class="form-select-sm" id="tipo" name="tipo">
+                            <option value="" selected>Selecione...</option>
+                            <option value="Receita" selected="@(Model.Tipo == "Receita")">Receita</option>
+                            <option value="Despesa" selected="@(Model.Tipo == "Despesa")">Despesa</option>
+                        </select>
+                    </div>
                 </div>
-            </div>
-            <div class="row g-2">
-                <div class="col-auto">
-                    <label for="selectCategoria" class="col-form-label text-primary">Categoria:</label>
+                <div class="row g-1 align-items-center p-1">
+                    <div class="col-auto">
+                        <label for="selectCategoria" class="col-form-label text-primary">Categoria:</label>
+                    </div>
+                    <div class="col-auto">
+                    <select class="form-select-sm" id="categoria" name="categoria">
+                            <option value="" selected>Selecione...</option>
+                            <option value="Água">Água</option>
+                            <option value="Alimentação VA">Alimentação VA</option>
+                            <option value="Aluguel">Aluguel</option>
+                            <option value="Carro">Carro</option>
+                            <option value="Casa">Casa</option>
+                            <option value="Combustível">Combustível</option>
+                            <option value="Diversos">Despesas Mayte</option>
+                            <option value="Diversos">Diversos</option>
+                            <option value="Eletrônicos">Eletrônicos</option>
+                            <option value="Empréstimo">Empréstimo</option>
+                            <option value="Energia">Energia</option>
+                            <option value="Estacionamento">Estacionamento</option>
+                            <option value="Estudo">Estudo</option>
+                            <option value="Fast Food">Fast Food</option>
+                            <option value="FGTS">FGTS</option>
+                            <option value="Férias">Férias</option>
+                            <option value="Financiamento">Financiamento</option>
+                            <option value="Internet">Internet</option>
+                            <option value="Móveis">Móveis</option>
+                            <option value="Salário">Salário</option>
+                            <option value="Saldo Inicial">Saldo Inicial</option>
+                            <option value="Telefone">Telefone</option>
+                            <option value="Transferência entre contas">Transferência entre contas</option>
+                            <option value="TV">TV</option>
+                            <option value="Roupas">Roupas</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="col-auto">
-                <select class="form-select-sm" id="categoria" name="categoria">
-                        <option value="" selected>Selecione...</option>
-                        <option value="Água">Água</option>
-                        <option value="Alimentação VA">Alimentação VA</option>
-                        <option value="Aluguel">Aluguel</option>
-                        <option value="Carro">Carro</option>
-                        <option value="Casa">Casa</option>
-                        <option value="Combustível">Combustível</option>
-                        <option value="Diversos">Despesas Mayte</option>
-                        <option value="Diversos">Diversos</option>
-                        <option value="Eletrônicos">Eletrônicos</option>
-                        <option value="Empréstimo">Empréstimo</option>
-                        <option value="Energia">Energia</option>
-                        <option value="Estacionamento">Estacionamento</option>
-                        <option value="Estudo">Estudo</option>
-                        <option value="Fast Food">Fast Food</option>
-                        <option value="FGTS">FGTS</option>
-                        <option value="Férias">Férias</option>
-                        <option value="Financiamento">Financiamento</option>
-                        <option value="Internet">Internet</option>
-                        <option value="Móveis">Móveis</option>
-                        <option value="Salário">Salário</option>
-                        <option value="Saldo Inicial">Saldo Inicial</option>
-                        <option value="Telefone">Telefone</option>
-                        <option value="Transferência entre contas">Transferência entre contas</option>
-                        <option value="TV">TV</option>
-                        <option value="Roupas">Roupas</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="row g-2 align-items-center p-2">
-                <div class="col-auto">
-                    <label for="selectTipo" class="col-form-label text-primary">Conta:</label>
-                </div>
-                <div class="col-auto">
-                    <select class="form-select-sm" id="conta">
-                        <option value="" selected>Selecione...</option>
-                        @{
-                            foreach (var conta in Model.Contas)
-                            {
-                                <option value="@conta.Id">@conta.Banco</option>
-                            }
-                        }
-                    </select>
-                </div>
-            </div>
-            <div class="row g-1">
-                <div class="col-auto">
-                    <label for="valorFiltro" class="col-form-label text-primary">Valor:</label>
-                </div>
-                <div class="col-auto">
-                    <input type="text" name="valor" />
-                </div>
-            </div>
-
-            <div class="">
-                <button type="button" class="btn btn-sm btn-info" id="btnLimpar" 
-                data-datainicial="@Model.DataInicial?.ToString("yyyy-MM-dd")"
-                data-datafinal="@Model.DataFinal?.ToString("yyyy-MM-dd")">Limpar</button>
-                <button type="submit" class="btn btn-sm btn-primary">Filtrar</button>  
-            </div>
                 
+                <div class="row g-1 align-items-center p-1">
+                    <div class="col-auto">
+                        <label for="selectTipo" class="col-form-label text-primary">Conta:</label>
+                    </div>
+                    <div class="col-auto">
+                        <select class="form-select-sm" id="conta">
+                            <option value="" selected>Selecione...</option>
+                            @{
+                                foreach (var conta in Model.Contas)
+                                {
+                                    <option value="@conta.Id">@conta.Banco</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="row g-1 align-items-center p-1">
+                    <div class="col-auto">
+                        <label for="valorFiltro" class="col-form-label text-primary">Valor:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" name="valor" id="valorFiltro"/>
+                    </div>
+                </div>
+
+                <div class="align-items-center ms-2 p-1">
+                    <button type="button" class="btn btn-sm btn-info btnLimparExtrato" id="btnLimpar" 
+                    data-datainicial="@Model.DataInicial?.ToString("yyyy-MM-dd")"
+                    data-datafinal="@Model.DataFinal?.ToString("yyyy-MM-dd")">Limpar</button>
+                    <button type="submit" class="btn btn-sm btn-primary ms-2 btnFiltrarExtrato" id="btnFiltrar">Filtrar</button>  
+                </div>
+            </div>    
         </div>
     </form>
         
@@ -132,7 +135,7 @@
 
                 double saldoTotal = 0;
 
-                if (lancamentosPorData != null)
+                if (lancamentosPorData.Any())
                 {
                     foreach(var grupo in lancamentosPorData)
                     {
@@ -191,7 +194,7 @@
                         </tr>
                     }
                 }
-                else 
+                else
                 {
                     <tr class="table-custom text-dark">
                         <td colspan="7">

@@ -21,7 +21,7 @@ namespace projeto_financeiro_mvc.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index(DateTime? dataInicial, DateTime? dataFinal, string? tipo, string? categoria, string? descricao, double? valor)
+        public IActionResult Index(DateTime? dataInicial, DateTime? dataFinal, string? tipo, string? categoria, string? descricao, double? valor, int? contaId)
         {
             var listaContas = new List<ContaModel>();
 
@@ -40,6 +40,7 @@ namespace projeto_financeiro_mvc.Controllers
                     Valor = l.Valor,
                     Categoria = l.Categoria,
                     Conta = l.Conta.Banco,
+                    ContaId = l.ContaId,
                     Origem = "Lancamento"
                 }));
 
@@ -54,6 +55,7 @@ namespace projeto_financeiro_mvc.Controllers
                     Valor = r.Valor,
                     Categoria = r.Categoria,
                     Conta = r.Conta.Banco,
+                    ContaId = r.ContaId,
                     Origem = "Recorrente"
                 }));
 
@@ -66,6 +68,7 @@ namespace projeto_financeiro_mvc.Controllers
                 Valor = t.Valor,
                 Categoria = t.Categoria,
                 Conta = t.ContaOrigem.Banco,
+                ContaId = t.ContaOrigemId,
                 Origem = "Transferencia"
             }));
 
@@ -94,11 +97,16 @@ namespace projeto_financeiro_mvc.Controllers
                 movimentos = movimentos.Where(m => m.Descricao.Equals(descricao, StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
-            if (valor.HasValue)
+            if (contaId.HasValue)
             {
-                Console.WriteLine("valor recebido: " + valor.Value);
-                movimentos = movimentos.Where(m => m.Valor == valor.Value).ToList();
+                movimentos = movimentos.Where(m => m.ContaId == contaId.Value).ToList();
             }
+
+            if (valor.HasValue)
+                {
+                    Console.WriteLine("valor recebido: " + valor.Value);
+                    movimentos = movimentos.Where(m => m.Valor == valor.Value).ToList();
+                }
 
             movimentos = movimentos
                 .Where(m => m.Data >= dataInicial.Value && m.Data <= dataFinal.Value)

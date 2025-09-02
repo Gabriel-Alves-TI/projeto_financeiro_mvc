@@ -52,12 +52,22 @@ input[type="number"]::-webkit-inner-spin-button {
   }
 
   #btnLimpar, #btnFiltrar{
-    width: 100px;
+    width: 80px;
   }
 
   #btnLimpar {
     margin-bottom: 5px;
   }
+
+  #btnFiltrar {
+    margin-left: 0px !important;
+  }
+
+  #valorFiltro{
+    width: 100px;
+  }
+
+  
 }
 
 @media (min-width: 1500px) {

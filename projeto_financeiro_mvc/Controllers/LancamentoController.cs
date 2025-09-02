@@ -133,6 +133,12 @@ namespace projeto_financeiro_mvc.Controllers
                 // Lógica para Ajuste de Saldo da Conta
                 if (viewModel.Lancamento.Categoria?.Trim().Equals("Saldo Inicial", StringComparison.OrdinalIgnoreCase) == true)
                 {
+                    if (conta == null)
+                    {
+                        ModelState.AddModelError("", "Conta não localizada");
+                        return View(viewModel);
+                    }
+
                     conta.Saldo = 0;
 
                     if (viewModel.Lancamento.Tipo == TipoLancamento.Despesa)
@@ -276,26 +282,53 @@ namespace projeto_financeiro_mvc.Controllers
                     return NotFound(viewModel);
                 }
 
-                if (viewModel.Lancamento.Pago == true)
+                bool pagoAntes = lancamento.Pago;
+                double valorAntes = lancamento.Valor;
+                var tipoAntes = lancamento.Tipo;
+                int? contaIdAntes = lancamento.ContaId;
+
+                if (contaIdAntes != viewModel.Lancamento.ContaId)
                 {
-                    if (viewModel.Lancamento.Tipo == TipoLancamento.Receita)
+                    var contaAntiga = _context.Contas.Find(contaIdAntes);
+
+                    if (pagoAntes)
                     {
-                        conta.Saldo += viewModel.Lancamento.Valor;
+                        if (tipoAntes == TipoLancamento.Receita)
+                        {
+                            contaAntiga.Saldo -= valorAntes;
+                        }
+                        if (tipoAntes == TipoLancamento.Despesa)
+                        {
+                            contaAntiga.Saldo += valorAntes;
+                        }
                     }
-                    if (viewModel.Lancamento.Tipo == TipoLancamento.Despesa)
-                    {
-                        conta.Saldo -= viewModel.Lancamento.Valor;
-                    }
+                    _context.Contas.Update(contaAntiga);
                 }
-                if (viewModel.Lancamento.Pago == false)
+
+                if (pagoAntes != viewModel.Lancamento.Pago || valorAntes != viewModel.Lancamento.Valor || tipoAntes != viewModel.Lancamento.Tipo || contaIdAntes != viewModel.Lancamento.ContaId)
                 {
-                    if (viewModel.Lancamento.Tipo == TipoLancamento.Receita)
+                    if (pagoAntes)
                     {
-                        conta.Saldo -= viewModel.Lancamento.Valor;
+                        if (tipoAntes == TipoLancamento.Receita)
+                        {
+                            conta.Saldo -= valorAntes;
+                        }
+                        if (tipoAntes == TipoLancamento.Despesa)
+                        {
+                            conta.Saldo += valorAntes;
+                        }
                     }
-                    if (viewModel.Lancamento.Tipo == TipoLancamento.Despesa)
+
+                    if (viewModel.Lancamento.Pago)
                     {
-                        conta.Saldo += viewModel.Lancamento.Valor;
+                        if (viewModel.Lancamento.Tipo == TipoLancamento.Receita)
+                        {
+                            conta.Saldo += viewModel.Lancamento.Valor;
+                        }
+                        if (viewModel.Lancamento.Tipo == TipoLancamento.Despesa)
+                        {
+                            conta.Saldo -= viewModel.Lancamento.Valor;
+                        }
                     }
                 }
 
