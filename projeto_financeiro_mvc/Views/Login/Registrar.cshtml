@@ -1,0 +1,46 @@
+@using projeto_financeiro_mvc.DTOs
+@model UsuarioRegistrarDTO
+@{
+    Layout = "_LayoutRegistrar";
+    ViewData["Title"] = "Registrar";
+}
+
+<p>Model is null? @(Model == null)</p>
+<p>Model type: @(Model?.GetType().Name ?? "NULL")</p>
+
+<div class="d-flex">
+    <div class="container bg-light-subtle border border-2 rounded rounded-4 p-4 w-25">
+        <h1 class="d-flex justify-content-center text-primary fw-bold mt-2">@ViewData["Title"]</h1>
+        <form asp-controller="Login" asp-action="Registrar" method="post">
+            <div class="mb-3">
+                <label asp-for="Nome" class="form-label text-primary">Nome:</label>
+                <input type="text" class="form-control" asp-for="Nome">
+                <span asp-validation-for="Nome" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Sobrenome" class="form-label text-primary">Sobrenome:</label>
+                <input type="text" class="form-control" asp-for="Sobrenome" >
+                <span asp-validation-for="Sobrenome" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label text-primary">E-mail:</label>
+                <input type="text" class="form-control" asp-for="Email" >
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Senha" class="form-label text-primary">Senha:</label>
+                <input type="password" class="form-control" asp-for="Senha" >
+                <span asp-validation-for="Senha" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ConfirmaSenha" class="form-label text-primary">Confirmar Senha:</label>
+                <input type="password" class="form-control" asp-for="ConfirmaSenha" >
+                <span asp-validation-for="ConfirmaSenha" class="text-danger"></span>
+            </div>
+            <div class="d-flex justify-content-end gap-3 mt-4">
+                <button type="submit" class="btn btn-secondary" style="width: 100px;">Cadastrar</button>
+                <a type="button" asp-action="Index" asp-controller="Login" class="btn btn-secondary" style="width: 100px;">Voltar</a>
+            </div>
+        </form>
+    </div>
+</div>

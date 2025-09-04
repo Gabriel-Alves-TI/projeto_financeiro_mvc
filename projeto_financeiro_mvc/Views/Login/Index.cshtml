@@ -1,0 +1,52 @@
+
+@{
+    Layout = "_LayoutLogin";
+    ViewData["Title"] = "Index";
+}
+
+<div class="d-flex">
+    <div class="d-flex col-3 align-items-center justify-content-center bg-primary" style="min-height: 100vh;">
+        <div class="d-flex flex-column">
+            <div class="container d-flex justify-content-center mt-2">
+                @if (TempData["MensagemSucesso"] != null)
+                {
+                    <div class="alert alert-success text-white" role="alert">
+                        @TempData["MensagemSucesso"]
+                    </div>
+                }
+
+                @if (TempData["MensagemErro"] != null)
+                {
+                    <div class="alert alert-danger text-light" role="alert">
+                        @TempData["MensagemErro"]
+                    </div>
+                }
+            </div>
+            <h1 class="mb-4 text-center">Controle Financeiro</h1>
+            <h3 class="mb-4 text-center text-white">Olá, seja bem-vindo(a)!</h3>
+            <form asp-controller="Login" asp-action="Logar" method="post">
+                <div class="mb-3">
+                    <label for="exampleInputEmail1" class="form-label text-white">E-mail</label>
+                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                </div>
+                <div class="mb-3">
+                    <label for="exampleInputPassword1" class="form-label text-white">Senha</label>
+                    <input type="password" class="form-control" id="exampleInputPassword1">
+                </div>
+                <div class="d-flex justify-content-end gap-3 mt-4">
+                    <button type="submit" class="btn btn-secondary" style="width: 100px;">Entrar</button>
+                    <a type="button" asp-action="Registrar" asp-controller="Login" class="btn btn-secondary" style="width: 100px;">Cadastrar</a>
+                </div>
+                <div class="d-flex justify-content-end mt-2">
+                    <a href="">Esqueceu sua senha?</a>
+                </div>  
+            </form>
+        </div>
+    </div>
+
+    <div class="d-flex bg-white">
+        <div class="d-flex align-items-center justify-content-center">
+            <img src="img/img-login.jpg" alt="" class="w-50">
+        </div>
+    </div>
+</div>
