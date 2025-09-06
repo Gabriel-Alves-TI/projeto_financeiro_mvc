@@ -87,7 +87,7 @@
                                     <option value="Salário">Salário</option>
                                     <option value="Saldo Inicial">Saldo Inicial</option>
                                     <option value="Telefone">Telefone</option>
-                                    <option value="Transferência entre contas">Transferência entre contas</option>
+                                    <option value="Transporte">Transporte</option>
                                     <option value="TV">TV</option>
                                     <option value="Roupas">Roupas</option>
                                 </select>
@@ -196,7 +196,7 @@
                                         <h6 class="text-info m-0">@lanc.Conta.Banco</h6>
                                         <i class="bi bi-check-circle-fill fs-5 text-success-emphasis ms-1"></i>
                                     }
-                                    <p class="text-success text-success-emphasis fs-6 fw-bold mb-0 me-1"><i class="bi bi-plus"></i> R$@lanc.Valor</p>
+                                    <p class="text-success text-success-emphasis fs-6 fw-bold mb-0 me-1"><i class="bi bi-plus"></i> R$@lanc.Valor.ToString("N2")</p>
                                     <div class="d-flex align-items-center justify-content-end ms-2 border-start border-2 border-dark" style="cursor: pointer">
                                         <a asp-controller="Lancamento" asp-action="Editar" asp-route-id="@lanc.Id" class="text-center ms-2 me-3 fw-bold"><i class="bi bi-pencil-square text-dark"></i></a>
                                         <a asp-controller="Lancamento" asp-action="Excluir" asp-route-id="@lanc.Id" class="text-center me-2"><i class="bi bi-x-square-fill text-danger"></i></a>

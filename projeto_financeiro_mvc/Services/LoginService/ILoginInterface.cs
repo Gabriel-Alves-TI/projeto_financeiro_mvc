@@ -10,6 +10,6 @@ namespace projeto_financeiro_mvc.Services.LoginService
     public interface ILoginInterface
     {
         Task<ResponseModel<UsuarioModel>> RegistrarUsuario(UsuarioRegistrarDTO usuarioRegistrarDto);
-
+        Task<ResponseModel<UsuarioModel>> Login(UsuarioLoginDTO usuarioLoginDto);
     }
 }

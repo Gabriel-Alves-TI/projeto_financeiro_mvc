@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using projeto_financeiro_mvc.Data;
 using projeto_financeiro_mvc.DTOs;
 using projeto_financeiro_mvc.Services.LoginService;
+using projeto_financeiro_mvc.Services.SessaoService;
 
 namespace projeto_financeiro_mvc.Controllers
 {
@@ -15,17 +16,50 @@ namespace projeto_financeiro_mvc.Controllers
     {
         private readonly AppDbContext _context;
         private readonly ILoginInterface _loginInterface;
+        private readonly ISessaoInterface _sessaoInterface;
 
-        public LoginController(AppDbContext context, ILoginInterface loginInterface)
+        public LoginController(AppDbContext context, ILoginInterface loginInterface, ISessaoInterface sessaoInterface)
         {
             _context = context;
             _loginInterface = loginInterface;
+            _sessaoInterface = sessaoInterface;
         }
 
         [HttpGet]
         public IActionResult Index()
         {
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(UsuarioLoginDTO usuarioLoginDto)
+        {
+            if (ModelState.IsValid)
+            {
+                var usuario = await _loginInterface.Login(usuarioLoginDto);
+
+                if (usuario.Status)
+                {
+                    Console.WriteLine(usuario.Mensagem);
+                    return RedirectToAction("Index", "Dashboard");
+                }
+                else
+                {
+                    Console.WriteLine(usuario.Mensagem);
+                    return View("Index", usuarioLoginDto);
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Erro ao realizar login.");
+                return View("Index", usuarioLoginDto);
+            }
+        }
+
+        public IActionResult Logout()
+        {
+            _sessaoInterface.RemoverSessao();
+            return RedirectToAction("Index", "Login");
         }
 
         [HttpGet]

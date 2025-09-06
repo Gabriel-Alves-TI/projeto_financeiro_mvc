@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using projeto_financeiro_mvc.Data;
 using projeto_financeiro_mvc.DTOs;
 using projeto_financeiro_mvc.Models;
+using projeto_financeiro_mvc.Services.SessaoService;
 using projeto_financeiro_mvc.ViewModels;
 
 namespace projeto_financeiro_mvc.Controllers
@@ -16,10 +17,12 @@ namespace projeto_financeiro_mvc.Controllers
     public class TransferenciaController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly ISessaoInterface _sessaoInterface;
 
-        public TransferenciaController(AppDbContext context)
+        public TransferenciaController(AppDbContext context, ISessaoInterface sessaoInterface)
         {
             _context = context;
+            _sessaoInterface = sessaoInterface;
         }
 
         public IActionResult Transferencia()

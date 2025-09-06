@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using projeto_financeiro_mvc.Data;
 using projeto_financeiro_mvc.Models;
+using projeto_financeiro_mvc.Services.SessaoService;
 using projeto_financeiro_mvc.ViewModels;
 
 namespace projeto_financeiro_mvc.Controllers
@@ -15,14 +16,22 @@ namespace projeto_financeiro_mvc.Controllers
     public class ExtratoController : Controller
     {
         private readonly AppDbContext _context;
-        public ExtratoController(AppDbContext context)
+        private readonly ISessaoInterface _sessaoInterface;
+        public ExtratoController(AppDbContext context, ISessaoInterface sessaoInterface)
         {
             _context = context;
+            _sessaoInterface = sessaoInterface;
         }
 
         [HttpGet]
         public IActionResult Index(DateTime? dataInicial, DateTime? dataFinal, string? tipo, string? categoria, string? descricao, double? valor, int? contaId)
         {
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
             var listaContas = new List<ContaModel>();
 
             var contas = _context.Contas.ToList();

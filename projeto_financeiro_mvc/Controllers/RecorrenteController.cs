@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using projeto_financeiro_mvc.Data;
 using projeto_financeiro_mvc.DTOs;
 using projeto_financeiro_mvc.Models;
+using projeto_financeiro_mvc.Services.SessaoService;
 using projeto_financeiro_mvc.ViewModels;
 using projeto_financeiro_mvc.Views.Recorrente;
 
@@ -17,10 +18,12 @@ namespace projeto_financeiro_mvc.Controllers
     public class RecorrenteController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly ISessaoInterface _sessaoInterface;
 
-        public RecorrenteController(AppDbContext context)
+        public RecorrenteController(AppDbContext context, ISessaoInterface sessaoInterface)
         {
             _context = context;
+            _sessaoInterface = sessaoInterface;
         }
 
         public IActionResult Cadastrar()

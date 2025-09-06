@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using projeto_financeiro_mvc.Data;
 using projeto_financeiro_mvc.Services.LoginService;
 using projeto_financeiro_mvc.Services.SenhaService;
+using projeto_financeiro_mvc.Services.SessaoService;
 using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,8 +27,16 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ILoginInterface, LoginService>();
 builder.Services.AddScoped<ISenhaInterface, SenhaService>();
+builder.Services.AddScoped<ISessaoInterface, SessaoService>();
+
+builder.Services.AddSession(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 var app = builder.Build();
 
@@ -52,8 +61,10 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+app.UseSession();
+
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Dashboard}/{action=Index}/{id?}");
+    pattern: "{controller=Login}/{action=Index}/{id?}");
 
 app.Run();
