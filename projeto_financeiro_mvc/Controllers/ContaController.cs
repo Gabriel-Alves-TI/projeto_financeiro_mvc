@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using projeto_financeiro_mvc.Data;
 using projeto_financeiro_mvc.DTOs;
 using projeto_financeiro_mvc.Models;
@@ -57,18 +58,50 @@ namespace projeto_financeiro_mvc.Controllers
 
         public IActionResult Editar(int? id)
         {
-            if (id == null || id == 0)
-            {
-                return NotFound();
-            }
-
-            ContaModel conta = _context.Contas.FirstOrDefault(c => c.Id == id);
-
+            var conta = _context.Contas.FirstOrDefault(c => c.Id == id);
             if (conta == null)
             {
                 return NotFound();
             }
 
+            ContaDTO contaDto = new ContaDTO
+            {
+                Banco = conta.Banco,
+                Agencia = conta.Agencia,
+                NumeroConta = conta.NumeroConta,
+                SaldoInicial = conta.Saldo
+            };
+
+            return View(contaDto);
+        }
+
+        [HttpPost]
+        public IActionResult Editar(ContaDTO contaDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(contaDto);
+            }
+
+            var conta = _context.Contas.Find(contaDto.Id);
+            if (conta == null)
+            {
+                return NotFound();
+            }
+
+            if (conta.Banco.IsNullOrEmpty() || conta.Agencia.IsNullOrEmpty() || conta.NumeroConta.IsNullOrEmpty())
+            {
+                return View(contaDto);
+            }
+
+            conta.Banco = contaDto.Banco;
+            conta.Agencia = contaDto.Agencia;
+            conta.NumeroConta = contaDto.NumeroConta;
+
+            _context.Contas.Update(conta);
+            _context.SaveChanges();
+
+            TempData["MensagemSucesso"] = "Conta atualizada com sucesso!";
             return View(conta);
         }
 

@@ -1,4 +1,5 @@
-@model ContaModel
+@using projeto_financeiro_mvc.DTOs
+@model ContaDTO
 @{
     ViewData["Title"] = "Editar";
 }
@@ -9,6 +10,8 @@
     <div class="card d-flex align-items-center justify-content-center border border-2 border-primary rounded rounded-3 bg-opacity-25 w-50 p-2">
         <form method="post" asp-controller="Conta" asp-action="Editar">
             <input type="hidden" asp-for="Id">
+
+            <div asp-validation-summary="All" class="text-danger"></div>
 
             <div class="row g-2 align-items-center p-1">
                 <div class="col-auto">
@@ -32,14 +35,6 @@
                 </div>
                 <div class="col-auto form-control">
                     <input type="number" asp-for="NumeroConta" class="rounded border-1 w-50 fs-5">
-                </div>
-            </div>
-            <div class="row g-2 align-items-center p-1">
-                <div class="col-auto">
-                    <label asp-for="Saldo" class="col-form-label fs-5 text-primary">Saldo Inicial:</label>
-                </div>
-                <div class="col-auto form-control">
-                    <input type="number" asp-for="Saldo" class="rounded border-1 w-50 fs-5">
                 </div>
             </div>
             <div class="d-flex justify-content-between align-items-center w-100 p-2 mt-4">
