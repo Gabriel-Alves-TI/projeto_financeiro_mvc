@@ -6,7 +6,7 @@ services:
         container_name: financeiro_db
         environment:
             - ACCEPT_EULA=Y
-            - SA_PASSWORD=MinhaSenhaSegura123!
+            - SA_PASSWORD=root
         ports:
             - "1433:1433"
         networks:
@@ -24,6 +24,7 @@ services:
         environment:
             - ASPNETCORE_ENVIRONMENT=Production
             - ASPNETCORE_URLS=http://+:80
+            - DefaultConnection=Server=${DB_SERVER};Database=${DB_NAME};User Id=${DB_USER};Password=${DB_PASSWORD};TrustServerCertificate=True;
         ports:
             - "5000:80"
         networks:

@@ -30,7 +30,7 @@
     
 
     <div class="container w-50">
-    <table class="table table-primary table-hover">
+    <table class="table table-primary table-hover border border-2">
         <thead>
             <tr>
                 <th scope="col">Banco</th>
@@ -42,7 +42,7 @@
         </thead>
         <tbody>
 
-            @if (Model != null)
+            @if (Model.Any())
             {
                 @foreach(var conta in Model)
                 {
@@ -57,6 +57,14 @@
                     </td>
                 </tr>
                 }
+            }
+            else
+            {
+                <tr class="table-custom text-dark">
+                    <td colspan="7">
+                        <h5 class="text-primary text-center">Nenhuma conta encontrada!</h5>
+                    </td>
+                </tr>
             }
             
         </tbody>
