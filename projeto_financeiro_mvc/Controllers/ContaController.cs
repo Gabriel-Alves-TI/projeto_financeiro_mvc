@@ -9,24 +9,45 @@ using Microsoft.IdentityModel.Tokens;
 using projeto_financeiro_mvc.Data;
 using projeto_financeiro_mvc.DTOs;
 using projeto_financeiro_mvc.Models;
+using projeto_financeiro_mvc.Services.SessaoService;
 
 namespace projeto_financeiro_mvc.Controllers
 {
     public class ContaController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly ISessaoInterface _sessaoInterface;
 
-        public ContaController(AppDbContext context)
+        public ContaController(AppDbContext context, ISessaoInterface sessaoInterface)
         {
             _context = context;
+            _sessaoInterface = sessaoInterface;
         }
 
         public IActionResult ListarContas()
         {
-            ViewData["Title"] = "Contas";
-            IEnumerable<ContaModel> contas = _context.Contas;
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
 
-            return View(contas);
+            IQueryable<ContaModel> contas;
+
+            if (usuario.GrupoFamiliarId.HasValue)
+            {
+                // Retorna todas as contas do grupo
+                contas = _context.Contas
+                    .Where(c => c.GrupoFamiliarId == usuario.GrupoFamiliarId);
+            }
+            else
+            {
+                // Usuário individual, retorna apenas as dele
+                contas = _context.Contas
+                    .Where(c => c.UsuarioId == usuario.Id);
+            }
+
+            return View(contas.ToList());
         }
 
         public IActionResult Cadastrar()
@@ -35,16 +56,25 @@ namespace projeto_financeiro_mvc.Controllers
         }
 
         [HttpPost]
-        public IActionResult Cadastrar(ContaDTO contaDTO)
+        public IActionResult Cadastrar(ContaDTO contaDto)
         {
             if (ModelState.IsValid)
             {
+                var usuario = _sessaoInterface.BuscarSessao();
+                if (usuario == null)
+                {
+                    return RedirectToAction("Index", "Login");
+                }
+
                 var conta = new ContaModel()
                 {
-                    Banco = contaDTO.Banco,
-                    Agencia = contaDTO.Agencia,
-                    NumeroConta = contaDTO.NumeroConta,
-                    Saldo = contaDTO.SaldoInicial ?? 0,
+                    Banco = contaDto.Banco,
+                    Agencia = contaDto.Agencia,
+                    NumeroConta = contaDto.NumeroConta,
+                    Saldo = contaDto.SaldoInicial ?? 0,
+
+                    UsuarioId = usuario.Id,
+                    GrupoFamiliarId = usuario.GrupoFamiliarId
                 };
 
                 _context.Contas.Add(conta);
@@ -53,18 +83,41 @@ namespace projeto_financeiro_mvc.Controllers
                 return RedirectToAction("ListarContas");
             }
 
-            return View();
+            return View(contaDto);
         }
 
         public IActionResult Editar(int? id)
         {
-            var conta = _context.Contas.FirstOrDefault(c => c.Id == id);
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            ContaModel conta;
+
+            if (usuario.GrupoFamiliarId.HasValue)
+            {
+                conta = _context.Contas
+                    .FirstOrDefault(c => c.Id == id && c.GrupoFamiliarId == usuario.GrupoFamiliarId);
+            }
+            else
+            {
+                conta = _context.Contas
+                    .FirstOrDefault(c => c.Id == id && c.UsuarioId == usuario.Id);
+            }
+
             if (conta == null)
             {
                 return NotFound();
             }
 
-            ContaDTO contaDto = new ContaDTO
+            var contaDto = new ContaDTO
             {
                 Banco = conta.Banco,
                 Agencia = conta.Agencia,
@@ -78,18 +131,36 @@ namespace projeto_financeiro_mvc.Controllers
         [HttpPost]
         public IActionResult Editar(ContaDTO contaDto)
         {
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(contaDto);
             }
 
-            var conta = _context.Contas.Find(contaDto.Id);
+            ContaModel conta;
+
+            if (usuario.GrupoFamiliarId.HasValue)
+            {
+                conta = _context.Contas
+                    .FirstOrDefault(c => c.Id == contaDto.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId);
+            }
+            else
+            {
+                conta = _context.Contas
+                    .FirstOrDefault(c => c.Id == contaDto.Id && c.UsuarioId == usuario.Id);
+            }
+
             if (conta == null)
             {
                 return NotFound();
             }
 
-            if (conta.Banco.IsNullOrEmpty() || conta.Agencia.IsNullOrEmpty() || conta.NumeroConta.IsNullOrEmpty())
+            if (string.IsNullOrEmpty(contaDto.Banco) || string.IsNullOrEmpty(contaDto.Agencia) || string.IsNullOrEmpty(contaDto.NumeroConta))
             {
                 return View(contaDto);
             }
@@ -102,17 +173,38 @@ namespace projeto_financeiro_mvc.Controllers
             _context.SaveChanges();
 
             TempData["MensagemSucesso"] = "Conta atualizada com sucesso!";
-            return View(conta);
+
+            var contaDtoAtualizado = new ContaDTO
+            {
+                Id = conta.Id,
+                Banco = conta.Banco,
+                Agencia = conta.Agencia,
+                NumeroConta = conta.NumeroConta,
+                SaldoInicial = conta.Saldo
+            };
+
+            return RedirectToAction("ListarContas");
         }
 
         public IActionResult Excluir(int? id)
         {
-            if (id == null || id == 0)
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
             {
-                return NotFound();
+                return RedirectToAction("Index", "Login");
             }
 
-            ContaModel conta = _context.Contas.FirstOrDefault(c => c.Id == id);
+            ContaModel conta;
+            if (usuario.GrupoFamiliarId.HasValue)
+            {
+                conta = _context.Contas
+                    .FirstOrDefault(c => c.Id == id && c.GrupoFamiliarId == usuario.GrupoFamiliarId);
+            }
+            else
+            {
+                conta = _context.Contas
+                    .FirstOrDefault(c => c.Id == id && c.UsuarioId == usuario.Id);
+            }
 
             if (conta == null)
             {
@@ -123,12 +215,30 @@ namespace projeto_financeiro_mvc.Controllers
         }
 
         [HttpPost]
-        public IActionResult Excluir(ContaModel conta)
+        public IActionResult Excluir(int id)
         {
-            var contaId = _context.Contas.FirstOrDefault(c => c.Id == conta.Id);
-            if (contaId == null)
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
             {
-                return NotFound();
+                return RedirectToAction("Index", "Login");
+            }
+
+            ContaModel conta;
+            if (usuario.GrupoFamiliarId.HasValue)
+            {
+                conta = _context.Contas
+                    .FirstOrDefault(c => c.Id == id && c.GrupoFamiliarId == usuario.GrupoFamiliarId);
+            }
+            else
+            {
+                conta = _context.Contas
+                    .FirstOrDefault(c => c.Id == id && c.UsuarioId == usuario.Id);
+            }
+
+            if (conta == null)
+            {
+                TempData["MensagemErro"] = "Conta não encontrada ou você não tem permissão para excluir.";
+                return RedirectToAction("ListarContas");
             }
 
             var lancamentos = _context.Lancamentos.Where(l => l.ContaId == conta.Id);
@@ -138,7 +248,7 @@ namespace projeto_financeiro_mvc.Controllers
                 return RedirectToAction("ListarContas");
             }
 
-            _context.Contas.Remove(contaId);
+            _context.Contas.Remove(conta);
             _context.SaveChanges();
 
             TempData["MensagemSucesso"] = "Conta excluída com sucesso!";

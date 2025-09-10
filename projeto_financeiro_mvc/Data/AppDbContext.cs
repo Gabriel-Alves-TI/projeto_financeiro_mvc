@@ -18,6 +18,7 @@ namespace projeto_financeiro_mvc.Data
         public DbSet<TransferenciaModel> Transferencias { get; set; }
         public DbSet<RecorrenteModel> Recorrentes { get; set; }
         public DbSet<UsuarioModel> Usuarios { get; set; }
+        public DbSet<GrupoFamiliarModel> GrupoFamiliar { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

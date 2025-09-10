@@ -11,5 +11,11 @@ namespace projeto_financeiro_mvc.Models
         public string? Descricao { get; set; }
         public double Valor { get; set; }
         public string Categoria { get; set; }
+
+        //Relacionamentos
+        public int UsuarioId { get; set; }
+        public UsuarioModel Usuario { get; set; }
+        public int? GrupoFamiliarId { get; set; }
+        public GrupoFamiliarModel GrupoFamiliar { get; set; }
     }
 }

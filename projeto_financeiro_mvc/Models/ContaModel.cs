@@ -12,6 +12,11 @@ namespace projeto_financeiro_mvc.Models
         public string Agencia { get; set; }
         public string NumeroConta { get; set; }
         public double Saldo { get; set; }
+
+        public int UsuarioId { get; set; }
+        public UsuarioModel Usuario { get; set; }
+        public int? GrupoFamiliarId { get; set; }
+        public GrupoFamiliarModel GrupoFamiliar { get; set; }
         public ICollection<LancamentoModel> Lancamentos { get; set; }
     }
 }

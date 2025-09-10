@@ -13,5 +13,10 @@ namespace projeto_financeiro_mvc.Models
         public string Email { get; set; }
         public byte[] SenhaHash { get; set; }
         public byte[] SenhaSalt { get; set; }
+
+        public int? GrupoFamiliarId { get; set; }
+        public GrupoFamiliarModel GrupoFamiliar { get; set; }
+        public ICollection<ContaModel> Contas { get; set; }
+        public ICollection<LancamentoModel> Lancamentos { get; set; }
     }
 }
