@@ -53,17 +53,17 @@
 
                     var receitaMesAtual = listaReceitas.Where(l => l.Data.Month == dataAtual.Month).ToList();
 
-                    double valorMesAnterior = receitaMesAnterior.Sum(x => x.Valor);
-                    double valorMesAtual = receitaMesAtual.Sum(x => x.Valor);
+                    double valorReceitaMesAnterior = receitaMesAnterior.Sum(x => x.Valor);
+                    double valorReceitaMesAtual = receitaMesAtual.Sum(x => x.Valor);
 
                     double comparativo = 0;
 
-                    if (valorMesAnterior > 0)
+                    if (valorReceitaMesAnterior > 0)
                     {
-                        comparativo = (valorMesAtual / valorMesAnterior)* 100;
+                        comparativo = (valorReceitaMesAtual / valorReceitaMesAnterior)* 100;
                     }
 
-                    <p class="card-text fw-medium fs-3 mt-4 text-dark valor-card">R$@valorMesAtual.ToString("N2")</p>
+                    <p class="card-text fw-medium fs-3 mt-4 text-dark valor-card">R$@valorReceitaMesAtual.ToString("N2")</p>
                     <p class="card-text fw-light text-secondary texto-card">@comparativo.ToString("N2")% - Comparado ao mês anterior</p>
                 }
             </div>
@@ -79,27 +79,47 @@
                 @{
                     var lancamentos = Model?.Lancamentos
                         .Where(l => l.Tipo == TipoLancamento.Despesa && l.Pago == true && l.Categoria != "SaldoInicial")
-                        .Select(l => new { l.Tipo, l.Valor })
+                        .Select(l => new { l.Tipo, l.Data, l.Valor })
                         .ToList();
 
                     var recorrentes = Model?.Recorrentes
                         .Where(r => r.Tipo == TipoLancamento.Despesa && r.Pago == true)
-                        .Select(l => new { l.Tipo, l.Valor })
+                        .Select(l => new { l.Tipo, l.Data, l.Valor })
                         .ToList();
 
-                    var lista = lancamentos.Concat(recorrentes);
+                    var listaDespesas = lancamentos.Concat(recorrentes);
 
                     double despesa = 0;
 
-                    foreach(var itemLista in lista)
+                    foreach(var itemLista in listaDespesas)
                     {
-
                         despesa += itemLista.Valor;
-
                     }
+
+                    var lancDespesaMesAnterior = Model?.Lancamentos
+                        .Where(l => l.Data.Month == mesAnterior && l.Tipo == TipoLancamento.Despesa && l.Pago == true && l.Categoria != "SaldoInicial")
+                        .Select(l => new { l.Data, l.Tipo, l.Valor })
+                        .ToList();
+                    
+                    var recDespesaMesAnterior = Model?.Recorrentes
+                        .Where(r => r.Data.Month == mesAnterior && r.Tipo == TipoLancamento.Despesa && r.Pago == true)
+                        .Select(r => new { r.Data, r.Tipo, r.Valor })
+                        .ToList();
+                    
+                    var despesasMesAnterior = lancDespesaMesAnterior.Concat(recDespesaMesAnterior);
+                    var despesasMesAtual = listaDespesas.Where(d => d.Data.Month == dataAtual.Month);
+
+                    double valorDespesasMesAnterior = despesasMesAnterior.Sum(x => x.Valor);
+                    double valorDespesasMesAtual = despesasMesAtual.Sum(x => x.Valor);
+
+                    if (valorDespesasMesAnterior > 0)
+                    {
+                        comparativo = (valorDespesasMesAtual / valorDespesasMesAnterior) *  100;
+                    }
+
                     <p class="card-text fw-medium fs-3 mt-4 text-dark valor-card">R$@despesa.ToString("N2")</p>
+                    <p class="card-text fw-light text-secondary texto-card">@comparativo.ToString("N2")% - Comparado ao mês anterior</p>
                 }
-                <p class="card-text fw-light text-secondary texto-card">Comparado ao mês anterior</p>
             </div>
         </div>
     </div>

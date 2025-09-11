@@ -33,17 +33,19 @@ namespace projeto_financeiro_mvc.Controllers
             }
 
             var lancamentos = _context.Lancamentos
-                .Where(l => l.Categoria != "Saldo Inicial")
+                .Where(l => l.UsuarioId == usuario.Id && l.GrupoFamiliarId == usuario.GrupoFamiliarId && l.Categoria != "Saldo Inicial")
                 .Include(lanc => lanc.Conta)
                 .OrderBy(lanc => lanc.Data)
                 .ToList();
             
             var recorrentes = _context.Recorrentes
+                .Where(l => l.UsuarioId == usuario.Id && l.GrupoFamiliarId == usuario.GrupoFamiliarId)
                 .Include(r => r.Conta)
                 .OrderBy(r => r.Data)
                 .ToList();
 
             var contas = _context.Contas
+                .Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId)
                 .ToList();
 
             var (inicioSemana, fimSemana) = GetIntervaloSemana(DateTime.Today);
