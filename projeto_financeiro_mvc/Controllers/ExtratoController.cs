@@ -34,12 +34,12 @@ namespace projeto_financeiro_mvc.Controllers
 
             var listaContas = new List<ContaModel>();
 
-            var contas = _context.Contas.ToList();
+            var contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList();
 
             var movimentos = new List<ExtratoViewModel>();
  
             movimentos.AddRange(_context.Lancamentos
-                .Where(l => l.Pago == true)
+                .Where(l => l.UsuarioId == usuario.Id && l.GrupoFamiliarId == usuario.GrupoFamiliarId && l.Pago == true)
                 .Select(l => new ExtratoViewModel
                 {
                     Id = l.Id,
@@ -54,7 +54,7 @@ namespace projeto_financeiro_mvc.Controllers
                 }));
 
             movimentos.AddRange(_context.Recorrentes
-                .Where(r => r.Pago == true)
+                .Where(r => r.UsuarioId == usuario.Id && r.GrupoFamiliarId == usuario.GrupoFamiliarId && r.Pago == true)
                 .Select(r => new ExtratoViewModel
                 {
                     Id = r.Id,
@@ -68,7 +68,9 @@ namespace projeto_financeiro_mvc.Controllers
                     Origem = "Recorrente"
                 }));
 
-            movimentos.AddRange(_context.Transferencias.Select(t => new ExtratoViewModel
+            movimentos.AddRange(_context.Transferencias
+                .Where(t => t.UsuarioId == usuario.Id && t.GrupoFamiliarId == usuario.GrupoFamiliarId)
+                .Select(t => new ExtratoViewModel
             {
                 Id = t.Id,
                 Data = t.DataTransferencia,
