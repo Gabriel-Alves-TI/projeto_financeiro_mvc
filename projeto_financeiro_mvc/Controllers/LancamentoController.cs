@@ -26,31 +26,70 @@ namespace projeto_financeiro_mvc.Controllers
             _sessaoInterface = sessaoInterface;
         }
         [HttpGet]
-        public IActionResult Index(DateTime? dataInicial, DateTime? dataFinal)
+        public IActionResult Index(DateTime? dataInicial, DateTime? dataFinal, string? tipo, string? descricao, string? categoria, int? contaId, double? valor)
         {
             var usuario = _sessaoInterface.BuscarSessao();
             if (usuario == null)
             {
                 return RedirectToAction("Index", "Login");
             }
-
-            var lancamentos = _context.Lancamentos
-                .Include(l => l.Conta)
-                .OrderBy(l => l.Data)
+            
+            var contas = _context.Contas
+                .Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId)
                 .ToList();
 
-            var transferencias = _context.Transferencias
-                .Include(t => t.ContaOrigem)
-                .Include(t => t.ContaDestino)
-                .OrderBy(t => t.DataTransferencia)
-                .ToList();
+            var movimentos = new List<Lancamentos>();
 
-            var recorrentes = _context.Recorrentes
-                .Include(r => r.Conta)
-                .OrderBy(r => r.Data)
-                .ToList();
+            movimentos.AddRange(_context.Lancamentos
+                .Where(l => l.UsuarioId == usuario.Id && l.GrupoFamiliarId == usuario.GrupoFamiliarId)
+                .Select(l => new Lancamentos
+                {
+                    Id = l.Id,
+                    Data = l.Data,
+                    Descricao = l.Descricao,
+                    Tipo = l.Tipo,
+                    Valor = l.Valor,
+                    Categoria = l.Categoria,
+                    Pago = l.Pago,
+                    Conta = l.Conta.Banco,
+                    ContaId = l.ContaId,
+                    ContaDestino = null,
+                    Origem = "Lancamento"
+                }));
 
-            var contas = _context.Contas.ToList();
+            movimentos.AddRange(_context.Recorrentes
+                .Where(l => l.UsuarioId == usuario.Id && l.GrupoFamiliarId == usuario.GrupoFamiliarId)
+                .Select(r => new Lancamentos
+                {
+                    Id = r.Id,
+                    Data = r.Data,
+                    Descricao = r.Descricao,
+                    Tipo = r.Tipo,
+                    Valor = r.Valor,
+                    Categoria = r.Categoria,
+                    Pago = r.Pago,
+                    Conta = r.Conta.Banco,
+                    ContaId = r.ContaId,
+                    ContaDestino = null,
+                    Origem = "Recorrente"
+                }));
+
+            movimentos.AddRange(_context.Transferencias
+                .Where(l => l.UsuarioId == usuario.Id && l.GrupoFamiliarId == usuario.GrupoFamiliarId)
+                .Select(t => new Lancamentos
+                {
+                    Id = t.Id,
+                    Data = t.DataTransferencia,
+                    Descricao = $"Transferência {t.ContaOrigem.Banco} -> {t.ContaDestino.Banco}",
+                    Tipo = t.Tipo,
+                    Valor = t.Valor,
+                    Categoria = t.Categoria,
+                    Pago = true,
+                    Conta = t.ContaOrigem.Banco,
+                    ContaId = t.ContaOrigemId,
+                    ContaDestino = t.ContaDestino.Banco,
+                    Origem = "Transferencia"
+                }));
 
             if (!dataInicial.HasValue)
             {
@@ -60,18 +99,32 @@ namespace projeto_financeiro_mvc.Controllers
             {
                 dataFinal = dataInicial.Value.AddMonths(1).AddDays(-1);
             }
-
-            lancamentos = lancamentos.Where(l => l.Data >= dataInicial.Value && l.Data <= dataFinal.Value).ToList();
-
-            transferencias = transferencias.Where(t => t.DataTransferencia >= dataInicial.Value && t.DataTransferencia <= dataFinal.Value).ToList();
-
-            recorrentes = recorrentes.Where(r => r.Data >= dataInicial.Value && r.Data <= dataFinal.Value).ToList();
-
-            var viewModel = new MovimentosFinanceirosViewModel
+            if (!string.IsNullOrEmpty(tipo))
             {
-                Lancamentos = lancamentos,
-                Transferencias = transferencias,
-                Recorrentes = recorrentes,
+                movimentos = movimentos.Where(m => m.Tipo.ToString() == tipo).ToList();
+            }
+            if (!string.IsNullOrEmpty(descricao))
+            {
+                movimentos = movimentos.Where(m => m.Descricao.Equals(descricao, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            if (!string.IsNullOrEmpty(categoria))
+            {
+                movimentos = movimentos.Where(m => m.Categoria.Equals(categoria, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            if (contaId.HasValue)
+            {
+                movimentos = movimentos.Where(m => m.ContaId == contaId.Value).ToList();
+            }
+            if (valor.HasValue)
+            {
+                movimentos = movimentos.Where(m => m.Valor == valor.Value).ToList();
+            }
+
+            movimentos = movimentos.Where(l => l.Data >= dataInicial.Value && l.Data <= dataFinal.Value).ToList();
+
+            var viewModel = new ListLancamentosViewModel
+            {
+                Movimentos = movimentos.OrderByDescending(m => m.Data).ToList(),
 
                 DataInicial = dataInicial,
                 DataFinal = dataFinal,
@@ -83,6 +136,12 @@ namespace projeto_financeiro_mvc.Controllers
 
         public IActionResult Cadastrar()
         {
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
             var viewModel = new LancamentoViewModel
             {
                 Lancamento = new LancamentoDTO()
@@ -90,7 +149,7 @@ namespace projeto_financeiro_mvc.Controllers
                     Data = DateTime.Today,
                     Previsao = DateTime.Today
                 },
-                Contas = _context.Contas.ToList(),
+                Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList()
             };
 
             return View(viewModel);
@@ -99,6 +158,12 @@ namespace projeto_financeiro_mvc.Controllers
         [HttpPost]
         public IActionResult Cadastrar(LancamentoViewModel viewModel)
         {
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
             Console.WriteLine("ContaId recebido: " + viewModel.Lancamento.ContaId);
             foreach (var erro in ModelState.Values.SelectMany(v => v.Errors))
             {
@@ -167,7 +232,10 @@ namespace projeto_financeiro_mvc.Controllers
                         Previsao = viewModel.Lancamento.Previsao,
                         Parcelas = viewModel.Lancamento.Parcelas,
                         Pago = true,
-                        ContaId = viewModel.Lancamento.ContaId
+                        ContaId = viewModel.Lancamento.ContaId,
+
+                        UsuarioId = usuario.Id,
+                        GrupoFamiliarId = usuario.GrupoFamiliarId,
                     };
 
                     _context.Contas.Update(conta);
@@ -192,7 +260,10 @@ namespace projeto_financeiro_mvc.Controllers
                         Previsao = viewModel.Lancamento.Previsao,
                         Parcelas = viewModel.Lancamento.Parcelas,
                         Pago = false,
-                        ContaId = viewModel.Lancamento.ContaId
+                        ContaId = viewModel.Lancamento.ContaId,
+
+                        UsuarioId = usuario.Id,
+                        GrupoFamiliarId = usuario.GrupoFamiliarId,
                     };
 
                     _context.Lancamentos.Add(lancamento);
@@ -221,7 +292,10 @@ namespace projeto_financeiro_mvc.Controllers
                             Previsao = viewModel.Lancamento.Previsao,
                             Parcelas = viewModel.Lancamento.Parcelas,
                             Pago = false,
-                            ContaId = viewModel.Lancamento.ContaId
+                            ContaId = viewModel.Lancamento.ContaId,
+
+                            UsuarioId = usuario.Id,
+                            GrupoFamiliarId = usuario.GrupoFamiliarId,
                         };
 
                         listaLancamentos.Add(lancamento);
@@ -243,7 +317,15 @@ namespace projeto_financeiro_mvc.Controllers
 
         public IActionResult Editar(int? id)
         {
-            var lancamento = _context.Lancamentos.FirstOrDefault(lanc => lanc.Id == id);
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            var lancamento = _context.Lancamentos
+                .Where(l => l.UsuarioId == usuario.Id && l.GrupoFamiliarId == usuario.GrupoFamiliarId)
+                .FirstOrDefault(lanc => lanc.Id == id);
             if (lancamento == null)
             {
                 return NotFound();
@@ -264,7 +346,7 @@ namespace projeto_financeiro_mvc.Controllers
                     Pago = lancamento.Pago,
                     ContaId = lancamento.ContaId
                 },
-                Contas = _context.Contas.ToList()
+                Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id).ToList()
             };
 
             return View(viewModel);
@@ -273,20 +355,27 @@ namespace projeto_financeiro_mvc.Controllers
         [HttpPost]
         public IActionResult Editar(LancamentoViewModel viewModel)
         {
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
             if (ModelState.IsValid)
             {
-                var conta = _context.Contas.Find(viewModel.Lancamento.ContaId);
-                if (conta == null)
-                {
-                    TempData["MensagemErro"] = "Conta não localizada.";
-                    return NotFound(viewModel);
-                }
-
-                var lancamento = _context.Lancamentos.Find(viewModel.Lancamento.Id);
+                var lancamento = _context.Lancamentos
+                    .FirstOrDefault(l => l.UsuarioId == usuario.Id && l.Id == viewModel.Lancamento.Id);
                 if (lancamento == null)
                 {
                     TempData["MensagemErro"] = "Lançamento não encontrado.";
                     return NotFound(viewModel);
+                }
+
+                if (viewModel.Lancamento.Pago == true && viewModel.Lancamento.ContaId == null)
+                {
+                    ModelState.AddModelError("", "Não é possível realizar um pagamento sem uma conta selecionada!");
+                    viewModel.Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id).ToList();
+                    return View(viewModel);
                 }
 
                 bool pagoAntes = lancamento.Pago;
@@ -333,11 +422,11 @@ namespace projeto_financeiro_mvc.Controllers
                         {
                             if (tipoAntes == TipoLancamento.Receita)
                             {
-                                conta.Saldo -= valorAntes;
+                                contaAntiga.Saldo -= valorAntes;
                             }
                             if (tipoAntes == TipoLancamento.Despesa)
                             {
-                                conta.Saldo += valorAntes;
+                                contaAntiga.Saldo += valorAntes;
                             }
 
                             _context.Contas.Update(contaAntiga);
@@ -348,11 +437,11 @@ namespace projeto_financeiro_mvc.Controllers
                     {
                         if (viewModel.Lancamento.Tipo == TipoLancamento.Receita)
                         {
-                            conta.Saldo += viewModel.Lancamento.Valor;
+                            contaNova.Saldo += viewModel.Lancamento.Valor;
                         }
                         if (viewModel.Lancamento.Tipo == TipoLancamento.Despesa)
                         {
-                            conta.Saldo -= viewModel.Lancamento.Valor;
+                            contaNova.Saldo -= viewModel.Lancamento.Valor;
                         }
 
                         _context.Contas.Update(contaNova);
@@ -369,15 +458,13 @@ namespace projeto_financeiro_mvc.Controllers
                 lancamento.Pago = viewModel.Lancamento.Pago;
                 lancamento.ContaId = viewModel.Lancamento.ContaId;
 
-                _context.Contas.Update(conta);
-
                 _context.Lancamentos.Update(lancamento);
                 _context.SaveChanges();
 
                 TempData["MensagemSucesso"] = "Lançamento atualizado com sucesso!";
                 return RedirectToAction("Index", "Lancamento");
             }
-            viewModel.Contas = _context.Contas.ToList();
+            viewModel.Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList();
             return View(viewModel);
         }
 
@@ -422,9 +509,25 @@ namespace projeto_financeiro_mvc.Controllers
 
         public IActionResult Excluir(int? id)
         {
-            var lancamento = _context.Lancamentos
-                .Include(l => l.Conta)
-                .FirstOrDefault(l => l.Id == id);
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            LancamentoModel lancamento;
+            if (usuario.GrupoFamiliarId.HasValue)
+            {
+                lancamento = _context.Lancamentos
+                    .Include(l => l.Conta)
+                    .FirstOrDefault(l => l.Id == id && l.GrupoFamiliarId == usuario.GrupoFamiliarId);
+            }
+            else
+            {
+                lancamento = _context.Lancamentos
+                    .Include(l => l.Conta)
+                    .FirstOrDefault(l => l.Id == id && l.UsuarioId == usuario.Id);
+            }
 
             if (lancamento == null)
             {
@@ -437,9 +540,15 @@ namespace projeto_financeiro_mvc.Controllers
         [HttpPost]
         public IActionResult Excluir(LancamentoModel lancamento)
         {
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
             var lancamentoDb = _context.Lancamentos
                 .Include(l => l.Conta)
-                .FirstOrDefault(l => l.Id == lancamento.Id);
+                .FirstOrDefault(l => l.UsuarioId == usuario.Id && l.GrupoFamiliarId == usuario.GrupoFamiliarId && l.Id == lancamento.Id);
 
             if (lancamentoDb == null)
             {

@@ -1,4 +1,4 @@
-@model projeto_financeiro_mvc.ViewModels.MovimentosFinanceirosViewModel
+@model projeto_financeiro_mvc.ViewModels.ListLancamentosViewModel
 @{
     ViewData["Title"] = "Lançamentos";
 }
@@ -51,10 +51,10 @@
                                 <label for="selectTipo" class="col-form-label text-primary">Tipo:</label>
                             </div>
                             <div class="col-auto">
-                                <select class="form-select-sm" id="tipo">
+                                <select class="form-select-sm" id="tipo" asp-for="Tipo">
                                     <option value="" selected>Selecione...</option>
-                                    <option value="receita" selected="@(Model.Tipo == "receita")">Receita</option>
-                                    <option value="despesa" selected="@(Model.Tipo == "despesa")">Despesa</option>
+                                    <option value="Receita" selected="@(Model.Tipo == "Receita")">Receita</option>
+                                    <option value="Despesa" selected="@(Model.Tipo == "Despesa")">Despesa</option>
                                 </select>
                             </div>
                         </div>
@@ -63,7 +63,7 @@
                                 <label for="selectCategoria" class="col-form-label text-primary">Categoria:</label>
                             </div>
                             <div class="col-auto">
-                            <select class="form-select-sm" id="categoria">
+                            <select class="form-select-sm" id="categoria" asp-for="Categoria">
                                     <option value="" selected>Selecione...</option>
                                     <option value="Água">Água</option>
                                     <option value="Alimentação VA">Alimentação VA</option>
@@ -101,7 +101,7 @@
                                 <label for="selectTipo" class="col-form-label text-primary">Descrição:</label>
                             </div>
                             <div class="col-auto">
-                                <input type="text">
+                                <input type="text" asp-for="Descricao">
                             </div>
                         </div>
                         <div class="row g-1 align-items-center p-1">
@@ -109,7 +109,7 @@
                                 <label for="selectTipo" class="col-form-label text-primary">Conta:</label>
                             </div>
                             <div class="col-auto">
-                                <select class="form-select-sm" id="conta">
+                                <select class="form-select-sm" id="conta" asp-for="ContaId">
                                     <option value="" selected>Selecione...</option>
                                     @{
                                         foreach (var conta in Model.Contas)
@@ -125,7 +125,7 @@
                                 <label for="selectCategoria" class="col-form-label text-primary">Valor:</label>
                             </div>
                             <div class="col-auto">
-                                <input type="text" style="max-width: 100px;" id="valorFiltro">
+                                <input type="text" style="max-width: 100px;" id="valorFiltro" asp-for="Valor">
                             </div>
                         </div>
 
@@ -141,18 +141,15 @@
 
                 <div class="container overflow-auto" style="max-height: 450px;" id="container_lancamentos">
                     @{
-                        var lancamentos = Model?.Lancamentos
-                            .ToList();
-                        
-                        var transferencias = Model?.Transferencias
-                            .ToList();
+                        var lancamentos = Model?.Movimentos.Where(l => l.Origem == "Lancamento").ToList();
 
-                        var recorrentes = Model?.Recorrentes
-                            .ToList();
+                        var recorrentes = Model?.Movimentos.Where(l => l.Origem == "Recorrente").ToList();
 
-                        var resultados = lancamentos.Any() || transferencias.Any() || recorrentes.Any();
+                        var transferencias = Model?.Movimentos.Where(l => l.Origem == "Transferencia").ToList();
 
-                        if (!resultados)
+                        var resultados = Model.Movimentos.ToList();
+
+                        if (!resultados.Any())
                         {
                             //QUANDO NÃO EXISTIR LANÇAMENTOS
                             <div class="d-flex align-items-center justify-content-center mt-4 p-2">
@@ -169,11 +166,11 @@
                                     
                                     <div class="d-flex flex-column flex-grow-1 p-0">
                                         <h5 class="card-title text-dark fs-6">@lanc.Descricao</h5>
-                                        <span class="card-text text-dark-emphasis" style="font-size: 12px;">@lanc.Data.ToString("dd/MM/yyyy - hh:mm")</span>
+                                        <span class="card-text text-dark-emphasis" style="font-size: 12px;">@lanc.Data.ToString("dd/MM/yyyy")</span>
                                     </div>
                                     @if (lanc.Pago == true)
                                     {
-                                        <h6 class="text-info m-0">@lanc.Conta.Banco</h6>
+                                        <h6 class="text-info m-0">@lanc.Conta</h6>
                                         <i class="bi bi-check-circle-fill fs-5 text-success-emphasis ms-1"></i>
                                     }
                                     <p class="text-danger fs-6 fw-bold mb-0 me-1"><i class="bi bi-dash"></i> R$@lanc.Valor.ToString("N2")</p>
@@ -189,11 +186,11 @@
                                     <i class="bi bi-arrow-up text-success text-success-emphasis ms-3 fs-5"></i>
                                     <div class="d-flex flex-column flex-grow-1 p-0">
                                         <h5 class="card-title text-dark fs-6">@lanc.Descricao</h5>
-                                        <span class="card-text text-dark-emphasis" style="font-size: 12px;">@lanc.Data.ToString("dd/MM/yyyy - hh:mm")</span>
+                                        <span class="card-text text-dark-emphasis" style="font-size: 12px;">@lanc.Data.ToString("dd/MM/yyyy")</span>
                                     </div>
                                     @if (lanc.Pago == true)
                                     {
-                                        <h6 class="text-info m-0">@lanc.Conta.Banco</h6>
+                                        <h6 class="text-info m-0">@lanc.Conta</h6>
                                         <i class="bi bi-check-circle-fill fs-5 text-success-emphasis ms-1"></i>
                                     }
                                     <p class="text-success text-success-emphasis fs-6 fw-bold mb-0 me-1"><i class="bi bi-plus"></i> R$@lanc.Valor.ToString("N2")</p>
@@ -206,27 +203,24 @@
                         }
                         foreach (var transf in transferencias)
                         {
-                            if (transf.Tipo == TipoLancamento.Transferencia)
-                            {
-                                <div class="card rounded rounded-3 border-1 border-info bg-info bg-opacity-25 d-flex flex-row align-items-center justify-content-between text-center mb-2 mt-2">
-                                    <i class="bi bi-arrow-down-up text-info text-info ms-3 fs-5"></i>
-                                    <div class="d-flex flex-column flex-grow-1 p-0">
-                                        <div class="d-flex align-items-center justify-content-center flex-row">
-                                            <i class="bi bi-caret-down-fill text-danger me-1"></i>
-                                            <h5 class="card-title text-dark fs-6 me-4">@transf.ContaOrigem.Banco</h5>
-                                            <h5 class="card-title text-dark fs-6 me-4">- @transf.Descricao -</h5>
-                                            <h5 class="card-title text-dark fs-6">@transf.ContaDestino.Banco</h5>
-                                            <i class="bi bi-caret-up-fill text-success ms-1"></i>
-                                        </div>
-                                        <span class="card-text text-dark-emphasis" style="font-size: 12px;">@transf.DataTransferencia.ToString("dd/MM/yyyy - hh:mm")</span>
+                            <div class="card rounded rounded-3 border-1 border-info bg-info bg-opacity-25 d-flex flex-row align-items-center justify-content-between text-center mb-2 mt-2">
+                                <i class="bi bi-arrow-down-up text-info text-info ms-3 fs-5"></i>
+                                <div class="d-flex flex-column flex-grow-1 p-0">
+                                    <div class="d-flex align-items-center justify-content-center flex-row">
+                                        <i class="bi bi-caret-down-fill text-danger me-1"></i>
+                                        <h5 class="card-title text-dark fs-6 me-4">@transf.Conta</h5>
+                                        <h5 class="card-title text-dark fs-6 me-4">- @transf.Descricao -</h5>
+                                        <h5 class="card-title text-dark fs-6">@transf.ContaDestino</h5>
+                                        <i class="bi bi-caret-up-fill text-success ms-1"></i>
                                     </div>
-                                    <p class="text-info fs-6 fw-bold mb-0 me-1"> R$@transf.Valor</p>
-                                    <div class="d-flex align-items-center justify-content-end ms-2 border-start border-2 border-dark" style="cursor: pointer">
-                                        <a asp-controller="Transferencia" asp-action="Editar" asp-route-id="@transf.Id" class="text-center ms-2 me-3 fw-bold"><i class="bi bi-pencil-square text-dark"></i></a>
-                                        <a asp-controller="Transferencia" asp-action="Excluir" asp-route-id="@transf.Id" class="text-center me-2"><i class="bi bi-x-square-fill text-danger"></i></a>
-                                    </div>
+                                    <span class="card-text text-dark-emphasis" style="font-size: 12px;">@transf.Data.ToString("dd/MM/yyyy")</span>
                                 </div>
-                            }
+                                <p class="text-info fs-6 fw-bold mb-0 me-1"> R$@transf.Valor</p>
+                                <div class="d-flex align-items-center justify-content-end ms-2 border-start border-2 border-dark" style="cursor: pointer">
+                                    <a asp-controller="Transferencia" asp-action="Editar" asp-route-id="@transf.Id" class="text-center ms-2 me-3 fw-bold"><i class="bi bi-pencil-square text-dark"></i></a>
+                                    <a asp-controller="Transferencia" asp-action="Excluir" asp-route-id="@transf.Id" class="text-center me-2"><i class="bi bi-x-square-fill text-danger"></i></a>
+                                </div>
+                            </div>
                         }
                         foreach (var recorrente in recorrentes)
                         {
@@ -313,11 +307,11 @@
                 
                 <div class="container overflow-auto" style="max-height: 450px;">
                     @{
-                        var lancamentosFiltrados = Model?.Lancamentos
+                        var lancamentosFiltrados = lancamentos
                             .Where(l => l.Data.Month == dataAtual.Month && l.Data > dataAtual && l.Pago == false)
                             .ToList();
                         
-                        var recorrentesFiltrados = Model?.Recorrentes
+                        var recorrentesFiltrados = recorrentes
                             .Where(r => r.Data.Month == dataAtual.Month && r.Data > dataAtual)
                             .ToList();
                         

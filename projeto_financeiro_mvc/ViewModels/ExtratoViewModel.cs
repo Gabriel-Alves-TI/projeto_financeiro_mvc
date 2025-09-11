@@ -25,7 +25,6 @@ namespace projeto_financeiro_mvc.ViewModels
         public List<ContaModel> Contas { get; set; }
 
         // Filtros
-
         public string? Tipo { get; set; }
         public string? Categoria { get; set; }
         public string? Descricao { set; get; }
