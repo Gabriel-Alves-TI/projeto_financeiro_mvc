@@ -5,13 +5,13 @@
 
 <h1 class="d-flex justify-content-center text-primary fw-bold mt-2">@ViewData["Title"]</h1>
 
-@Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
-
 <div class="container">
     <div class="card mb-3 rounded-3 border-" style="border-color: orange;">
         <form asp-controller="Lancamento" asp-action="Editar" method="post">
             <input type="hidden" asp-for="Lancamento.Id">
             <div class="card-body">
+                @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+
                 <div class="d-flex justify-content-between bg-primary bg-opacity-25 rounded">
                     <div class="row g-2 align-items-center p-2">
                         <div class="col-auto">

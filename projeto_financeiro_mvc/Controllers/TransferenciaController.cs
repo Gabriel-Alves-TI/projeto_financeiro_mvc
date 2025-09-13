@@ -27,6 +27,12 @@ namespace projeto_financeiro_mvc.Controllers
 
         public IActionResult Transferencia()
         {
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
             var viewModel = new TransferenciaViewModel
             {
                 Transferencia = new TransferenciaDTO()
@@ -34,7 +40,7 @@ namespace projeto_financeiro_mvc.Controllers
                     DataTransferencia = DateTime.Today,
                     DataCompensacao = DateTime.Today
                 },
-                Contas = _context.Contas.ToList(),
+                Contas = _context.Contas.Where(c => c.GrupoFamiliarId == usuario.GrupoFamiliarId && c.UsuarioId == usuario.Id).ToList(),
             };
             return View(viewModel);
         }
@@ -42,6 +48,14 @@ namespace projeto_financeiro_mvc.Controllers
         [HttpPost]
         public IActionResult Transferencia(TransferenciaViewModel viewModel)
         {
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            var contas = _context.Contas.Where(c => c.GrupoFamiliarId == usuario.GrupoFamiliarId && c.UsuarioId == usuario.Id).ToList();
+
             foreach (var erro in ModelState.Values.SelectMany(v => v.Errors))
             {
                 Console.WriteLine("===> ModelState com erros: " + erro.ErrorMessage);
@@ -55,7 +69,7 @@ namespace projeto_financeiro_mvc.Controllers
                     Console.WriteLine(erro.ErrorMessage);
                 }
 
-                viewModel.Contas = _context.Contas.ToList();
+                viewModel.Contas = contas;
                 return View(viewModel);
             }
 
@@ -73,9 +87,17 @@ namespace projeto_financeiro_mvc.Controllers
 
                 if (contaOrigem.Saldo < viewModel.Transferencia.Valor)
                 {
-                    Console.WriteLine("Saldo Insuficiente");
                     ModelState.AddModelError("", "Saldo insuficiente na conta de origem.");
-                    viewModel.Contas = _context.Contas.ToList();
+
+                    viewModel.Contas = contas;
+                    return View(viewModel);
+                }
+
+                if (contaOrigem == contaDestino)
+                {
+                    ModelState.AddModelError("", "Conta origem ou destino não localizada.");
+
+                    viewModel.Contas = contas;
                     return View(viewModel);
                 }
 
@@ -103,7 +125,7 @@ namespace projeto_financeiro_mvc.Controllers
                 return RedirectToAction("Index", "Lancamento");
             }
 
-            viewModel.Contas = _context.Contas.ToList();
+            viewModel.Contas = contas;
             return View(viewModel);
         }
 

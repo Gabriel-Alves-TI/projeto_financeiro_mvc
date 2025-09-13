@@ -5,12 +5,12 @@
 
 <h1 class="d-flex justify-content-center text-info fw-bold mt-2">@ViewData["Title"]</h1>
 
-@Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
-
 <div class="container">
     <div class="card mb-3 rounded-3 border-info">
         <form asp-controller="Transferencia" asp-action="Transferencia" method="post">
             <div class="card-body">
+                @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+
                 <div class="d-flex justify-content-between bg-info bg-opacity-25 rounded">
                     <div class="row g-2 align-items-center p-2">
                         <div class="col-auto">

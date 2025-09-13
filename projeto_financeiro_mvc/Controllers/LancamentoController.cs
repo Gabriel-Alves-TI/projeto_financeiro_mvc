@@ -167,6 +167,8 @@ namespace projeto_financeiro_mvc.Controllers
                 return RedirectToAction("Index", "Login");
             }
 
+            var contas = _context.Contas.Where(c => c.GrupoFamiliarId == usuario.GrupoFamiliarId && c.UsuarioId == usuario.Id).ToList();
+
             Console.WriteLine("ContaId recebido: " + viewModel.Lancamento.ContaId);
             foreach (var erro in ModelState.Values.SelectMany(v => v.Errors))
             {
@@ -203,7 +205,8 @@ namespace projeto_financeiro_mvc.Controllers
                 if (viewModel.Lancamento.Parcelas <= 0)
                 {
                     TempData["MensagemErro"] = "Número de parcelas deve ser maior que 0.";
-                    viewModel.Contas = _context.Contas.ToList();
+
+                    viewModel.Contas = contas;
                     return View(viewModel);
                 }
 
@@ -314,7 +317,7 @@ namespace projeto_financeiro_mvc.Controllers
                 }
             }
 
-            viewModel.Contas = _context.Contas.ToList();
+            viewModel.Contas = contas;
             return View(viewModel);
         }
 
@@ -364,6 +367,8 @@ namespace projeto_financeiro_mvc.Controllers
                 return RedirectToAction("Index", "Login");
             }
 
+            var contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList();
+
             if (ModelState.IsValid)
             {
                 var lancamento = _context.Lancamentos
@@ -374,21 +379,23 @@ namespace projeto_financeiro_mvc.Controllers
 
                     ModelState.AddModelError("", "Lançamento recorrente não localizado.");
 
-                    viewModel.Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList();
+                    viewModel.Contas = contas;
                     return NotFound(viewModel);
                 }
 
                 if (viewModel.Lancamento.Pago == true && viewModel.Lancamento.ContaId == null)
                 {
                     ModelState.AddModelError("", "Não é possível realizar um pagamento sem uma conta selecionada!");
-                    viewModel.Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList();
+                    
+                    viewModel.Contas = contas;
                     return View(viewModel);
                 }
 
                 if (viewModel.Lancamento.Pago == true && viewModel.Lancamento.ContaId == null)
                 {
                     ModelState.AddModelError("", "Não é possível realizar um pagamento sem uma conta selecionada!");
-                    viewModel.Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id).ToList();
+
+                    viewModel.Contas = contas;
                     return View(viewModel);
                 }
 
@@ -436,48 +443,49 @@ namespace projeto_financeiro_mvc.Controllers
                 TempData["MensagemSucesso"] = "Lançamento atualizado com sucesso!";
                 return RedirectToAction("Index", "Lancamento");
             }
-            viewModel.Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList();
+
+            viewModel.Contas = contas;
             return View(viewModel);
         }
 
-        [HttpPost]
-        public IActionResult Pagar(LancamentoViewModel viewModel)
-        {
-            if (ModelState.IsValid)
-            {
-                var conta = _context.Contas.Find(viewModel.Lancamento.ContaId);
-                if (conta == null)
-                {
-                    TempData["MensagemErro"] = "Conta não localizada.";
-                    return NotFound(viewModel);
-                }
+        // [HttpPost]
+        // public IActionResult Pagar(LancamentoViewModel viewModel)
+        // {
+        //     if (ModelState.IsValid)
+        //     {
+        //         var conta = _context.Contas.Find(viewModel.Lancamento.ContaId);
+        //         if (conta == null)
+        //         {
+        //             TempData["MensagemErro"] = "Conta não localizada.";
+        //             return NotFound(viewModel);
+        //         }
 
-                var lancamento = _context.Lancamentos.Find(viewModel.Lancamento.Id);
-                if (lancamento == null)
-                {
-                    TempData["MensagemErro"] = "Lançamento não localizado.";
-                    return NotFound(viewModel);
-                }
+        //         var lancamento = _context.Lancamentos.Find(viewModel.Lancamento.Id);
+        //         if (lancamento == null)
+        //         {
+        //             TempData["MensagemErro"] = "Lançamento não localizado.";
+        //             return NotFound(viewModel);
+        //         }
 
-                lancamento.Pago = true;
+        //         lancamento.Pago = true;
 
-                if (viewModel.Lancamento.Tipo == TipoLancamento.Receita)
-                {
-                    conta.Saldo += viewModel.Lancamento.Valor;
-                }
-                if (viewModel.Lancamento.Tipo == TipoLancamento.Despesa)
-                {
-                    conta.Saldo -= viewModel.Lancamento.Valor;
-                }
+        //         if (viewModel.Lancamento.Tipo == TipoLancamento.Receita)
+        //         {
+        //             conta.Saldo += viewModel.Lancamento.Valor;
+        //         }
+        //         if (viewModel.Lancamento.Tipo == TipoLancamento.Despesa)
+        //         {
+        //             conta.Saldo -= viewModel.Lancamento.Valor;
+        //         }
 
-                _context.Contas.Update(conta);
-                _context.Lancamentos.Update(lancamento);
-                _context.SaveChanges();
-                return RedirectToAction("Index", "Lancamento");
-            }
+        //         _context.Contas.Update(conta);
+        //         _context.Lancamentos.Update(lancamento);
+        //         _context.SaveChanges();
+        //         return RedirectToAction("Index", "Lancamento");
+        //     }
 
-            return View(viewModel);
-        }
+        //     return View(viewModel);
+        // }
 
         public IActionResult Excluir(int? id)
         {
