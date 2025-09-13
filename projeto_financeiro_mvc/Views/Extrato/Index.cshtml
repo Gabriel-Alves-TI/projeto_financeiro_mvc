@@ -5,6 +5,22 @@
 
 <h1 class="d-flex justify-content-center text-primary fw-bold mt-2">@ViewData["Title"]</h1>
 
+<div class="container d-flex justify-content-center mt-2">
+    @if (TempData["MensagemSucesso"] != null)
+    {
+        <div class="alert alert-success text-white" role="alert">
+            @TempData["MensagemSucesso"]
+        </div>
+    }
+
+    @if (TempData["MensagemErro"] != null)
+    {
+        <div class="alert alert-danger text-light" role="alert">
+            @TempData["MensagemErro"]
+        </div>
+    }
+</div>
+
 <div class="container">
     <form asp-controller="Extrato" asp-action="Index" method="get">
         <div class="d-flex justify-content-between align-items-center flex-column border border-2 p-2 rounded rounded-2 mb-2">
@@ -82,7 +98,7 @@
                         <label for="selectTipo" class="col-form-label text-primary">Conta:</label>
                     </div>
                     <div class="col-auto">
-                        <select class="form-select-sm" id="conta">
+                        <select class="form-select-sm" id="conta" asp-for="ContaId">
                             <option value="" selected>Selecione...</option>
                             @{
                                 foreach (var conta in Model.Contas)
@@ -103,9 +119,9 @@
                 </div>
 
                 <div class="align-items-center ms-2 p-1">
-                    <button type="button" class="btn btn-sm btn-info btnLimparExtrato" id="btnLimpar" 
+                    <a type="button" asp-action="Index" asp-controller="Extrato" class="btn btn-sm btn-info btnLimparExtrato" id="btnLimpar" 
                     data-datainicial="@Model.DataInicial?.ToString("yyyy-MM-dd")"
-                    data-datafinal="@Model.DataFinal?.ToString("yyyy-MM-dd")">Limpar</button>
+                    data-datafinal="@Model.DataFinal?.ToString("yyyy-MM-dd")">Limpar</a>
                     <button type="submit" class="btn btn-sm btn-primary ms-2 btnFiltrarExtrato" id="btnFiltrar">Filtrar</button>  
                 </div>
             </div>    
