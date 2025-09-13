@@ -1,0 +1,87 @@
+@model TransferenciaModel
+@{
+    ViewData["Title"] = "Visualizar";
+}
+
+<h1 class="d-flex justify-content-center text-info fw-bold mt-2">@ViewData["Title"]</h1>
+
+<div class="container">
+    <div class="card mb-3 rounded-3 border-info">
+        <form asp-controller="Transferencia" asp-action="Visualizar" method="get">
+            <input type="hidden" asp-for="Id">
+            <div class="card-body">
+                <div class="d-flex justify-content-between bg-info bg-opacity-25 rounded">
+                    <div class="row g-2 align-items-center p-2">
+                        <div class="col-auto">
+                            <label class="col-form-label fs-4 text-primary">Valor:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="text" asp-for="Valor" class="rounded border-1 w-50 fs-5" style="height: 35px;" disabled>
+                        </div>
+                    </div>
+                    <div class="row g-2 align-items-center p-2">
+                        <div class="col-auto">
+                            <label asp-for="DataTransferencia" class="col-form-label fs-5 text-primary">Data Transferência:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="date" asp-for="DataTransferencia" class="rounded border-1 p-1" disabled>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between bg-info bg-opacity-25 rounded mt-1">
+                    <div class="row g-2 align-items-center p-2">
+                        <div class="col-auto">
+                            <label class="col-form-label fs-5 text-primary">Conta Origem:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="text" class="form-control bg-white text-danger" value="@Model.ContaOrigem.Banco" disabled>
+                        </div>
+                        <div class="col-auto">
+                            <label class="col-form-label fs-5 text-primary">Conta Destino:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="text" class="form-control bg-white text-success text-success-emphasis" value="@Model.ContaDestino.Banco" disabled>
+                        </div>
+                    </div>
+                    <div class="row g-2 align-items-center p-2">
+                        <div class="col-auto">
+                            <label for="selectTipo" asp-for="Tipo" class="col-form-label fs-5 text-primary">Tipo:</label>
+                        </div>
+                        <div class="col-auto">
+                            <select class="form-select border-2 bg-white text-primary" asp-for="Tipo" disabled>
+                                <option value="0">Receita</option>
+                                <option value="1">Despesa</option>
+                                <option value="2" selected>Transferencia</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row g-2 align-items-center p-2">
+                        <div class="col-auto">
+                            <label asp-for="DataCompensacao"  class="col-form-label fs-5 text-primary">Data Compensação:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="date" asp-for="DataCompensacao" class="rounded border-1 p-1" disabled>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-2 mb-1">
+                    <label asp-for="Descricao" class="form-label fs-5 text-primary">Descrição:</label>
+                    <input class="rounded border-1 p-1" asp-for="Descricao" name="Descricao" rows="1" style="max-height: 80px;" disabled>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <div class="row g-2 align-items-center p-2">
+                        <div class="col-auto">
+                            <label asp-for="Categoria" class="col-form-label fs-5 text-primary">Categoria:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input class="rounded border-1 p-1" style="width: 200px;" asp-for="Categoria" name="Categoria" disabled>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end align-items-end w-100 p-3">
+                <a asp-controller="Lancamento" asp-action="Index" class="btn btn-danger w-25" id="btn-cancelar">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>

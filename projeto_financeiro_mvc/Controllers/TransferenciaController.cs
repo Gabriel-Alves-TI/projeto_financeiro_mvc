@@ -95,7 +95,7 @@ namespace projeto_financeiro_mvc.Controllers
 
                 if (contaOrigem == contaDestino)
                 {
-                    ModelState.AddModelError("", "Conta origem ou destino não localizada.");
+                    ModelState.AddModelError("", "Selecione uma Conta Origem/Conta Destino diferente.");
 
                     viewModel.Contas = contas;
                     return View(viewModel);
@@ -110,7 +110,10 @@ namespace projeto_financeiro_mvc.Controllers
                     DataTransferencia = viewModel.Transferencia.DataTransferencia,
                     DataCompensacao = viewModel.Transferencia.DataCompensacao,
                     ContaOrigemId = viewModel.Transferencia.ContaOrigemId,
-                    ContaDestinoId = viewModel.Transferencia.ContaDestinoId
+                    ContaDestinoId = viewModel.Transferencia.ContaDestinoId,
+
+                    UsuarioId = usuario.Id,
+                    GrupoFamiliarId = usuario.GrupoFamiliarId,
                 };
 
                 contaOrigem.Saldo -= viewModel.Transferencia.Valor;
@@ -130,86 +133,37 @@ namespace projeto_financeiro_mvc.Controllers
         }
 
         [HttpGet]
-        public IActionResult Editar(int? id)
+        public IActionResult Visualizar(int? id)
         {
-            if (id == null)
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
             {
-                return NotFound();
+                return RedirectToAction("Index", "Login");
             }
 
-            var transferencia = _context.Transferencias.FirstOrDefault(t => t.Id == id);
+            TransferenciaModel transferencia;
+
+            if (usuario.GrupoFamiliarId.HasValue)
+            {
+                transferencia = _context.Transferencias
+                    .Include(t => t.ContaOrigem)
+                    .Include(t => t.ContaDestino)
+                    .FirstOrDefault(t => t.UsuarioId == usuario.Id && t.GrupoFamiliarId == usuario.GrupoFamiliarId && t.Id == id);
+            }
+            else
+            {
+                transferencia = _context.Transferencias
+                    .Include(t => t.ContaOrigem)
+                    .Include(t => t.ContaDestino)
+                    .FirstOrDefault(t => t.UsuarioId == usuario.Id && t.Id == id);
+            }
 
             if (transferencia == null)
             {
                 return NotFound();
             }
 
-            var viewModel = new TransferenciaViewModel
-            {
-                Transferencia = new TransferenciaDTO
-                {
-                    Id = transferencia.Id,
-                    Descricao = transferencia.Descricao,
-                    Valor = transferencia.Valor,
-                    Categoria = transferencia.Categoria,
-                    Tipo = transferencia.Tipo,
-                    DataTransferencia = transferencia.DataTransferencia,
-                    DataCompensacao = transferencia.DataCompensacao,
-                    ContaOrigemId = transferencia.ContaOrigemId,
-                    ContaDestinoId = transferencia.ContaDestinoId
-                },
-                Contas = _context.Contas.ToList()
-            };
-
-            return View(viewModel);
-        }
-
-        [HttpPost]//PRECISA CORRIGIR QUANDO ALTERAR CONTAS
-        public IActionResult Editar(TransferenciaViewModel viewModel)
-        {
-            if (!ModelState.IsValid)
-            {
-                TempData["MensagemErro"] = "Dados inválidos.";
-                return View(viewModel);
-            }
-
-            if (ModelState.IsValid)
-            {
-                var transferenciaBanco = _context.Transferencias
-                    .Include(t => t.ContaOrigem)
-                    .Include(t => t.ContaDestino)
-                    .FirstOrDefault(t => t.Id == viewModel.Transferencia.Id);
-
-                if (transferenciaBanco == null)
-                {
-                    ModelState.AddModelError("", "Transferência não localizada");
-                    return NotFound();
-                }
-
-                transferenciaBanco.ContaOrigem.Saldo += transferenciaBanco.Valor;
-                transferenciaBanco.ContaDestino.Saldo -= transferenciaBanco.Valor;
-
-                var novaContaOrigem = _context.Contas.First(c => c.Id == viewModel.Transferencia.ContaOrigemId);
-                var novaContaDestino = _context.Contas.First(c => c.Id == viewModel.Transferencia.ContaDestinoId);
-
-                novaContaOrigem.Saldo -= viewModel.Transferencia.Valor;
-                novaContaDestino.Saldo += viewModel.Transferencia.Valor;
-
-                transferenciaBanco.Descricao = viewModel.Transferencia.Descricao;
-                transferenciaBanco.Valor = viewModel.Transferencia.Valor;
-                transferenciaBanco.DataTransferencia = viewModel.Transferencia.DataTransferencia;
-                transferenciaBanco.DataCompensacao = viewModel.Transferencia.DataCompensacao;
-                transferenciaBanco.ContaOrigem = novaContaOrigem;
-                transferenciaBanco.ContaDestino = novaContaDestino;
-
-                _context.Transferencias.Update(transferenciaBanco);
-                _context.SaveChanges();
-
-                TempData["MensagemSucesso"] = "Transferência atualizada com sucesso!";
-                return RedirectToAction("Index", "Lancamento");
-            }
-
-            return View(viewModel);
+            return View(transferencia);
         }
 
         [HttpGet]

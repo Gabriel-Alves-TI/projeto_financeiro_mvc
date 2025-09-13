@@ -8,11 +8,11 @@ using Microsoft.Extensions.Logging;
 
 namespace projeto_financeiro_mvc.Views.Transferencia
 {
-    public class Editar : PageModel
+    public class Visualizar : PageModel
     {
-        private readonly ILogger<Editar> _logger;
+        private readonly ILogger<Visualizar> _logger;
 
-        public Editar(ILogger<Editar> logger)
+        public Visualizar(ILogger<Visualizar> logger)
         {
             _logger = logger;
         }
