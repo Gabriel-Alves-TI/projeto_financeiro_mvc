@@ -5,6 +5,8 @@
 
 <h1 class="d-flex justify-content-center text-primary fw-bold mt-2">@ViewData["Title"]</h1>
 
+@Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+
 <div class="container">
     <div class="card mb-3 rounded-3 border-warning">
         <form asp-controller="Recorrente" asp-action="Cadastrar" method="post">
@@ -24,7 +26,7 @@
                             </div>
                             <div class="col-auto">
                                 <input class="form-check-input bg-primary" asp-for="Recorrente.IsRecorrente" type="radio" name="Recorrente.IsRecorrente" id="fixoNao"
-                                    value="false">
+                                    value="false" disabled>
                                 <label class="form-check-label text-dark" for="fixoNao">
                                     Não
                                 </label>

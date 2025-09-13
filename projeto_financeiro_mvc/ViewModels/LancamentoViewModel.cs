@@ -30,6 +30,7 @@ namespace projeto_financeiro_mvc.ViewModels
         public string Conta { get; set; }
         public int? ContaId { get; set; }
         public string? ContaDestino { get; set; }
+        public bool? IsRecorrente { get; set; }
         public string Origem { get; set; } // Lancamento, Recorrente, Transferencia
     }
 

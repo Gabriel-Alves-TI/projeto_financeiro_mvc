@@ -28,14 +28,21 @@ namespace projeto_financeiro_mvc.Controllers
 
         public IActionResult Cadastrar()
         {
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
             var viewModel = new RecorrenteViewModel
             {
                 Recorrente = new RecorrenteDTO()
                 {
                     Data = DateTime.Today,
                     Previsao = DateTime.Today,
+                    IsRecorrente = true,
                 },
-                Contas = _context.Contas.ToList()
+                Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList()
             };
             
             return View(viewModel);
@@ -44,6 +51,19 @@ namespace projeto_financeiro_mvc.Controllers
         [HttpPost]
         public IActionResult Cadastrar(RecorrenteViewModel viewModel)
         {
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            if (viewModel.Recorrente.Valor == 0 || viewModel.Recorrente.Valor == null)
+            {
+                ModelState.AddModelError("", "Não é possível fazer um lançamento com o valor 0,00. Insira algum valor!");
+                viewModel.Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList();
+                return View(viewModel);
+            }
+
             if (!ModelState.IsValid)
             {
                 Console.WriteLine("===> ModelState com erros:");
@@ -52,7 +72,7 @@ namespace projeto_financeiro_mvc.Controllers
                     Console.WriteLine(erro.ErrorMessage);
                 }
 
-                viewModel.Contas = _context.Contas.ToList();
+                viewModel.Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList();
                 return View(viewModel);
             }
 
@@ -65,13 +85,15 @@ namespace projeto_financeiro_mvc.Controllers
                 Console.WriteLine($"Valor: {viewModel.Recorrente.Valor}");
                 Console.WriteLine($"Tipo: {viewModel.Recorrente.Tipo}");
                 Console.WriteLine($"Data: {viewModel.Recorrente.Data}");
+                Console.WriteLine($"Recorrente: {viewModel.Recorrente.IsRecorrente}");
                 Console.WriteLine($"Parcelas: {viewModel.Recorrente.Parcelas}");
                 Console.WriteLine($"Previsao: {viewModel.Recorrente.Previsao}");
 
                 var conta = _context.Contas.Find(viewModel.Recorrente.ContaId);
                 if (conta == null)
                 {
-                    TempData["MensagemErro"] = "Conta não localizada.";
+                    ModelState.AddModelError("", "Conta não localizada!");
+                    viewModel.Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList();
                     return View(viewModel);
                 }
 
@@ -88,7 +110,10 @@ namespace projeto_financeiro_mvc.Controllers
                         Parcelas = viewModel.Recorrente.Parcelas,
                         Pago = false,
                         IsRecorrente = viewModel.Recorrente.IsRecorrente,
-                        ContaId = viewModel.Recorrente.ContaId
+                        ContaId = viewModel.Recorrente.ContaId,
+
+                        UsuarioId = usuario.Id,
+                        GrupoFamiliarId = usuario.GrupoFamiliarId
                     };
 
                     _context.Recorrentes.Add(recorrente);
@@ -101,7 +126,7 @@ namespace projeto_financeiro_mvc.Controllers
                 var listaLancamentos = new List<RecorrenteModel>();
                 DateTime dataParcela = viewModel.Recorrente.Data;
 
-                if (viewModel.Recorrente.IsRecorrente == true &&  viewModel.Recorrente.Parcelas > 1)
+                if (viewModel.Recorrente.IsRecorrente == true && viewModel.Recorrente.Parcelas > 1)
                 {
                     for (int i = 1; i <= viewModel.Recorrente.Parcelas; i++)
                     {
@@ -116,7 +141,10 @@ namespace projeto_financeiro_mvc.Controllers
                             Parcelas = viewModel.Recorrente.Parcelas,
                             Pago = false,
                             IsRecorrente = viewModel.Recorrente.IsRecorrente,
-                            ContaId = viewModel.Recorrente.ContaId
+                            ContaId = viewModel.Recorrente.ContaId,
+
+                            UsuarioId = usuario.Id,
+                            GrupoFamiliarId = usuario.GrupoFamiliarId
                         };
 
                         listaLancamentos.Add(recorrente);
@@ -132,18 +160,26 @@ namespace projeto_financeiro_mvc.Controllers
                 }
             }
 
-            viewModel.Contas = _context.Contas.ToList();
+            ModelState.AddModelError("", "Ocorreu algum erro!");
+            viewModel.Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList();
             return View(viewModel);
         }
 
         [HttpGet]
         public IActionResult Editar(int? id)
         {
-            var recorrente = _context.Recorrentes.FirstOrDefault(r => r.Id == id);
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            var recorrente = _context.Recorrentes
+                .FirstOrDefault(r => r.UsuarioId == usuario.Id && r.GrupoFamiliarId == usuario.GrupoFamiliarId && r.Id == id);
             if (recorrente == null)
             {
-                TempData["MensagemErro"] = "Lançamento recorrente não localizado.";
-                return NotFound();
+                TempData["MensagemErro"] = "Lançamento recorrente não localizado!";
+                return RedirectToAction("Index", "Lancamento");
             }
 
             var viewModel = new RecorrenteViewModel
@@ -162,7 +198,7 @@ namespace projeto_financeiro_mvc.Controllers
                     IsRecorrente = recorrente.IsRecorrente,
                     ContaId = recorrente.ContaId
                 },
-                Contas = _context.Contas.ToList()
+                Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList()
             };
 
             return View(viewModel);
@@ -171,43 +207,64 @@ namespace projeto_financeiro_mvc.Controllers
         [HttpPost]
         public IActionResult Editar(RecorrenteViewModel viewModel)
         {
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
             if (ModelState.IsValid)
             {
-                var conta = _context.Contas.Find(viewModel.Recorrente.ContaId);
-                if (conta == null)
-                {
-                    TempData["MensagemErro"] = "Conta não localizada.";
-                    return NotFound(viewModel);
-                }
+                // var conta = _context.Contas.Find(viewModel.Recorrente.ContaId);
+                // if (conta == null)
+                // {
+                //     ModelState.AddModelError("", "Conta não localizado.");
+                //     viewModel.Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList();
+                //     return View(viewModel);
+                // }
 
-                var recorrente = _context.Recorrentes.Find(viewModel.Recorrente.Id);
+                var recorrente = _context.Recorrentes.FirstOrDefault(r => r.UsuarioId == usuario.Id && r.GrupoFamiliarId == usuario.GrupoFamiliarId && r.Id == viewModel.Recorrente.Id);
                 if (recorrente == null)
                 {
-                    TempData["MensagemErro"] = "Lançamento recorrente não localizado.";
-                    return NotFound(viewModel);
+                    ModelState.AddModelError("", "Lançamento recorrente não localizado.");
+
+                    viewModel.Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList();
+                    return View(viewModel);
                 }
 
-                if (viewModel.Recorrente.Pago == true)
+                if (viewModel.Recorrente.Pago == true && viewModel.Recorrente.ContaId == null)
                 {
-                    if (viewModel.Recorrente.Tipo == TipoLancamento.Receita)
-                    {
-                        conta.Saldo += viewModel.Recorrente.Valor;
-                    }
-                    if (viewModel.Recorrente.Tipo == TipoLancamento.Despesa)
-                    {
-                        conta.Saldo -= viewModel.Recorrente.Valor;
-                    }
+                    ModelState.AddModelError("", "Não é possível realizar um pagamento sem uma conta selecionada!");
+                    viewModel.Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id).ToList();
+                    return View(viewModel);
                 }
-                if (viewModel.Recorrente.Pago == false)
+
+                bool pagoAntes = recorrente.Pago;
+                double valorAntes = recorrente.Valor;
+                var tipoAntes = recorrente.Tipo;
+                int? contaIdAntes = recorrente.ContaId;
+                int? contaIdNova = null;
+
+                if (pagoAntes && contaIdAntes.HasValue)
                 {
+                    var contaAntiga = _context.Contas.Find(contaIdAntes.Value);
+                    if (tipoAntes == TipoLancamento.Receita)
+                        contaAntiga.Saldo -= valorAntes;
+                    else
+                        contaAntiga.Saldo += valorAntes;
+
+                    _context.Contas.Update(contaAntiga);
+                }
+
+                if (viewModel.Recorrente.Pago && viewModel.Recorrente.ContaId.HasValue)
+                {
+                    var contaNova = _context.Contas.Find(viewModel.Recorrente.ContaId.Value);
                     if (viewModel.Recorrente.Tipo == TipoLancamento.Receita)
-                    {
-                        conta.Saldo -= viewModel.Recorrente.Valor;
-                    }
-                    if (viewModel.Recorrente.Tipo == TipoLancamento.Despesa)
-                    {
-                        conta.Saldo += viewModel.Recorrente.Valor;
-                    }
+                        contaNova.Saldo += viewModel.Recorrente.Valor;
+                    else
+                        contaNova.Saldo -= viewModel.Recorrente.Valor;
+
+                    _context.Contas.Update(contaNova);
                 }
 
                 recorrente.Descricao = viewModel.Recorrente.Descricao;
@@ -218,9 +275,8 @@ namespace projeto_financeiro_mvc.Controllers
                 recorrente.Previsao = viewModel.Recorrente.Previsao;
                 recorrente.Parcelas = viewModel.Recorrente.Parcelas;
                 recorrente.Pago = viewModel.Recorrente.Pago;
+                recorrente.IsRecorrente = viewModel.Recorrente.IsRecorrente;
                 recorrente.ContaId = viewModel.Recorrente.ContaId;
-
-                _context.Contas.Update(conta);
 
                 _context.Recorrentes.Update(recorrente);
                 _context.SaveChanges();
@@ -229,15 +285,33 @@ namespace projeto_financeiro_mvc.Controllers
                 return RedirectToAction("Index", "Lancamento");
             }
 
-            viewModel.Contas = _context.Contas.ToList();
+            ModelState.AddModelError("", "Ocorreu algum erro!");
+            viewModel.Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList();
             return View(viewModel);
         }
 
         public IActionResult Excluir(int? id)
         {
-            var recorrente = _context.Recorrentes
-                .Include(c => c.Conta)
-                .FirstOrDefault(r => r.Id == id);
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            RecorrenteModel recorrente;
+
+            if (usuario.GrupoFamiliarId.HasValue)
+            {
+                recorrente = _context.Recorrentes
+                    .Include(r => r.Conta)
+                    .FirstOrDefault(r => r.GrupoFamiliarId == usuario.GrupoFamiliarId && r.Id == id && r.UsuarioId == usuario.Id);
+            }
+            else
+            {
+                recorrente = _context.Recorrentes
+                    .Include(r => r.Conta)
+                    .FirstOrDefault(r => r.GrupoFamiliarId == usuario.GrupoFamiliarId && r.Id == id && r.UsuarioId == usuario.Id);
+            }
 
             if (recorrente == null)
             {
@@ -250,9 +324,15 @@ namespace projeto_financeiro_mvc.Controllers
         [HttpPost]
         public IActionResult Excluir(RecorrenteModel recorrente)
         {
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
             var recorrenteDb = _context.Recorrentes
                 .Include(r => r.Conta)
-                .FirstOrDefault(r => r.Id == recorrente.Id);
+                .FirstOrDefault(r => r.GrupoFamiliarId == usuario.GrupoFamiliarId && r.UsuarioId == usuario.Id && r.Id == recorrente.Id);
 
             if (recorrenteDb == null)
             {

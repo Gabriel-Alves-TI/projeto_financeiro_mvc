@@ -54,6 +54,7 @@ namespace projeto_financeiro_mvc.Controllers
                     Conta = l.Conta.Banco,
                     ContaId = l.ContaId,
                     ContaDestino = null,
+                    IsRecorrente = null,
                     Origem = "Lancamento"
                 }));
 
@@ -71,6 +72,7 @@ namespace projeto_financeiro_mvc.Controllers
                     Conta = r.Conta.Banco,
                     ContaId = r.ContaId,
                     ContaDestino = null,
+                    IsRecorrente = true,
                     Origem = "Recorrente"
                 }));
 
@@ -88,6 +90,7 @@ namespace projeto_financeiro_mvc.Controllers
                     Conta = t.ContaOrigem.Banco,
                     ContaId = t.ContaOrigemId,
                     ContaDestino = t.ContaDestino.Banco,
+                    IsRecorrente = null,
                     Origem = "Transferencia"
                 }));
 
@@ -245,7 +248,7 @@ namespace projeto_financeiro_mvc.Controllers
 
                     TempData["MensagemSucesso"] = "Saldo inicial da conta corrigido com sucesso!";
                     return RedirectToAction("Index", "Lancamento");
-                };                ;
+                };                
 
                 // Lógica para Lançamento único
                 if (viewModel.Lancamento.Parcelas == 1)
@@ -325,7 +328,7 @@ namespace projeto_financeiro_mvc.Controllers
 
             var lancamento = _context.Lancamentos
                 .Where(l => l.UsuarioId == usuario.Id && l.GrupoFamiliarId == usuario.GrupoFamiliarId)
-                .FirstOrDefault(lanc => lanc.Id == id);
+                .FirstOrDefault(l => l.UsuarioId == usuario.Id && l.GrupoFamiliarId == usuario.GrupoFamiliarId && l.Id == id);
             if (lancamento == null)
             {
                 return NotFound();
@@ -346,7 +349,7 @@ namespace projeto_financeiro_mvc.Controllers
                     Pago = lancamento.Pago,
                     ContaId = lancamento.ContaId
                 },
-                Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id).ToList()
+                Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList()
             };
 
             return View(viewModel);
@@ -364,11 +367,22 @@ namespace projeto_financeiro_mvc.Controllers
             if (ModelState.IsValid)
             {
                 var lancamento = _context.Lancamentos
-                    .FirstOrDefault(l => l.UsuarioId == usuario.Id && l.Id == viewModel.Lancamento.Id);
+                    .FirstOrDefault(l => l.UsuarioId == usuario.Id && l.GrupoFamiliarId == usuario.GrupoFamiliarId && l.Id == viewModel.Lancamento.Id);
                 if (lancamento == null)
                 {
-                    TempData["MensagemErro"] = "Lançamento não encontrado.";
+                    // TempData["MensagemErro"] = "Lançamento não encontrado.";
+
+                    ModelState.AddModelError("", "Lançamento recorrente não localizado.");
+
+                    viewModel.Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList();
                     return NotFound(viewModel);
+                }
+
+                if (viewModel.Lancamento.Pago == true && viewModel.Lancamento.ContaId == null)
+                {
+                    ModelState.AddModelError("", "Não é possível realizar um pagamento sem uma conta selecionada!");
+                    viewModel.Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList();
+                    return View(viewModel);
                 }
 
                 if (viewModel.Lancamento.Pago == true && viewModel.Lancamento.ContaId == null)
@@ -382,70 +396,28 @@ namespace projeto_financeiro_mvc.Controllers
                 double valorAntes = lancamento.Valor;
                 var tipoAntes = lancamento.Tipo;
                 int? contaIdAntes = lancamento.ContaId;
-                int? contaIdNova = viewModel.Lancamento.ContaId;
+                int? contaIdNova = null;
 
-                ContaModel? contaNova = null;
-                if (contaIdNova != null)
+                if (pagoAntes && contaIdAntes.HasValue)
                 {
-                    contaNova = _context.Contas.Find(contaIdNova);
-                    if (contaNova == null)
-                    {
-                        TempData["MensagemErro"] = "Conta não localizada.";
-                        return NotFound(viewModel);
-                    }
-                }
+                    var contaAntiga = _context.Contas.Find(contaIdAntes.Value);
+                    if (tipoAntes == TipoLancamento.Receita)
+                        contaAntiga.Saldo -= valorAntes;
+                    else
+                        contaAntiga.Saldo += valorAntes;
 
-                if (contaIdAntes != null && contaIdAntes != contaIdNova)
-                {
-                    var contaAntiga = _context.Contas.Find(contaIdAntes);
-
-                    if (contaAntiga != null && pagoAntes)
-                    {
-                        if (tipoAntes == TipoLancamento.Receita)
-                        {
-                            contaAntiga.Saldo -= valorAntes;
-                        }
-                        if (tipoAntes == TipoLancamento.Despesa)
-                        {
-                            contaAntiga.Saldo += valorAntes;
-                        }
-                    }
                     _context.Contas.Update(contaAntiga);
                 }
 
-                if (pagoAntes != viewModel.Lancamento.Pago || valorAntes != viewModel.Lancamento.Valor || tipoAntes != viewModel.Lancamento.Tipo || contaIdAntes != viewModel.Lancamento.ContaId || contaIdAntes != contaIdNova)
+                if (viewModel.Lancamento.Pago && viewModel.Lancamento.ContaId.HasValue)
                 {
-                    if (contaIdAntes != null && pagoAntes)
-                    {
-                        var contaAntiga = _context.Contas.Find(contaIdAntes);
-                        if (contaAntiga != null)
-                        {
-                            if (tipoAntes == TipoLancamento.Receita)
-                            {
-                                contaAntiga.Saldo -= valorAntes;
-                            }
-                            if (tipoAntes == TipoLancamento.Despesa)
-                            {
-                                contaAntiga.Saldo += valorAntes;
-                            }
+                    var contaNova = _context.Contas.Find(viewModel.Lancamento.ContaId.Value);
+                    if (viewModel.Lancamento.Tipo == TipoLancamento.Receita)
+                        contaNova.Saldo += viewModel.Lancamento.Valor;
+                    else
+                        contaNova.Saldo -= viewModel.Lancamento.Valor;
 
-                            _context.Contas.Update(contaAntiga);
-                        }
-                    }
-
-                    if (contaNova != null && viewModel.Lancamento.Pago)
-                    {
-                        if (viewModel.Lancamento.Tipo == TipoLancamento.Receita)
-                        {
-                            contaNova.Saldo += viewModel.Lancamento.Valor;
-                        }
-                        if (viewModel.Lancamento.Tipo == TipoLancamento.Despesa)
-                        {
-                            contaNova.Saldo -= viewModel.Lancamento.Valor;
-                        }
-
-                        _context.Contas.Update(contaNova);
-                    }
+                    _context.Contas.Update(contaNova);
                 }
 
                 lancamento.Descricao = viewModel.Lancamento.Descricao;
