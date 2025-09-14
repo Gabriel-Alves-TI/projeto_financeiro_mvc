@@ -11,5 +11,6 @@ namespace projeto_financeiro_mvc.Services.LoginService
     {
         Task<ResponseModel<UsuarioModel>> RegistrarUsuario(UsuarioRegistrarDTO usuarioRegistrarDto);
         Task<ResponseModel<UsuarioModel>> Login(UsuarioLoginDTO usuarioLoginDto);
+        Task<ResponseModel<UsuarioModel>> SolicitarRedefinicaoSenha(SolicitarRedefinicaoSenhaDTO solicitacaoDto);
     }
 }

@@ -20,3 +20,28 @@
     <script src="~/js/site.js"></script>
 </body>
 </html>
+<div id="spinnerCarregando" class="d-none position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-flex justify-content-center align-items-center" style="z-index: 2000;">
+    <div class="d-flex flex-column align-items-center justify-content-center bg-white rounded-4 p-4">
+        <div class="loading-wave">
+            <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
+        </div>
+        <p class="text-primary text-center mt-2">Carregando...</p>
+    </div>
+</div>
+<script>
+    const form = document.querySelector('form');
+    const spinner = document.getElementById('spinnerCarregando');
+
+    form.addEventListener("submit", (e) => {
+        spinner.classList.remove("d-none");
+
+        e.preventDefault();
+
+        setTimeout(() => {
+            form.submit();
+        }, 800); 
+    });
+</script>

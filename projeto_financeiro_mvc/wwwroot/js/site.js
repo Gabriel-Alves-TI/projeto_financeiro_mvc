@@ -1,5 +1,5 @@
 ﻿setTimeout(()=> {
-    $(".alert").fadeOut("slow", () => {
+    $(".alert").fadeOut("slow", function() {
         $(this).alert("close");
     })
 }, 3500)

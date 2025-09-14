@@ -100,6 +100,27 @@ namespace projeto_financeiro_mvc.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult RedefinirSenha()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RedefinirSenha(SolicitarRedefinicaoSenhaDTO solicitacaoDto)
+        {
+            var response = await _loginInterface.SolicitarRedefinicaoSenha(solicitacaoDto);
+
+            if (!response.Status)
+            {
+                TempData["MensagemErro"] = response.Mensagem;
+                return RedirectToAction("Index", "Login");
+            }
+                
+            TempData["MensagemSucesso"] = response.Mensagem;
+            return RedirectToAction("Index", "Login");
+        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

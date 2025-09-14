@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using projeto_financeiro_mvc.Data;
 using projeto_financeiro_mvc.DTOs;
 using projeto_financeiro_mvc.Models;
@@ -62,6 +64,13 @@ namespace projeto_financeiro_mvc.Services.LoginService
             var response = new ResponseModel<UsuarioModel>();
             try
             {
+                if (!VerificarSeEmailValido(usuarioRegistrarDto.Email))
+                {
+                    response.Mensagem = "Digite um e-mail válido!";
+                    response.Status = false;
+                    return response;
+                }
+
                 if (VerificarSeEmailExiste(usuarioRegistrarDto))
                 {
                     response.Mensagem = "E-mail já cadastrado!";
@@ -94,6 +103,30 @@ namespace projeto_financeiro_mvc.Services.LoginService
             }
         }
 
+        public async Task<ResponseModel<UsuarioModel>> SolicitarRedefinicaoSenha(SolicitarRedefinicaoSenhaDTO solicitacaoDto)
+        {
+            var response = new ResponseModel<UsuarioModel>();
+
+            var usuario = _context.Usuarios.FirstOrDefault(u => u.Email == solicitacaoDto.Email);
+
+            if (usuario == null)
+            {
+                response.Mensagem = "O e-mail digitado não está registrado. Tente novamente!";
+                response.Status = false;
+                return response;
+            }
+
+            var token = Guid.NewGuid().ToString().Substring(0, 8);
+            usuario.Token = token;
+            usuario.ExpiracaoToken = DateTime.UtcNow.AddHours(1);
+
+            await _context.SaveChangesAsync();
+
+            response.Mensagem = "Link de redefinição enviado para o seu e-mail.";
+            response.Status = true;
+            return response;
+        }
+
         private bool VerificarSeEmailExiste(UsuarioRegistrarDTO usuarioRegistrarDto)
         {
             var usuario = _context.Usuarios.FirstOrDefault(u => u.Email == usuarioRegistrarDto.Email);
@@ -104,6 +137,22 @@ namespace projeto_financeiro_mvc.Services.LoginService
             }
 
             return true;
+        }
+
+        private bool VerificarSeEmailValido(string email)
+        {
+            if (string.IsNullOrEmpty(email))
+                return false;
+
+            try
+            {
+                var mailAddress = new MailAddress(email);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }
