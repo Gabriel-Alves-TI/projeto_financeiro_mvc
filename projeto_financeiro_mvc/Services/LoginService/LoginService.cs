@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using projeto_financeiro_mvc.Data;
 using projeto_financeiro_mvc.DTOs;
@@ -23,7 +24,7 @@ namespace projeto_financeiro_mvc.Services.LoginService
             _senhaInterface = senhaInterface;
             _sessaoInterface = sessaoInterface;
         }
-
+        
         public async Task<ResponseModel<UsuarioModel>> Login(UsuarioLoginDTO usuarioLoginDto)
         {
             var response = new ResponseModel<UsuarioModel>();
@@ -103,7 +104,7 @@ namespace projeto_financeiro_mvc.Services.LoginService
             }
         }
 
-        public async Task<ResponseModel<UsuarioModel>> SolicitarRedefinicaoSenha(SolicitarRedefinicaoSenhaDTO solicitacaoDto)
+        public async Task<ResponseModel<UsuarioModel>> SolicitarRecuperacaoSenha(RecuperacaoSenhaDTO solicitacaoDto)
         {
             var response = new ResponseModel<UsuarioModel>();
 
@@ -112,6 +113,13 @@ namespace projeto_financeiro_mvc.Services.LoginService
             if (usuario == null)
             {
                 response.Mensagem = "O e-mail digitado não está registrado. Tente novamente!";
+                response.Status = false;
+                return response;
+            }
+
+            if (!VerificarSeEmailValido(usuario.Email))
+            {
+                response.Mensagem = "O e-mail digitado não é válido. Tente novamente!";
                 response.Status = false;
                 return response;
             }
@@ -126,6 +134,43 @@ namespace projeto_financeiro_mvc.Services.LoginService
             response.Status = true;
             return response;
         }
+
+        public async Task<ResponseModel<UsuarioModel>> RedefinicaoSenha(RedefinicaoSenhaDTO redefinicaoDto)
+        {
+            var response = new ResponseModel<UsuarioModel>();
+            try
+            {
+                var usuario = _context.Usuarios.FirstOrDefault(u => u.Token == redefinicaoDto.Token);
+
+                DateTime dataAtual = DateTime.Now;
+                var expiracaoToken = usuario.ExpiracaoToken;
+
+                if (dataAtual > expiracaoToken || usuario == null)
+                {
+                    response.Mensagem = "Token inválido ou expirado.";
+                    response.Status = false;
+                    return response;
+                }
+
+                _senhaInterface.CriarSenhaHash(redefinicaoDto.NovaSenha, out byte[] senhaHash, out byte[] senhaSalt);
+
+                usuario.SenhaHash = senhaHash;
+                usuario.SenhaSalt = senhaSalt;
+
+                _context.Usuarios.Update(usuario);
+                await _context.SaveChangesAsync();
+
+                response.Mensagem = "Senha alterada com sucesso! Efetue o login.";
+                response.Status = true;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Mensagem = ex.Message;
+                response.Status = false;
+                return response;
+            }
+        }   
 
         private bool VerificarSeEmailExiste(UsuarioRegistrarDTO usuarioRegistrarDto)
         {

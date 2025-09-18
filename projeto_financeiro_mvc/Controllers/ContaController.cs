@@ -47,6 +47,7 @@ namespace projeto_financeiro_mvc.Controllers
                     .Where(c => c.UsuarioId == usuario.Id);
             }
 
+            ViewBag.NomeUsuario = usuario.Nome;
             return View(contas.ToList());
         }
 
@@ -125,6 +126,7 @@ namespace projeto_financeiro_mvc.Controllers
                 SaldoInicial = conta.Saldo
             };
 
+            ViewBag.NomeUsuario = usuario.Nome;
             return View(contaDto);
         }
 
@@ -211,6 +213,7 @@ namespace projeto_financeiro_mvc.Controllers
                 return NotFound();
             }
 
+            ViewBag.NomeUsuario = usuario.Nome;
             return View(conta);
         }
 

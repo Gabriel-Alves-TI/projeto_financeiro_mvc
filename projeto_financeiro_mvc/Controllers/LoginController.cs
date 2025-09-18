@@ -7,8 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using projeto_financeiro_mvc.Data;
 using projeto_financeiro_mvc.DTOs;
+using projeto_financeiro_mvc.Services.EmailService;
 using projeto_financeiro_mvc.Services.LoginService;
 using projeto_financeiro_mvc.Services.SessaoService;
+using projeto_financeiro_mvc.ViewModels;
 
 namespace projeto_financeiro_mvc.Controllers
 {
@@ -17,12 +19,14 @@ namespace projeto_financeiro_mvc.Controllers
         private readonly AppDbContext _context;
         private readonly ILoginInterface _loginInterface;
         private readonly ISessaoInterface _sessaoInterface;
+        private readonly IEmailInterface _emailInterface;
 
-        public LoginController(AppDbContext context, ILoginInterface loginInterface, ISessaoInterface sessaoInterface)
+        public LoginController(AppDbContext context, ILoginInterface loginInterface, ISessaoInterface sessaoInterface, IEmailInterface emailInterface)
         {
             _context = context;
             _loginInterface = loginInterface;
             _sessaoInterface = sessaoInterface;
+            _emailInterface = emailInterface;
         }
 
         [HttpGet]
@@ -52,7 +56,7 @@ namespace projeto_financeiro_mvc.Controllers
             else
             {
                 ModelState.AddModelError("", "Erro ao realizar login.");
-                return View("Index", usuarioLoginDto);
+                return View("Index");
             }
         }
 
@@ -101,26 +105,97 @@ namespace projeto_financeiro_mvc.Controllers
         }
 
         [HttpGet]
-        public IActionResult RedefinirSenha()
+        public IActionResult RecuperarSenha()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> RedefinirSenha(SolicitarRedefinicaoSenhaDTO solicitacaoDto)
+        public async Task<IActionResult> RecuperarSenha(RecuperacaoSenhaDTO solicitacaoDto)
         {
-            var response = await _loginInterface.SolicitarRedefinicaoSenha(solicitacaoDto);
+            var response = await _loginInterface.SolicitarRecuperacaoSenha(solicitacaoDto);
+            var usuario = _context.Usuarios.FirstOrDefault(u => u.Email == solicitacaoDto.Email);
 
             if (!response.Status)
             {
                 TempData["MensagemErro"] = response.Mensagem;
                 return RedirectToAction("Index", "Login");
             }
-                
+
+            // Mensagem do E-mail
+            string mensagem = @$"
+                <p>Olá! Você recebeu um link para redefinição da sua senha.</p>
+                <br>
+                <p>Clique abaixo e crie a nova senha.</p>
+                <br>
+                <p><a href='http://localhost:5262/Login/RedefinirSenha?token={usuario.Token}' style='color:#1a73e8'>Redefinir senha </a></p>
+                <br>
+            ";
+
+            await _emailInterface.EnviarEmailAsync(usuario.Email, "App Sistema Financeiro - Redefinição de senha", mensagem);    
             TempData["MensagemSucesso"] = response.Mensagem;
             return RedirectToAction("Index", "Login");
         }
 
+        [HttpGet]
+        public IActionResult RedefinirSenha(string token)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                TempData["MensagemErro"] = "Token inválido.";
+                return RedirectToAction("Index", "Login");
+            }
+
+            var usuario = _context.Usuarios.FirstOrDefault(u => u.Token == token);
+            var expiracaoToken = usuario.ExpiracaoToken;
+            DateTime dataAtual = DateTime.Now;
+
+            Console.WriteLine(dataAtual.ToString("dd/MM/yyyy hh:mm"));
+            Console.WriteLine(expiracaoToken.ToString());
+
+            if (usuario == null || dataAtual > expiracaoToken)
+            {
+                TempData["MensagemErro"] = "Token inválido ou expirado.";
+                return RedirectToAction("Index", "Login");
+            }
+
+            var viewModel = new RedefinirSenhaViewModel
+            {
+                Email = usuario.Email,
+                Token = token
+            };
+            
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RedefinirSenha(RedefinicaoSenhaDTO redefinicaoDto)
+        {
+            if (ModelState.IsValid)
+            {
+                var response = await _loginInterface.RedefinicaoSenha(redefinicaoDto);
+                var usuario = _context.Usuarios.FirstOrDefault(u => u.Token == redefinicaoDto.Token);
+
+                if (!response.Status)
+                {
+                    TempData["MensagemErro"] = response.Mensagem;
+                    return RedirectToAction("Index", "Login");
+                }
+
+                if (redefinicaoDto.NovaSenha != redefinicaoDto.ConfirmaNovaSenha)
+                {
+                    TempData["MensagemErro"] = "As senhas não conferem. Digite novamente.";
+                    return View(redefinicaoDto);
+                }
+                else
+                {
+                    TempData["MensagemSucesso"] = response.Mensagem;
+                    return RedirectToAction("Index", "Login");
+                }
+            }
+
+            return View(redefinicaoDto);
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

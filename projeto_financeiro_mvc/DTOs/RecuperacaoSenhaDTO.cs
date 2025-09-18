@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace projeto_financeiro_mvc.DTOs
 {
-    public class SolicitarRedefinicaoSenhaDTO
+    public class RecuperacaoSenhaDTO
     {
         public string Email { get; set; }
     }

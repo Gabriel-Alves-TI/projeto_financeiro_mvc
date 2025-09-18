@@ -134,6 +134,7 @@ namespace projeto_financeiro_mvc.Controllers
                 Contas = contas
             };
 
+            ViewBag.NomeUsuario = usuario.Nome;
             return View(viewModel);
         }
 
@@ -155,6 +156,7 @@ namespace projeto_financeiro_mvc.Controllers
                 Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList()
             };
 
+            ViewBag.NomeUsuario = usuario.Nome;
             return View(viewModel);
         }
 
@@ -355,6 +357,7 @@ namespace projeto_financeiro_mvc.Controllers
                 Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList()
             };
 
+            ViewBag.NomeUsuario = usuario.Nome;
             return View(viewModel);
         }
 
@@ -443,7 +446,7 @@ namespace projeto_financeiro_mvc.Controllers
                 TempData["MensagemSucesso"] = "Lançamento atualizado com sucesso!";
                 return RedirectToAction("Index", "Lancamento");
             }
-
+            
             viewModel.Contas = contas;
             return View(viewModel);
         }
@@ -514,6 +517,7 @@ namespace projeto_financeiro_mvc.Controllers
                 return NotFound();
             }
 
+            ViewBag.NomeUsuario = usuario.Nome;
             return View(lancamento);
         }
 

@@ -45,6 +45,7 @@ namespace projeto_financeiro_mvc.Controllers
                 Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList()
             };
             
+            ViewBag.NomeUsuario = usuario.Nome;
             return View(viewModel);
         }
 
@@ -201,6 +202,7 @@ namespace projeto_financeiro_mvc.Controllers
                 Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList()
             };
 
+            ViewBag.NomeUsuario = usuario.Nome;
             return View(viewModel);
         }
 
@@ -318,6 +320,7 @@ namespace projeto_financeiro_mvc.Controllers
                 return NotFound();
             }
 
+            ViewBag.NomeUsuario = usuario.Nome;
             return View(recorrente);
         }
 

@@ -1,17 +1,30 @@
-@model projeto_financeiro_mvc.DTOs.SolicitarRedefinicaoSenhaDTO
+@model projeto_financeiro_mvc.ViewModels.RedefinirSenhaViewModel
 @{
     Layout = "_LayoutRegistrar";
-    ViewData["Title"] = "Redefinir Senha";
+    ViewData["Title"] = "Redefinir senha";
 }
 
 <div class="d-flex">
     <div class="container bg-light-subtle border border-2 rounded rounded-4 p-4 w-50">
-        <h1 class="d-flex justify-content-center text-primary fw-bold mt-2">@ViewData["Title"]</h1>
+        <h1 class="d-flex justify-content-center text-primary fw-bold mt-2">Redefinir senha</h1>
+
+        <div asp-validation-summary="All" class="text-warning"></div>    
+
         <form asp-controller="Login" asp-action="RedefinirSenha" method="post" id="formLogin">
-            <h5 class="text-dark mt-4">Informe seu e-mail. Enviaremos um link para verificação e redefinição da senha.</h5>
+            <input type="hidden" asp-for="Token">
+
+            <h5 class="text-dark mt-4">Digite a nova senha:</h5>
             <div class="mb-3 mt-4">
-                <label for="exampleInputEmail1" class="form-label text-primary">E-mail:</label>
-                <input type="email" class="form-control" asp-for="Email" style="width: 400px">
+                <label  class="form-label text-primary">E-mail:</label>
+                <input type="email" asp-for="Email" class="form-control" style="width: 400px" disabled>
+            </div>
+            <div class="mb-3 mt-4">
+                <label  class="form-label text-primary">Nova senha:</label>
+                <input type="password" name="NovaSenha" class="form-control" style="width: 400px">
+            </div>
+            <div class="mb-3 mt-4">
+                <label  class="form-label text-primary">Confirme Nova senha:</label>
+                <input type="password" name="ConfirmaNovaSenha" class="form-control" style="width: 400px">
             </div>
             <div class="d-flex justify-content-end gap-3 mt-4">
                 <button type="submit" class="btn btn-info" style="width: 100px;">Enviar</button>

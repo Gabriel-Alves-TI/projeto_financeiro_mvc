@@ -15,7 +15,7 @@ namespace projeto_financeiro_mvc.Models
         public byte[] SenhaSalt { get; set; }
         
         // Redefinição de Senha
-        public string Token { get; set; }
+        public string? Token { get; set; }
         public DateTime? ExpiracaoToken { get; set; }
 
         public int? GrupoFamiliarId

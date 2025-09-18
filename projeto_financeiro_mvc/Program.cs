@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using projeto_financeiro_mvc.Data;
+using projeto_financeiro_mvc.Models;
+using projeto_financeiro_mvc.Services.EmailService;
 using projeto_financeiro_mvc.Services.LoginService;
 using projeto_financeiro_mvc.Services.SenhaService;
 using projeto_financeiro_mvc.Services.SessaoService;
@@ -37,6 +39,11 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
+builder.Services.Configure<EmailSettings>(
+    builder.Configuration.GetSection("EmailSettings"));
+
+builder.Services.AddScoped<IEmailInterface, EmailService>();
 
 var app = builder.Build();
 

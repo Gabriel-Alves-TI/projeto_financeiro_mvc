@@ -12,8 +12,8 @@ using projeto_financeiro_mvc.Data;
 namespace projeto_financeiro_mvc.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250914004937_redefinicaoSenha")]
-    partial class redefinicaoSenha
+    [Migration("20250916145149_redefinicaoSenha_TokenNullable")]
+    partial class redefinicaoSenha_TokenNullable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -276,7 +276,6 @@ namespace projeto_financeiro_mvc.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Token")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

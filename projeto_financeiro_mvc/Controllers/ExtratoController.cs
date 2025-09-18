@@ -139,6 +139,7 @@ namespace projeto_financeiro_mvc.Controllers
                 Contas = contas
             };
 
+            ViewBag.NomeUsuario = usuario.Nome;
             return View(viewModel);
         }
 

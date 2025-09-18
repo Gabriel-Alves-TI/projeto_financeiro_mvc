@@ -1,0 +1,25 @@
+@model projeto_financeiro_mvc.DTOs.RecuperacaoSenhaDTO
+@{
+    Layout = "_LayoutRegistrar";
+    ViewData["Title"] = "Recuperar Senha";
+}
+
+<div class="d-flex">
+    <div class="container bg-light-subtle border border-2 rounded rounded-4 p-4 w-50">
+        <h1 class="d-flex justify-content-center text-primary fw-bold mt-2">Recuperar senha</h1>
+
+        <div asp-validation-summary="All" class="text-warning"></div>
+        
+        <form asp-controller="Login" asp-action="RecuperarSenha" method="post" id="formLogin">
+            <h5 class="text-dark mt-4">Para recuperar a sua senha, informe seu e-mail cadastrado. Enviaremos um link com um Token para redefinição da senha.</h5>
+            <div class="mb-3 mt-4">
+                <label for="exampleInputEmail1" class="form-label text-primary">E-mail:</label>
+                <input type="email" class="form-control" asp-for="Email" style="width: 400px">
+            </div>
+            <div class="d-flex justify-content-end gap-3 mt-4">
+                <button type="submit" class="btn btn-info" style="width: 100px;">Enviar</button>
+                <a type="button" asp-action="Index" asp-controller="Login" class="btn btn-secondary" style="width: 100px;">Voltar</a>
+            </div>
+        </form>
+    </div>
+</div>

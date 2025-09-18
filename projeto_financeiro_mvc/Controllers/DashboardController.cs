@@ -96,7 +96,8 @@ namespace projeto_financeiro_mvc.Controllers
                 ReceitaSemanal = receitaSemanal,
                 DespesaSemanal = despesaSemanal
             };
-            
+
+            ViewBag.NomeUsuario = usuario.Nome;
             return View(viewModel);
         }
 

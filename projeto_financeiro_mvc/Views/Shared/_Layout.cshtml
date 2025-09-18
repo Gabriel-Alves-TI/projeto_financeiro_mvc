@@ -12,11 +12,16 @@
 <body class="container-fluid p-1 d-flex flex-wrap">
     <header class="w-100 d-flex align-items-center justify-content-between px-3" style="height: 60px; overflow: hidden; background-image: linear-gradient(rgb(214, 214, 213), rgb(255, 255, 255));">
         <h1 class="mb-0 text-primary">Controle Financeiro</h1>
-        <div class="d-flex align-items-center justify-content-end">
-            <a class="text-primary py-2 px-3"
-        asp-controller="Login" asp-action="Logout">
-                <i class="bi bi-box-arrow-left fs-3 p-1"></i> Sair
-            </a>
+        <div class="row g-2 align-items-center p-2">
+            <div class="col-auto p-2">
+                <h4 class="text-center text-dark my-0">Olá, @ViewBag.NomeUsuario</h4>
+            </div>
+            <div class="col-auto p-2">
+                <a class="text-primary"
+            asp-controller="Login" asp-action="Logout">
+                    <i class="bi bi-box-arrow-left fs-3"></i> Sair
+                </a>
+            </div>            
         </div>
     </header>
 

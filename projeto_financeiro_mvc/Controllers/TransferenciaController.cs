@@ -42,6 +42,8 @@ namespace projeto_financeiro_mvc.Controllers
                 },
                 Contas = _context.Contas.Where(c => c.GrupoFamiliarId == usuario.GrupoFamiliarId && c.UsuarioId == usuario.Id).ToList(),
             };
+
+            ViewBag.NomeUsuario = usuario.Nome;
             return View(viewModel);
         }
 
@@ -163,12 +165,20 @@ namespace projeto_financeiro_mvc.Controllers
                 return NotFound();
             }
 
+            ViewBag.NomeUsuario = usuario.Nome;
             return View(transferencia);
         }
 
         [HttpGet]
         public IActionResult Excluir(int? id)
         {
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+
             if (id == null || id == 0)
             {
                 ModelState.AddModelError("", "Transferência não localizada");
@@ -186,6 +196,7 @@ namespace projeto_financeiro_mvc.Controllers
                 return NotFound();
             }
 
+            ViewBag.NomeUsuario = usuario.Nome;
             return View(transferencia);
         }
 
