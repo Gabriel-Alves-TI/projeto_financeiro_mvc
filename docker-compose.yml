@@ -6,7 +6,7 @@ services:
         container_name: financeiro_db
         environment:
             - ACCEPT_EULA=Y
-            - SA_PASSWORD=root
+            - SA_PASSWORD=${DB_PASSWORD}
         ports:
             - "1433:1433"
         networks:

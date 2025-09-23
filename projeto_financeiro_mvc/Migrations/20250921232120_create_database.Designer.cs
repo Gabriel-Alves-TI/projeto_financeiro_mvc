@@ -12,8 +12,8 @@ using projeto_financeiro_mvc.Data;
 namespace projeto_financeiro_mvc.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250902151834_createUsuarioModel")]
-    partial class createUsuarioModel
+    [Migration("20250921232120_create_database")]
+    partial class create_database
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,6 +41,9 @@ namespace projeto_financeiro_mvc.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("GrupoFamiliarId")
+                        .HasColumnType("int");
+
                     b.Property<string>("NumeroConta")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -48,9 +51,33 @@ namespace projeto_financeiro_mvc.Migrations
                     b.Property<double>("Saldo")
                         .HasColumnType("float");
 
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("GrupoFamiliarId");
+
+                    b.HasIndex("UsuarioId");
+
                     b.ToTable("Contas");
+                });
+
+            modelBuilder.Entity("projeto_financeiro_mvc.Models.GrupoFamiliarModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GrupoFamiliar");
                 });
 
             modelBuilder.Entity("projeto_financeiro_mvc.Models.LancamentoModel", b =>
@@ -74,6 +101,9 @@ namespace projeto_financeiro_mvc.Migrations
                     b.Property<string>("Descricao")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("GrupoFamiliarId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("Pago")
                         .HasColumnType("bit");
 
@@ -86,12 +116,19 @@ namespace projeto_financeiro_mvc.Migrations
                     b.Property<int>("Tipo")
                         .HasColumnType("int");
 
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
                     b.Property<double>("Valor")
                         .HasColumnType("float");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ContaId");
+
+                    b.HasIndex("GrupoFamiliarId");
+
+                    b.HasIndex("UsuarioId");
 
                     b.ToTable("Lancamentos");
                 });
@@ -117,6 +154,9 @@ namespace projeto_financeiro_mvc.Migrations
                     b.Property<string>("Descricao")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("GrupoFamiliarId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsRecorrente")
                         .HasColumnType("bit");
 
@@ -132,12 +172,19 @@ namespace projeto_financeiro_mvc.Migrations
                     b.Property<int>("Tipo")
                         .HasColumnType("int");
 
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
                     b.Property<double>("Valor")
                         .HasColumnType("float");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ContaId");
+
+                    b.HasIndex("GrupoFamiliarId");
+
+                    b.HasIndex("UsuarioId");
 
                     b.ToTable("Recorrentes");
                 });
@@ -169,7 +216,13 @@ namespace projeto_financeiro_mvc.Migrations
                     b.Property<string>("Descricao")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("GrupoFamiliarId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Tipo")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UsuarioId")
                         .HasColumnType("int");
 
                     b.Property<double>("Valor")
@@ -180,6 +233,10 @@ namespace projeto_financeiro_mvc.Migrations
                     b.HasIndex("ContaDestinoId");
 
                     b.HasIndex("ContaOrigemId");
+
+                    b.HasIndex("GrupoFamiliarId");
+
+                    b.HasIndex("UsuarioId");
 
                     b.ToTable("Transferencias");
                 });
@@ -195,6 +252,12 @@ namespace projeto_financeiro_mvc.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ExpiracaoToken")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("GrupoFamiliarId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -212,9 +275,31 @@ namespace projeto_financeiro_mvc.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Token")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("GrupoFamiliarId");
+
                     b.ToTable("Usuarios");
+                });
+
+            modelBuilder.Entity("projeto_financeiro_mvc.Models.ContaModel", b =>
+                {
+                    b.HasOne("projeto_financeiro_mvc.Models.GrupoFamiliarModel", "GrupoFamiliar")
+                        .WithMany()
+                        .HasForeignKey("GrupoFamiliarId");
+
+                    b.HasOne("projeto_financeiro_mvc.Models.UsuarioModel", "Usuario")
+                        .WithMany("Contas")
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("GrupoFamiliar");
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("projeto_financeiro_mvc.Models.LancamentoModel", b =>
@@ -223,7 +308,21 @@ namespace projeto_financeiro_mvc.Migrations
                         .WithMany("Lancamentos")
                         .HasForeignKey("ContaId");
 
+                    b.HasOne("projeto_financeiro_mvc.Models.GrupoFamiliarModel", "GrupoFamiliar")
+                        .WithMany("Lancamentos")
+                        .HasForeignKey("GrupoFamiliarId");
+
+                    b.HasOne("projeto_financeiro_mvc.Models.UsuarioModel", "Usuario")
+                        .WithMany("Lancamentos")
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Conta");
+
+                    b.Navigation("GrupoFamiliar");
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("projeto_financeiro_mvc.Models.RecorrenteModel", b =>
@@ -232,7 +331,21 @@ namespace projeto_financeiro_mvc.Migrations
                         .WithMany()
                         .HasForeignKey("ContaId");
 
+                    b.HasOne("projeto_financeiro_mvc.Models.GrupoFamiliarModel", "GrupoFamiliar")
+                        .WithMany()
+                        .HasForeignKey("GrupoFamiliarId");
+
+                    b.HasOne("projeto_financeiro_mvc.Models.UsuarioModel", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Conta");
+
+                    b.Navigation("GrupoFamiliar");
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("projeto_financeiro_mvc.Models.TransferenciaModel", b =>
@@ -249,13 +362,50 @@ namespace projeto_financeiro_mvc.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("projeto_financeiro_mvc.Models.GrupoFamiliarModel", "GrupoFamiliar")
+                        .WithMany()
+                        .HasForeignKey("GrupoFamiliarId");
+
+                    b.HasOne("projeto_financeiro_mvc.Models.UsuarioModel", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("ContaDestino");
 
                     b.Navigation("ContaOrigem");
+
+                    b.Navigation("GrupoFamiliar");
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("projeto_financeiro_mvc.Models.UsuarioModel", b =>
+                {
+                    b.HasOne("projeto_financeiro_mvc.Models.GrupoFamiliarModel", "GrupoFamiliar")
+                        .WithMany("Usuarios")
+                        .HasForeignKey("GrupoFamiliarId");
+
+                    b.Navigation("GrupoFamiliar");
                 });
 
             modelBuilder.Entity("projeto_financeiro_mvc.Models.ContaModel", b =>
                 {
+                    b.Navigation("Lancamentos");
+                });
+
+            modelBuilder.Entity("projeto_financeiro_mvc.Models.GrupoFamiliarModel", b =>
+                {
+                    b.Navigation("Lancamentos");
+
+                    b.Navigation("Usuarios");
+                });
+
+            modelBuilder.Entity("projeto_financeiro_mvc.Models.UsuarioModel", b =>
+                {
+                    b.Navigation("Contas");
+
                     b.Navigation("Lancamentos");
                 });
 #pragma warning restore 612, 618
