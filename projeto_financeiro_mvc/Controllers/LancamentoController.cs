@@ -82,7 +82,7 @@ namespace projeto_financeiro_mvc.Controllers
                 {
                     Id = t.Id,
                     Data = t.DataTransferencia,
-                    Descricao = $"Transferência {t.ContaOrigem.Banco} -> {t.ContaDestino.Banco}",
+                    Descricao = t.Descricao,
                     Tipo = t.Tipo,
                     Valor = t.Valor,
                     Categoria = t.Categoria,

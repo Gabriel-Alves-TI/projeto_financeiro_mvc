@@ -3,7 +3,7 @@
     ViewData["Title"] = "Transferência entre Contas";
 }
 
-<h1 class="d-flex justify-content-center text-info fw-bold mt-2">@ViewData["Title"]</h1>
+<h1 class="d-flex justify-content-center text-info fw-bold mt-2" id="titulo">@ViewData["Title"]</h1>
 
 <div class="container">
     <div class="card mb-3 rounded-3 border-info">
@@ -17,25 +17,25 @@
                             <label class="col-form-label fs-4 text-primary">Valor:</label>
                         </div>
                         <div class="col-auto">
-                            <input type="text" asp-for="Transferencia.Valor" class="rounded border-1 w-50 fs-5" style="height: 35px;">
+                            <input type="text" asp-for="Transferencia.Valor" class="rounded border-1 w-50 fs-5" style="height: 35px;" id="valorTransferencia">
                         </div>
                     </div>
                     <div class="row g-2 align-items-center p-2">
                         <div class="col-auto">
-                            <label asp-for="Transferencia.DataTransferencia" class="col-form-label fs-5 text-primary">Data Transferência:</label>
+                            <label asp-for="Transferencia.DataTransferencia" class="col-form-label fs-5 text-primary labels">Data Transferência:</label>
                         </div>
                         <div class="col-auto">
-                            <input type="date" asp-for="Transferencia.DataTransferencia" class="rounded border-1 p-1">
+                            <input type="date" asp-for="Transferencia.DataTransferencia" class="rounded border-1 p-1" id="dataTransferencia">
                         </div>
                     </div>
                 </div>
                 <div class="d-flex justify-content-between bg-info bg-opacity-25 rounded mt-1">
                     <div class="row g-2 align-items-center p-2">
                         <div class="col-auto">
-                            <label asp-for="Transferencia.ContaOrigemId" class="col-form-label fs-5 text-primary">Conta Origem:</label>
+                            <label asp-for="Transferencia.ContaOrigemId" class="col-form-label fs-5 text-primary labels">Conta Origem:</label>
                         </div>
                         <div class="col-auto">
-                            <select class="form-select border-2 bg-white text-primary" asp-for="Transferencia.ContaOrigemId">
+                            <select class="form-select border-2 bg-white text-primary" asp-for="Transferencia.ContaOrigemId" id="contaOrigem">
                                 @if (Model.Contas != null)
                                 {
                                     foreach(var conta in (Model.Contas))
@@ -49,7 +49,7 @@
                             <label asp-for="Transferencia.ContaDestinoId" class="col-form-label fs-5 text-primary">Conta Destino:</label>
                         </div>
                         <div class="col-auto">
-                            <select class="form-select border-2 bg-white text-primary" asp-for="Transferencia.ContaDestinoId">
+                            <select class="form-select border-2 bg-white text-primary" asp-for="Transferencia.ContaDestinoId" id="contaDestino">
                                 @if (Model.Contas != null)
                                 {
                                     foreach(var conta in (Model.Contas))
@@ -62,36 +62,34 @@
                     </div>
                     <div class="row g-2 align-items-center p-2">
                         <div class="col-auto">
-                            <label for="selectTipo" asp-for="Transferencia.Tipo" class="col-form-label fs-5 text-primary">Tipo:</label>
+                            <label for="selectTipo" asp-for="Transferencia.Tipo" class="col-form-label fs-5 text-primary labels">Tipo:</label>
                         </div>
                         <div class="col-auto">
-                            <select class="form-select border-2 bg-white text-primary" asp-for="Transferencia.Tipo" readonly>
-                                <option value="0">Receita</option>
-                                <option value="1">Despesa</option>
+                            <select class="form-select border-2 bg-white text-primary" asp-for="Transferencia.Tipo" id="selectTipo" readonly>
                                 <option value="2" selected>Transferencia</option>
                             </select>
                         </div>
                     </div>
                     <div class="row g-2 align-items-center p-2">
                         <div class="col-auto">
-                            <label asp-for="Transferencia.DataCompensacao"  class="col-form-label fs-5 text-primary">Data Compensação:</label>
+                            <label asp-for="Transferencia.DataCompensacao"  class="col-form-label fs-5 text-primary labels">Data Compensação:</label>
                         </div>
                         <div class="col-auto">
-                            <input type="date" asp-for="Transferencia.DataCompensacao" class="rounded border-1 p-1">
+                            <input type="date" asp-for="Transferencia.DataCompensacao" class="rounded border-1 p-1" id="dataCompensacao">
                         </div>
                     </div>
                 </div>
                 <div class="p-2 mb-1">
-                    <label asp-for="Transferencia.Descricao" class="form-label fs-5 text-primary">Descrição:</label>
-                    <textarea asp-for="Transferencia.Descricao" class="form-control bg-white border-1 border-dark text-primary" rows="1" style="max-height: 80px;"></textarea>
+                    <label asp-for="Transferencia.Descricao" class="form-label fs-5 text-primary labels">Descrição:</label>
+                    <textarea asp-for="Transferencia.Descricao" class="form-control bg-white border-1 border-dark text-primary" rows="1" id="descricao" style="max-height: 80px;"></textarea>
                 </div>
                 <div class="d-flex justify-content-between">
                     <div class="row g-2 align-items-center p-2">
                         <div class="col-auto">
-                            <label asp-for="Transferencia.Categoria" class="col-form-label fs-5 text-primary">Categoria:</label>
+                            <label asp-for="Transferencia.Categoria" class="col-form-label fs-5 text-primary labels">Categoria:</label>
                         </div>
                         <div class="col-auto">
-                            <select class="form-select bg-white text-primary border border-dark border-1" asp-for="Transferencia.Categoria">
+                            <select class="form-select bg-white text-primary border border-dark border-1" asp-for="Transferencia.Categoria" id="selectCategoria">
                                 <option value="Transferencia entre contas" selected>Transferência entre contas</option>
                             </select>
                         </div>

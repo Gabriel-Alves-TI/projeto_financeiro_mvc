@@ -4,7 +4,7 @@
     ViewData["Title"] = "Excluir Recorrente";
 }
 
-<h1 class="d-flex justify-content-center text-primary fw-bold mt-2">@ViewData["Title"]</h1>
+<h1 class="d-flex justify-content-center text-primary fw-bold mt-2" id="titulo">@ViewData["Title"]</h1>
 
 <div class="container">
     <div class="card mb-3 rounded-3 border-danger">
@@ -12,18 +12,41 @@
             <input type="hidden" asp-for="Id">
 
             <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-end bg-white w-100 border border-primary border-1 rounded-bottom rounded-3">
+                        <div class="row g-1 align-items-center p-1">
+                            <div class="col-auto">
+                                <label asp-for="IsRecorrente" class="col-form-label fs-6 text-primary me-2">Recorrente?</label>
+                            </div>
+                            <div class="col-auto">
+                                <input class="form-check-input bg-primary" asp-for="IsRecorrente" type="radio" name="IsRecorrente" id="fixoSim"
+                                    value="true" checked="checked">
+                                <label class="form-check-label text-dark">
+                                    Sim
+                                </label>
+                            </div>
+                            <div class="col-auto">
+                                <input class="form-check-input bg-primary" asp-for="IsRecorrente" type="radio" name="IsRecorrente" id="fixoNao"
+                                    value="false" disabled>
+                                <label class="form-check-label text-dark" for="fixoNao">
+                                    Não
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="d-flex justify-content-between bg-primary bg-opacity-25 rounded">
                     <div class="row g-2 align-items-center p-2">
                         <div class="col-auto">
                             <label asp-for="Valor" class="col-form-label fs-4 text-primary">Valor:</label>
                         </div>
                         <div class="col-auto">
-                            <input type="text" asp-for="Valor" class="rounded border-1 w-50 fs-5" style="height: 35px;" disabled>
+                            <input type="text" asp-for="Valor" class="rounded border-1 w-50 fs-5" style="height: 35px;" id="valorRecorrente" disabled>
                         </div>
                     </div>
                     <div class="row g-2 align-items-center p-2">
                         <div class="col-auto">
-                            <label for="parcelas" asp-for="Parcelas" class="col-form-label fs-5 text-primary">Parcelas:</label>
+                            <label for="parcelas" asp-for="Parcelas" class="col-form-label fs-5 text-primary labels">Parcelas:</label>
                         </div>
                         <div class="col-auto">
                             <input type="number" asp-for="Parcelas" name="Parcelas" id="parcelas" class="rounded border-1 p-1 w-25" disabled>
@@ -31,7 +54,7 @@
                     </div>
                     <div class="row g-2 align-items-center p-2">
                         <div class="col-auto">
-                            <label for="selectTipo" asp-for="Data" class="col-form-label fs-5 text-primary">Data:</label>
+                            <label for="selectTipo" asp-for="Data" class="col-form-label fs-5 text-primary labels">Data:</label>
                         </div>
                         <div class="col-auto">
                             <input type="date" asp-for="Data" name="Data" class="rounded border-1 p-1" id="dataLancamento" disabled>
@@ -41,15 +64,15 @@
                 <div class="d-flex justify-content-between bg-primary bg-opacity-25 rounded mt-1">
                     <div class="row g-2 align-items-center p-2">
                         <div class="col-auto">
-                            <label for="selectTipo" asp-for="Tipo" class="col-form-label fs-5 text-primary">Tipo:</label>
+                            <label for="selectTipo" asp-for="Tipo" class="col-form-label fs-5 text-primary labels">Tipo:</label>
                         </div>
                         <div class="col-auto">
-                            <input class="rounded border-1 p-1" asp-for="Tipo" disabled>
+                            <input class="rounded border-1 p-1" asp-for="Tipo" id="selectTipo" disabled>
                         </div>
                     </div>
                     <div class="row g-2 align-items-center p-2">
                         <div class="col-auto">
-                            <label for="selectTipo" asp-for="Previsao" class="col-form-label fs-5 text-primary">Prev. Pagamento:</label>
+                            <label for="selectTipo" asp-for="Previsao" class="col-form-label fs-5 text-primary labels">Prev. Pagamento:</label>
                         </div>
                         <div class="col-auto">
                             <input type="date" asp-for="Previsao" class="rounded border-1 p-1" disabled>
@@ -57,24 +80,38 @@
                     </div>
                 </div>
                 <div class="p-2 mb-1">
-                    <label asp-for="Descricao" class="form-label fs-5 text-primary">Descrição:</label>
-                    <input class="rounded border-1 p-1" asp-for="Descricao" name="Descricao" rows="1" style="max-height: 80px;" disabled>
+                    <label asp-for="Descricao" class="form-label fs-5 text-primary labels">Descrição:</label>
+                    <input class="rounded border-1 p-1" asp-for="Descricao" name="Descricao" rows="1" style="max-height: 80px;" id="descricao" disabled>
                 </div>
                 <div class="d-flex justify-content-between">
                     <div class="row g-2 align-items-center p-2">
                         <div class="col-auto">
-                            <label asp-for="Categoria" class="col-form-label fs-5 text-primary">Categoria:</label>
+                            <label asp-for="Categoria" class="col-form-label fs-5 text-primary labels">Categoria:</label>
                         </div>
                         <div class="col-auto">
-                            <input class="rounded border-1 p-1" asp-for="Categoria" name="Categoria" disabled>
+                            <input class="rounded border-1 p-1" asp-for="Categoria" name="Categoria" id="selectCategoria" disabled>
                         </div>
                     </div>
                     <div class="row g-2 align-items-center p-2">
                         <div class="col-auto">
-                            <label asp-for="ContaId" class="col-form-label fs-5 text-primary">Conta:</label>
+                            <label asp-for="ContaId" class="col-form-label fs-5 text-primary labels">Conta:</label>
                         </div>
                         <div class="col-auto">
-                            <input class="rounded border-1 p-1" asp-for="Conta" value="@Model.Conta.Banco" disabled>
+                            <input class="rounded border-1 p-1" asp-for="Conta" value="@Model.Conta?.Banco" id="conta" disabled>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-start align-items-center p-2 mx-2">
+                        <h5 class="text-primary text-center ms-2 me-4 fw-bold">Pagar?</h5>
+                        <div class="d-flex align-items-center w-50 gap-4">
+                            <!-- SIM -->
+                            <input type="radio" class="btn-check" asp-for="Pago" id="pagar-sim" value="true" disabled/>
+                            <label class="btn btn-outline-success text-success-emphasis labels" for="pagar-sim">Sim</label>
+
+                            <!-- NÃO -->
+                            <input type="radio" class="btn-check" asp-for="Pago" id="pagar-nao" value="false" disabled/>
+                            <label class="btn btn-outline-danger text-danger-emphasis labels" for="pagar-nao">Não</label>
                         </div>
                     </div>
                 </div>

@@ -3,7 +3,7 @@
     ViewData["Title"] = "Visualizar";
 }
 
-<h1 class="d-flex justify-content-center text-info fw-bold mt-2">@ViewData["Title"]</h1>
+<h1 class="d-flex justify-content-center text-info fw-bold mt-2" id="titulo">@ViewData["Title"]</h1>
 
 <div class="container">
     <div class="card mb-3 rounded-3 border-info">
@@ -16,12 +16,12 @@
                             <label class="col-form-label fs-4 text-primary">Valor:</label>
                         </div>
                         <div class="col-auto">
-                            <input type="text" asp-for="Valor" class="rounded border-1 w-50 fs-5" style="height: 35px;" disabled>
+                            <input type="text" asp-for="Valor" class="rounded border-1 w-50 fs-5" style="height: 35px;" id="valorTransferencia" disabled>
                         </div>
                     </div>
                     <div class="row g-2 align-items-center p-2">
                         <div class="col-auto">
-                            <label asp-for="DataTransferencia" class="col-form-label fs-5 text-primary">Data Transferência:</label>
+                            <label asp-for="DataTransferencia" class="col-form-label fs-5 text-primary labels">Data Transferência:</label>
                         </div>
                         <div class="col-auto">
                             <input type="date" asp-for="DataTransferencia" class="rounded border-1 p-1" disabled>
@@ -31,33 +31,31 @@
                 <div class="d-flex justify-content-between bg-info bg-opacity-25 rounded mt-1">
                     <div class="row g-2 align-items-center p-2">
                         <div class="col-auto">
-                            <label class="col-form-label fs-5 text-primary">Conta Origem:</label>
+                            <label class="col-form-label fs-5 text-primary labels">Conta Origem:</label>
                         </div>
                         <div class="col-auto">
-                            <input type="text" class="form-control bg-white text-danger" value="@Model.ContaOrigem.Banco" disabled>
+                            <input type="text" class="form-control bg-white text-danger" value="@Model.ContaOrigem.Banco" id="contaOrigem" disabled>
                         </div>
                         <div class="col-auto">
-                            <label class="col-form-label fs-5 text-primary">Conta Destino:</label>
+                            <label class="col-form-label fs-5 text-primary labels">Conta Destino:</label>
                         </div>
                         <div class="col-auto">
-                            <input type="text" class="form-control bg-white text-success text-success-emphasis" value="@Model.ContaDestino.Banco" disabled>
+                            <input type="text" class="form-control bg-white text-success text-success-emphasis" id="contaDestino" value="@Model.ContaDestino.Banco" disabled>
                         </div>
                     </div>
                     <div class="row g-2 align-items-center p-2">
                         <div class="col-auto">
-                            <label for="selectTipo" asp-for="Tipo" class="col-form-label fs-5 text-primary">Tipo:</label>
+                            <label for="selectTipo" asp-for="Tipo" class="col-form-label fs-5 text-primary labels">Tipo:</label>
                         </div>
                         <div class="col-auto">
-                            <select class="form-select border-2 bg-white text-primary" asp-for="Tipo" disabled>
-                                <option value="0">Receita</option>
-                                <option value="1">Despesa</option>
+                            <select class="form-select border-2 bg-white text-primary" asp-for="Tipo" id="selectTipo" disabled>
                                 <option value="2" selected>Transferencia</option>
                             </select>
                         </div>
                     </div>
                     <div class="row g-2 align-items-center p-2">
                         <div class="col-auto">
-                            <label asp-for="DataCompensacao"  class="col-form-label fs-5 text-primary">Data Compensação:</label>
+                            <label asp-for="DataCompensacao"  class="col-form-label fs-5 text-primary labels">Data Compensação:</label>
                         </div>
                         <div class="col-auto">
                             <input type="date" asp-for="DataCompensacao" class="rounded border-1 p-1" disabled>
@@ -66,15 +64,15 @@
                 </div>
                 <div class="p-2 mb-1">
                     <label asp-for="Descricao" class="form-label fs-5 text-primary">Descrição:</label>
-                    <input class="rounded border-1 p-1" asp-for="Descricao" name="Descricao" rows="1" style="max-height: 80px;" disabled>
+                    <input class="rounded border-1 p-1" asp-for="Descricao" name="Descricao" rows="1" style="max-height: 80px;" id="descricao" disabled>
                 </div>
                 <div class="d-flex justify-content-between">
                     <div class="row g-2 align-items-center p-2">
                         <div class="col-auto">
-                            <label asp-for="Categoria" class="col-form-label fs-5 text-primary">Categoria:</label>
+                            <label asp-for="Categoria" class="col-form-label fs-5 text-primary labels">Categoria:</label>
                         </div>
                         <div class="col-auto">
-                            <input class="rounded border-1 p-1" style="width: 200px;" asp-for="Categoria" name="Categoria" disabled>
+                            <input class="rounded border-1 p-1" style="width: 200px;" asp-for="Categoria" name="Categoria" id="selectCategoria" disabled>
                         </div>
                     </div>
                 </div>

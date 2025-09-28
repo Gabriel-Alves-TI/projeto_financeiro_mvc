@@ -60,6 +60,10 @@ input[type="number"]::-webkit-inner-spin-button {
   animation-delay: 0.3s;
 }
 
+#metas {
+  background-color: rgb(199, 197, 197) !important;
+}
+
 @keyframes loading-wave-animation {
   0% {
     height: 10px;
@@ -92,27 +96,157 @@ input[type="number"]::-webkit-inner-spin-button {
     margin-bottom: 10px;
   }
 
-  .divBtns{
-    margin-left: 10px;
-  }
-
-  #btnLimpar, #btnFiltrar{
-    width: 80px;
-  }
-
-  #btnLimpar {
-    margin-bottom: 5px;
-  }
-
-  #btnFiltrar {
-    margin-left: 0px !important;
-  }
-
   #valorFiltro{
     width: 100px;
   }
 
+  /* Layout */
+
+  #boxSpinner {
+    transform: scale(0.7);
+  }
+
+  .py-2 {
+    padding-top: 0.3rem !important;
+    padding-bottom: 0.3rem !important;
+  }
+
+  .menu {
+    font-size: 15px;
+  }
+
+  /* Login */
+
+  #formLogin{
+    margin-left: 15px;
+    margin-right: 15px;
+  }
   
+  /* Login - Registrar */
+
+  #divRegistrar{
+    width: 500px !important;
+  }
+
+  /* Lançamentos - Index */
+
+  .valor-font {
+    font-size: 14px !important;
+  }
+
+  #titulo {
+    font-size: 30px;
+  }
+
+  .btnLancamento {
+    width: 180px !important;
+    font-size: 14px;
+  }
+
+  h5 {
+    font-size: 15px;
+  }
+
+  h6 {
+    font-size: 13px;
+  }
+
+  input[type="date"]{
+    width: 90px;
+    font-size: 12px;
+  }
+
+  #tipo, #categoria, #conta, #valorFiltro{
+    width: 90px;
+    font-size: 13px;
+  }
+
+  #descricaoFiltro {
+    font-size: 12px;
+  }
+
+  #btnLimpar, #btnFiltrar {
+    margin-top: 30px;
+    width: 60px;
+    height: 20px;
+    font-size: 12px;
+    text-align: center;
+  }
+
+  #formFiltro {
+    height: min-content;
+  }
+
+  .divBtns {
+    display: flex;
+    margin: 0px;
+    gap: 10px;
+  }
+
+  /* Lançamentos - Cadastrar */
+
+  #valorLancamento {
+    width: 90px;
+    font-size: 18px !important;
+  }
+
+  .labels {
+    font-size: 16px !important;
+  }
+
+  #selectTipo, #selectCategoria, #parcelas {
+    font-size: 12px;
+  }
+
+  #conta {
+    width: 100px;
+  }
+
+  /* Lançamentos - Excluir */
+
+  #descricao {
+    margin-left: 5px;
+    width: 100%;
+  }
+
+  /* Recorrente - Cadastrar */
+
+  #valorRecorrente {
+    width: 90px;
+    font-size: 18px !important;
+  }
+
+  /* Transferência - Cadastrar */
+
+  #valorTransferencia {
+    width: 90px;
+    font-size: 18px !important;
+  }
+
+  #contaOrigem, #contaDestino, #dataCompensacao, #dataTransferencia {
+    font-size: 13px;
+  }
+
+  /* Contas */
+
+  #divConta {
+    width: 350px !important;
+  }
+
+  #banco, #agencia, #numeroConta, #saldoInicial {
+    font-size: 14px !important;
+    height: 30px;
+  }
+
+  #banco::placeholder {
+    font-size: 14px;
+    font-style: italic;
+  }
+
+  #spanExcluir {
+    font-size: 15px !important;
+  }
+
 }
 
 @media (min-width: 1500px) {

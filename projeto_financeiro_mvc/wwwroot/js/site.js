@@ -40,7 +40,7 @@ const formatarInput = (event) => {
     input.value = formatarMoeda(input.value);
 }
 
-const inputs = document.querySelectorAll("#valorLancamento, #valorRecorrente");
+const inputs = document.querySelectorAll("#valorLancamento, #valorRecorrente, #valorTransferencia, #saldoInicial");
 inputs.forEach(input => {
     input.addEventListener('input', formatarInput);
 });

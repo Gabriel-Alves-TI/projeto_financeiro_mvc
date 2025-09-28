@@ -91,12 +91,12 @@ namespace projeto_financeiro_mvc.Controllers
                 Console.WriteLine($"Previsao: {viewModel.Recorrente.Previsao}");
 
                 var conta = _context.Contas.Find(viewModel.Recorrente.ContaId);
-                if (conta == null)
-                {
-                    ModelState.AddModelError("", "Conta não localizada!");
-                    viewModel.Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList();
-                    return View(viewModel);
-                }
+                // if (conta == null)
+                // {
+                //     ModelState.AddModelError("", "Conta não localizada!");
+                //     viewModel.Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList();
+                //     return View(viewModel);
+                // }
 
                 if (viewModel.Recorrente.IsRecorrente == false && viewModel.Recorrente.Parcelas == 1)
                 {
@@ -312,7 +312,7 @@ namespace projeto_financeiro_mvc.Controllers
             {
                 recorrente = _context.Recorrentes
                     .Include(r => r.Conta)
-                    .FirstOrDefault(r => r.GrupoFamiliarId == usuario.GrupoFamiliarId && r.Id == id && r.UsuarioId == usuario.Id);
+                    .FirstOrDefault(r => r.Id == id && r.UsuarioId == usuario.Id);
             }
 
             if (recorrente == null)

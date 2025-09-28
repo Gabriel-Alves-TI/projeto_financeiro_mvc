@@ -59,14 +59,14 @@ namespace projeto_financeiro_mvc.Controllers
         [HttpPost]
         public IActionResult Cadastrar(ContaDTO contaDto)
         {
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
             if (ModelState.IsValid)
             {
-                var usuario = _sessaoInterface.BuscarSessao();
-                if (usuario == null)
-                {
-                    return RedirectToAction("Index", "Login");
-                }
-
                 var conta = new ContaModel()
                 {
                     Banco = contaDto.Banco,
@@ -84,6 +84,7 @@ namespace projeto_financeiro_mvc.Controllers
                 return RedirectToAction("ListarContas");
             }
 
+            ViewBag.NomeUsuario = usuario.Nome;
             return View(contaDto);
         }
 

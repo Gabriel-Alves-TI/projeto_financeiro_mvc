@@ -3,7 +3,7 @@
     ViewData["Title"] = "Extrato";
 }
 
-<h1 class="d-flex justify-content-center text-primary fw-bold mt-2">@ViewData["Title"]</h1>
+<h1 class="d-flex justify-content-center text-primary fw-bold mt-2" id="titulo">@ViewData["Title"]</h1>
 
 <div class="container d-flex justify-content-center mt-2">
     @if (TempData["MensagemSucesso"] != null)
@@ -42,7 +42,7 @@
                         <label for="selectTipo" class="col-form-label text-primary">Descrição:</label>
                     </div>
                     <div class="col-auto">
-                        <input type="text" name="descricao">
+                        <input type="text" name="descricao" id="descricao">
                     </div>
                 </div>
                 <div class="row g-1 align-items-center p-1">
@@ -70,7 +70,6 @@
                             <option value="Carro">Carro</option>
                             <option value="Casa">Casa</option>
                             <option value="Combustível">Combustível</option>
-                            <option value="Diversos">Despesas Mayte</option>
                             <option value="Diversos">Diversos</option>
                             <option value="Eletrônicos">Eletrônicos</option>
                             <option value="Empréstimo">Empréstimo</option>
@@ -119,10 +118,10 @@
                 </div>
 
                 <div class="align-items-center ms-2 p-1">
-                    <a type="button" asp-action="Index" asp-controller="Extrato" class="btn btn-sm btn-info btnLimparExtrato" id="btnLimpar" 
+                    <a type="button" asp-action="Index" asp-controller="Extrato" class="btn btn-sm btn-info btnLimparExtrato" id="btnLimparExtrato" 
                     data-datainicial="@Model.DataInicial?.ToString("yyyy-MM-dd")"
                     data-datafinal="@Model.DataFinal?.ToString("yyyy-MM-dd")">Limpar</a>
-                    <button type="submit" class="btn btn-sm btn-primary ms-2 btnFiltrarExtrato" id="btnFiltrar">Filtrar</button>  
+                    <button type="submit" class="btn btn-sm btn-primary ms-2 btnFiltrarExtrato" id="btnFiltrarExtrato">Filtrar</button>  
                 </div>
             </div>    
         </div>
