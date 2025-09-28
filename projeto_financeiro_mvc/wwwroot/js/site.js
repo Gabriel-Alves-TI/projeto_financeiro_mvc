@@ -44,3 +44,11 @@ const inputs = document.querySelectorAll("#valorLancamento, #valorRecorrente, #v
 inputs.forEach(input => {
     input.addEventListener('input', formatarInput);
 });
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+});
