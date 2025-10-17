@@ -52,7 +52,7 @@ namespace projeto_financeiro_mvc.Controllers
                         Descricao = l.Descricao,
                         Tipo = l.Tipo.ToString(),
                         Valor = l.Valor,
-                        Categoria = l.Categoria,
+                        Categoria = l.Categoria != null ? l.Categoria.Descricao : "",
                         Conta = l.Conta.Banco,
                         ContaId = l.ContaId,
                         Origem = "Lancamento"
@@ -70,7 +70,7 @@ namespace projeto_financeiro_mvc.Controllers
                         Descricao = r.Descricao,
                         Tipo = r.Tipo.ToString(),
                         Valor = r.Valor,
-                        Categoria = r.Categoria,
+                        Categoria = r.Categoria != null ? r.Categoria.Descricao : "",
                         Conta = r.Conta.Banco,
                         ContaId = r.ContaId,
                         Origem = "Recorrente"
@@ -87,7 +87,7 @@ namespace projeto_financeiro_mvc.Controllers
                         Descricao = $"Transferência {t.ContaOrigem.Banco} -> {t.ContaDestino.Banco}",
                         Tipo = t.Tipo.ToString(),
                         Valor = t.Valor,
-                        Categoria = t.Categoria,
+                        Categoria = t.Categoria != null ? t.Categoria.Descricao : "",
                         Conta = t.ContaOrigem.Banco,
                         ContaId = t.ContaOrigemId,
                         Origem = "Transferencia"

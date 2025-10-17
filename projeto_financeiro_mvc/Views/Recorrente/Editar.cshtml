@@ -49,7 +49,7 @@
                             <label for="parcelas" asp-for="Recorrente.Parcelas" class="col-form-label fs-5 text-primary labels">Parcelas:</label>
                         </div>
                         <div class="col-auto">
-                            <input type="number" asp-for="Recorrente.Parcelas" name="Recorrente.Parcelas" id="parcelas" class="rounded border-1 p-1 w-25">
+                            <input type="number" asp-for="Recorrente.Parcelas" name="Recorrente.Parcelas" id="parcelas" class="rounded border-1 p-1 w-25" readonly>
                         </div>
                     </div>
                     <div class="row g-2 align-items-center p-2">
@@ -89,12 +89,20 @@
                 <div class="d-flex justify-content-between">
                     <div class="row g-2 align-items-center p-2">
                         <div class="col-auto">
-                            <label asp-for="Recorrente.Categoria" class="col-form-label fs-5 text-primary labels">Categoria:</label>
+                            <label asp-for="Recorrente.CategoriaId" class="col-form-label fs-5 text-primary labels">Categoria:</label>
                         </div>
                         <div class="col-auto">
-                            <select class="form-select bg-white text-primary border border-dark border-1" asp-for="Recorrente.Categoria" name="Recorrente.Categoria" id="selectCategoria">
-                                <option selected>Selecione...</option>
-                                <option value="Água">Água</option>
+                            <select class="form-select bg-white text-primary border border-dark border-1" asp-for="Recorrente.CategoriaId" name="Recorrente.CategoriaId" id="selectCategoria">
+                                <option value="">Selecione...</option>
+
+                                @{
+                                    foreach(var categoria in Model.Categorias)
+                                    {
+                                        <option value="@categoria.Id">@categoria.Descricao</option>
+                                    }
+                                }
+
+                                @* <option value="Água">Água</option>
                                 <option value="Alimentação VA">Alimentação VA</option>
                                 <option value="Aluguel">Aluguel</option>
                                 <option value="Carro">Carro</option>
@@ -118,7 +126,7 @@
                                 <option value="Telefone">Telefone</option>
                                 <option value="Transferência entre contas">Transferência entre contas</option>
                                 <option value="TV">TV</option>
-                                <option value="Roupas">Roupas</option>
+                                <option value="Roupas">Roupas</option> *@
                             </select>
                         </div>
                     </div>

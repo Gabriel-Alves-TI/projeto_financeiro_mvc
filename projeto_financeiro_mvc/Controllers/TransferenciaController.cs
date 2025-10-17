@@ -41,6 +41,7 @@ namespace projeto_financeiro_mvc.Controllers
                     DataCompensacao = DateTime.Today
                 },
                 Contas = _context.Contas.Where(c => c.GrupoFamiliarId == usuario.GrupoFamiliarId && c.UsuarioId == usuario.Id).ToList(),
+                Categorias = _context.Categorias.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId && c.Descricao.Contains("Transferencia") || c.Descricao.Contains("Transferência")).ToList()
             };
 
             ViewBag.NomeUsuario = usuario.Nome;
@@ -57,6 +58,7 @@ namespace projeto_financeiro_mvc.Controllers
             }
 
             var contas = _context.Contas.Where(c => c.GrupoFamiliarId == usuario.GrupoFamiliarId && c.UsuarioId == usuario.Id).ToList();
+            var categorias = _context.Categorias.Where(c => c.GrupoFamiliarId == usuario.GrupoFamiliarId && c.UsuarioId == usuario.Id).ToList();
 
             foreach (var erro in ModelState.Values.SelectMany(v => v.Errors))
             {
@@ -72,6 +74,7 @@ namespace projeto_financeiro_mvc.Controllers
                 }
 
                 viewModel.Contas = contas;
+                viewModel.Categorias = categorias;
                 return View(viewModel);
             }
 
@@ -92,6 +95,7 @@ namespace projeto_financeiro_mvc.Controllers
                     ModelState.AddModelError("", "Saldo insuficiente na conta de origem.");
 
                     viewModel.Contas = contas;
+                    viewModel.Categorias = categorias;
                     return View(viewModel);
                 }
 
@@ -100,6 +104,7 @@ namespace projeto_financeiro_mvc.Controllers
                     ModelState.AddModelError("", "Selecione uma Conta Origem/Conta Destino diferente.");
 
                     viewModel.Contas = contas;
+                    viewModel.Categorias = categorias;
                     return View(viewModel);
                 }
 
@@ -107,7 +112,7 @@ namespace projeto_financeiro_mvc.Controllers
                 {
                     Descricao = viewModel.Transferencia.Descricao,
                     Valor = viewModel.Transferencia.Valor,
-                    Categoria = viewModel.Transferencia.Categoria,
+                    CategoriaId = viewModel.Transferencia.CategoriaId,
                     Tipo = viewModel.Transferencia.Tipo,
                     DataTransferencia = viewModel.Transferencia.DataTransferencia,
                     DataCompensacao = viewModel.Transferencia.DataCompensacao,
@@ -125,6 +130,7 @@ namespace projeto_financeiro_mvc.Controllers
                 _context.Contas.Update(contaDestino);
                 _context.Transferencias.Add(transferencia);
                 _context.SaveChanges();
+
 
                 TempData["MensagemSucesso"] = "Transferência efetuada com sucesso!";
                 return RedirectToAction("Index", "Lancamento");

@@ -5,16 +5,11 @@ using System.Threading.Tasks;
 
 namespace projeto_financeiro_mvc.Models
 {
-    public abstract class MovimentoFinanceiroBase
+    public class CategoriaModel
     {
-        public int Id { get; set; }
-        public string? Descricao { get; set; }
-        public double Valor { get; set; }
+        public int Id { get; set;}
+        public string Descricao { get; set; }
 
-        public int? CategoriaId { get; set; }
-        public CategoriaModel? Categoria { get; set; }
-
-        //Relacionamentos
         public int UsuarioId { get; set; }
         public UsuarioModel Usuario { get; set; }
         public int? GrupoFamiliarId { get; set; }

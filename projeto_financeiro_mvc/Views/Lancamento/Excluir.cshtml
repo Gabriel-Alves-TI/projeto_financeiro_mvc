@@ -65,7 +65,7 @@
                             <label asp-for="Categoria" class="col-form-label fs-5 text-primary labels">Categoria:</label>
                         </div>
                         <div class="col-auto">
-                            <input class="rounded border-1 p-1" asp-for="Categoria" name="Categoria" id="selectCategoria" disabled>
+                            <input class="rounded border-1 p-1" asp-for="Categoria" name="Categoria" id="selectCategoria" value="@Model.Categoria?.Descricao" disabled>
                         </div>
                     </div>
                     <div class="row g-2 align-items-center p-2">

@@ -46,6 +46,12 @@
                     </a>
                 </li>
                 <li class="list-group-item p-0 bg-white border border-1">
+                    <a asp-controller="Categoria" asp-action="Index" class="d-block text-primary py-2 px-3">
+                        <i class="bi bi-tags me-2"></i>
+                        Categorias
+                    </a>
+                </li>
+                <li class="list-group-item p-0 bg-white border border-1">
                     <a class="d-block text-primary py-2 px-3" asp-controller="Extrato" asp-action="Index">
                         <i class="bi bi-file-earmark-text me-2"></i>
                         Extrato
@@ -74,6 +80,10 @@
                 else if (tituloView == "Lançamentos" || tituloView == "Novo Lançamento" || tituloView == "Editar Lançamento" || tituloView == "Excluir Lançamento" || tituloView == "Cadastrar Recorrente" || tituloView == "Editar Recorrente" || tituloView == "Excluir Recorrente"|| tituloView == "Transferência entre Contas" || tituloView == "Excluir Transferência")
                 {
                     <img src="/img/lancamentos.jpg" class="w-100" alt="Lançamentos">
+                }
+                else if(tituloView == "Categorias" || tituloView == "Cadastrar Categoria" || tituloView == "Editar Categoria" || tituloView == "Excluir Categoria")
+                {
+                    <img src="img/foto-categorias.jpg" class="w-100" alt="Categorias">
                 }
                 else if(tituloView == "Extrato")
                 {

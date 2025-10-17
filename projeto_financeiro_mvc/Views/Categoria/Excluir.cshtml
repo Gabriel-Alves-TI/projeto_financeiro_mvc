@@ -1,0 +1,28 @@
+@using projeto_financeiro_mvc.DTOs
+@model CategoriaDTO
+@{
+    ViewData["Title"] = "Excluir Categoria";
+}
+
+<h1 class="d-flex justify-content-center text-primary fw-bold mt-2" id="titulo">@ViewData["Title"]</h1>
+
+<div class="container d-flex justify-content-center">
+    <div class="card d-flex align-items-center justify-content-center border border-2 border-primary rounded rounded-3 bg-opacity-25 w-50 p-2" id="divConta">
+        <form method="post" asp-controller="Categoria" asp-action="Excluir">
+            <input type="hidden" asp-for="Id">
+
+            <div class="row g-2 align-items-center p-1">
+                <div class="col-auto">
+                    <label for="Banco" class="col-form-label fs-4 text-primary labels">Descrição:</label>
+                </div>
+                <div class="col-auto form-control">
+                    <input type="text" asp-for="Descricao" class="border-1 text-white w-100 fs-5" disabled>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center w-100 p-2 mt-4">
+                <button class="btn btn-success rounded rounded-3">Confirmar</button>
+                <a class="btn btn-danger rounded rounded-3" asp-controller="Categoria" asp-action="Index">Cancelar</a>
+            </div>
+        </form>            
+    </div>
+</div>

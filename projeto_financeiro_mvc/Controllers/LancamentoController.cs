@@ -33,8 +33,12 @@ namespace projeto_financeiro_mvc.Controllers
             {
                 return RedirectToAction("Index", "Login");
             }
-            
+
             var contas = _context.Contas
+                .Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId)
+                .ToList();
+
+            var categorias = _context.Categorias   
                 .Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId)
                 .ToList();
 
@@ -49,7 +53,7 @@ namespace projeto_financeiro_mvc.Controllers
                     Descricao = l.Descricao,
                     Tipo = l.Tipo,
                     Valor = l.Valor,
-                    Categoria = l.Categoria,
+                    Categoria = l.Categoria != null ? l.Categoria.Descricao : "",
                     Pago = l.Pago,
                     Conta = l.Conta.Banco,
                     ContaId = l.ContaId,
@@ -67,7 +71,7 @@ namespace projeto_financeiro_mvc.Controllers
                     Descricao = r.Descricao,
                     Tipo = r.Tipo,
                     Valor = r.Valor,
-                    Categoria = r.Categoria,
+                    Categoria = r.Categoria != null ? r.Categoria.Descricao : "",
                     Pago = r.Pago,
                     Conta = r.Conta.Banco,
                     ContaId = r.ContaId,
@@ -85,7 +89,7 @@ namespace projeto_financeiro_mvc.Controllers
                     Descricao = t.Descricao,
                     Tipo = t.Tipo,
                     Valor = t.Valor,
-                    Categoria = t.Categoria,
+                    Categoria = t.Categoria != null ? t.Categoria.Descricao : "",
                     Pago = true,
                     Conta = t.ContaOrigem.Banco,
                     ContaId = t.ContaOrigemId,
@@ -131,7 +135,8 @@ namespace projeto_financeiro_mvc.Controllers
 
                 DataInicial = dataInicial,
                 DataFinal = dataFinal,
-                Contas = contas
+                Contas = contas,
+                Categorias = categorias
             };
 
             ViewBag.NomeUsuario = usuario.Nome;
@@ -153,7 +158,8 @@ namespace projeto_financeiro_mvc.Controllers
                     Data = DateTime.Today,
                     Previsao = DateTime.Today
                 },
-                Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList()
+                Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList(),
+                Categorias = _context.Categorias.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList()
             };
 
             ViewBag.NomeUsuario = usuario.Nome;
@@ -171,6 +177,10 @@ namespace projeto_financeiro_mvc.Controllers
 
             var contas = _context.Contas.Where(c => c.GrupoFamiliarId == usuario.GrupoFamiliarId && c.UsuarioId == usuario.Id).ToList();
 
+            var categorias = _context.Categorias   
+                .Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId)
+                .ToList();
+
             Console.WriteLine("ContaId recebido: " + viewModel.Lancamento.ContaId);
             foreach (var erro in ModelState.Values.SelectMany(v => v.Errors))
             {
@@ -186,13 +196,14 @@ namespace projeto_financeiro_mvc.Controllers
                 }
 
                 viewModel.Contas = _context.Contas.ToList();
+                viewModel.Categorias = categorias.ToList();
                 return View(viewModel);
             }
 
             if (ModelState.IsValid)
             {
                 Console.WriteLine("===> Dados recebidos:");
-                Console.WriteLine($"Categoria: {viewModel.Lancamento.Categoria}");
+                Console.WriteLine($"Categoria: {viewModel.Lancamento.CategoriaId}");
                 Console.WriteLine($"ContaId: {viewModel.Lancamento.ContaId}");
                 Console.WriteLine($"Descricao: {viewModel.Lancamento.Descricao}");
                 Console.WriteLine($"Valor: {viewModel.Lancamento.Valor}");
@@ -202,18 +213,21 @@ namespace projeto_financeiro_mvc.Controllers
                 Console.WriteLine($"Previsao: {viewModel.Lancamento.Previsao}");
 
                 var conta = _context.Contas.Find(viewModel.Lancamento.ContaId);
-                
+
 
                 if (viewModel.Lancamento.Parcelas <= 0)
                 {
                     TempData["MensagemErro"] = "Número de parcelas deve ser maior que 0.";
 
                     viewModel.Contas = contas;
+                    viewModel.Categorias = categorias;
                     return View(viewModel);
                 }
 
+                var categoriaSaldoInicial = _context.Categorias.FirstOrDefault(c => c.Descricao == "Saldo Inicial");
+
                 // Lógica para Ajuste de Saldo da Conta
-                if (viewModel.Lancamento.Categoria?.Trim().Equals("Saldo Inicial", StringComparison.OrdinalIgnoreCase) == true)
+                if (categoriaSaldoInicial != null && viewModel.Lancamento.CategoriaId == categoriaSaldoInicial.Id)
                 {
                     if (conta == null)
                     {
@@ -234,7 +248,7 @@ namespace projeto_financeiro_mvc.Controllers
                     {
                         Descricao = viewModel.Lancamento.Descricao,
                         Valor = viewModel.Lancamento.Valor,
-                        Categoria = viewModel.Lancamento.Categoria,
+                        CategoriaId = viewModel.Lancamento.CategoriaId,
                         Tipo = viewModel.Lancamento.Tipo,
                         Data = viewModel.Lancamento.Data,
                         Previsao = viewModel.Lancamento.Previsao,
@@ -262,7 +276,7 @@ namespace projeto_financeiro_mvc.Controllers
                     {
                         Descricao = viewModel.Lancamento.Descricao,
                         Valor = viewModel.Lancamento.Valor,
-                        Categoria = viewModel.Lancamento.Categoria,
+                        CategoriaId = viewModel.Lancamento.CategoriaId,
                         Tipo = viewModel.Lancamento.Tipo,
                         Data = viewModel.Lancamento.Data,
                         Previsao = viewModel.Lancamento.Previsao,
@@ -294,7 +308,7 @@ namespace projeto_financeiro_mvc.Controllers
                         {
                             Descricao = $"{viewModel.Lancamento.Descricao} - Parcelamento({i}/{viewModel.Lancamento.Parcelas})",
                             Valor = valorParcela,
-                            Categoria = viewModel.Lancamento.Categoria,
+                            CategoriaId = viewModel.Lancamento.CategoriaId,
                             Tipo = viewModel.Lancamento.Tipo,
                             Data = dataParcela,
                             Previsao = viewModel.Lancamento.Previsao,
@@ -320,6 +334,7 @@ namespace projeto_financeiro_mvc.Controllers
             }
 
             viewModel.Contas = contas;
+            viewModel.Categorias = categorias;
             return View(viewModel);
         }
 
@@ -346,7 +361,7 @@ namespace projeto_financeiro_mvc.Controllers
                     Id = lancamento.Id,
                     Descricao = lancamento.Descricao,
                     Valor = lancamento.Valor,
-                    Categoria = lancamento.Categoria,
+                    CategoriaId = lancamento.CategoriaId,
                     Tipo = lancamento.Tipo,
                     Data = lancamento.Data,
                     Previsao = lancamento.Previsao,
@@ -354,7 +369,8 @@ namespace projeto_financeiro_mvc.Controllers
                     Pago = lancamento.Pago,
                     ContaId = lancamento.ContaId
                 },
-                Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList()
+                Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList(),
+                Categorias = _context.Categorias.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList()
             };
 
             ViewBag.NomeUsuario = usuario.Nome;
@@ -372,6 +388,10 @@ namespace projeto_financeiro_mvc.Controllers
 
             var contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList();
 
+            var categorias = _context.Categorias   
+                .Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId)
+                .ToList();
+
             if (ModelState.IsValid)
             {
                 var lancamento = _context.Lancamentos
@@ -383,14 +403,16 @@ namespace projeto_financeiro_mvc.Controllers
                     ModelState.AddModelError("", "Lançamento recorrente não localizado.");
 
                     viewModel.Contas = contas;
+                    viewModel.Categorias = categorias;
                     return NotFound(viewModel);
                 }
 
                 if (viewModel.Lancamento.Pago == true && viewModel.Lancamento.ContaId == null)
                 {
                     ModelState.AddModelError("", "Não é possível realizar um pagamento sem uma conta selecionada!");
-                    
+
                     viewModel.Contas = contas;
+                    viewModel.Categorias = categorias;
                     return View(viewModel);
                 }
 
@@ -399,6 +421,7 @@ namespace projeto_financeiro_mvc.Controllers
                     ModelState.AddModelError("", "Não é possível realizar um pagamento sem uma conta selecionada!");
 
                     viewModel.Contas = contas;
+                    viewModel.Categorias = categorias;
                     return View(viewModel);
                 }
 
@@ -432,7 +455,7 @@ namespace projeto_financeiro_mvc.Controllers
 
                 lancamento.Descricao = viewModel.Lancamento.Descricao;
                 lancamento.Valor = viewModel.Lancamento.Valor;
-                lancamento.Categoria = viewModel.Lancamento.Categoria;
+                lancamento.CategoriaId = viewModel.Lancamento.CategoriaId;
                 lancamento.Tipo = viewModel.Lancamento.Tipo;
                 lancamento.Data = viewModel.Lancamento.Data;
                 lancamento.Previsao = viewModel.Lancamento.Previsao;
@@ -446,8 +469,9 @@ namespace projeto_financeiro_mvc.Controllers
                 TempData["MensagemSucesso"] = "Lançamento atualizado com sucesso!";
                 return RedirectToAction("Index", "Lancamento");
             }
-            
+
             viewModel.Contas = contas;
+            viewModel.Categorias = categorias;
             return View(viewModel);
         }
 
@@ -502,12 +526,14 @@ namespace projeto_financeiro_mvc.Controllers
             if (usuario.GrupoFamiliarId.HasValue)
             {
                 lancamento = _context.Lancamentos
+                    .Include(l => l.Categoria)
                     .Include(l => l.Conta)
                     .FirstOrDefault(l => l.Id == id && l.GrupoFamiliarId == usuario.GrupoFamiliarId);
             }
             else
             {
                 lancamento = _context.Lancamentos
+                    .Include(l => l.Categoria)
                     .Include(l => l.Conta)
                     .FirstOrDefault(l => l.Id == id && l.UsuarioId == usuario.Id);
             }
@@ -532,6 +558,7 @@ namespace projeto_financeiro_mvc.Controllers
 
             var lancamentoDb = _context.Lancamentos
                 .Include(l => l.Conta)
+                .Include(l => l.Categoria)
                 .FirstOrDefault(l => l.UsuarioId == usuario.Id && l.GrupoFamiliarId == usuario.GrupoFamiliarId && l.Id == lancamento.Id);
 
             if (lancamentoDb == null)
@@ -539,7 +566,7 @@ namespace projeto_financeiro_mvc.Controllers
                 return NotFound();
             }
 
-            if (lancamentoDb.Categoria.Equals("saldo inicial", StringComparison.OrdinalIgnoreCase) == true)
+            if (string.Equals(lancamentoDb.Categoria.Descricao, "saldo inicial", StringComparison.OrdinalIgnoreCase))
             {
                 if (lancamentoDb.Pago == true && lancamentoDb.Conta != null)
                 {

@@ -42,7 +42,8 @@ namespace projeto_financeiro_mvc.Controllers
                     Previsao = DateTime.Today,
                     IsRecorrente = true,
                 },
-                Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList()
+                Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList(),
+                Categorias = _context.Categorias.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList()
             };
             
             ViewBag.NomeUsuario = usuario.Nome;
@@ -80,7 +81,7 @@ namespace projeto_financeiro_mvc.Controllers
             if (ModelState.IsValid)
             {
                 Console.WriteLine("===> Dados recebidos:");
-                Console.WriteLine($"Categoria: {viewModel.Recorrente.Categoria}");
+                Console.WriteLine($"Categoria: {viewModel.Recorrente.CategoriaId}");
                 Console.WriteLine($"ContaId: {viewModel.Recorrente.ContaId}");
                 Console.WriteLine($"Descricao: {viewModel.Recorrente.Descricao}");
                 Console.WriteLine($"Valor: {viewModel.Recorrente.Valor}");
@@ -104,7 +105,7 @@ namespace projeto_financeiro_mvc.Controllers
                     {
                         Descricao = viewModel.Recorrente.Descricao,
                         Valor = viewModel.Recorrente.Valor,
-                        Categoria = viewModel.Recorrente.Categoria,
+                        CategoriaId = viewModel.Recorrente.CategoriaId,
                         Tipo = viewModel.Recorrente.Tipo,
                         Data = viewModel.Recorrente.Data,
                         Previsao = viewModel.Recorrente.Previsao,
@@ -135,7 +136,7 @@ namespace projeto_financeiro_mvc.Controllers
                         {
                             Descricao = $"{viewModel.Recorrente.Descricao} - Recorrente({i}/{viewModel.Recorrente.Parcelas})",
                             Valor = viewModel.Recorrente.Valor,
-                            Categoria = viewModel.Recorrente.Categoria,
+                            CategoriaId = viewModel.Recorrente.CategoriaId,
                             Tipo = viewModel.Recorrente.Tipo,
                             Data = dataParcela,
                             Previsao = viewModel.Recorrente.Previsao,
@@ -163,6 +164,8 @@ namespace projeto_financeiro_mvc.Controllers
 
             ModelState.AddModelError("", "Ocorreu algum erro!");
             viewModel.Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList();
+            viewModel.Categorias = _context.Categorias.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList();
+
             return View(viewModel);
         }
 
@@ -190,7 +193,7 @@ namespace projeto_financeiro_mvc.Controllers
                     Id = recorrente.Id,
                     Descricao = recorrente.Descricao,
                     Valor = recorrente.Valor,
-                    Categoria = recorrente.Categoria,
+                    CategoriaId = recorrente.CategoriaId,
                     Tipo = recorrente.Tipo,
                     Data = recorrente.Data,
                     Previsao = recorrente.Previsao,
@@ -199,7 +202,8 @@ namespace projeto_financeiro_mvc.Controllers
                     IsRecorrente = recorrente.IsRecorrente,
                     ContaId = recorrente.ContaId
                 },
-                Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList()
+                Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList(),
+                Categorias = _context.Categorias.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList()
             };
 
             ViewBag.NomeUsuario = usuario.Nome;
@@ -231,6 +235,8 @@ namespace projeto_financeiro_mvc.Controllers
                     ModelState.AddModelError("", "Lançamento recorrente não localizado.");
 
                     viewModel.Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList();
+                    viewModel.Categorias = _context.Categorias.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList();
+
                     return View(viewModel);
                 }
 
@@ -238,6 +244,7 @@ namespace projeto_financeiro_mvc.Controllers
                 {
                     ModelState.AddModelError("", "Não é possível realizar um pagamento sem uma conta selecionada!");
                     viewModel.Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id).ToList();
+                    viewModel.Categorias = _context.Categorias.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList();
                     return View(viewModel);
                 }
 
@@ -271,7 +278,7 @@ namespace projeto_financeiro_mvc.Controllers
 
                 recorrente.Descricao = viewModel.Recorrente.Descricao;
                 recorrente.Valor = viewModel.Recorrente.Valor;
-                recorrente.Categoria = viewModel.Recorrente.Categoria;
+                recorrente.CategoriaId = viewModel.Recorrente.CategoriaId;
                 recorrente.Tipo = viewModel.Recorrente.Tipo;
                 recorrente.Data = viewModel.Recorrente.Data;
                 recorrente.Previsao = viewModel.Recorrente.Previsao;
@@ -289,6 +296,7 @@ namespace projeto_financeiro_mvc.Controllers
 
             ModelState.AddModelError("", "Ocorreu algum erro!");
             viewModel.Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList();
+            viewModel.Categorias = _context.Categorias.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList();
             return View(viewModel);
         }
 

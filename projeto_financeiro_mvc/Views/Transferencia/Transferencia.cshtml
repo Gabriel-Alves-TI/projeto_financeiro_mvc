@@ -86,13 +86,28 @@
                 <div class="d-flex justify-content-between">
                     <div class="row g-2 align-items-center p-2">
                         <div class="col-auto">
-                            <label asp-for="Transferencia.Categoria" class="col-form-label fs-5 text-primary labels">Categoria:</label>
+                            <label asp-for="Transferencia.CategoriaId" class="col-form-label fs-5 text-primary labels">Categoria:</label>
                         </div>
                         <div class="col-auto">
-                            <select class="form-select bg-white text-primary border border-dark border-1" asp-for="Transferencia.Categoria" id="selectCategoria">
-                                <option value="Transferencia entre contas" selected>Transferência entre contas</option>
+                            <select class="form-select bg-white text-primary border border-dark border-1" asp-for="Transferencia.CategoriaId" id="selectCategoria">
+
+                                @{
+                                
+                                    foreach(var categoria in Model.Categorias)
+                                    {
+                                        <option value="@categoria.Id">@categoria.Descricao</option>
+                                    }
+                                }
                             </select>
                         </div>
+                         @{
+                            var categorias = Model.Categorias.ToList();
+
+                            if(!categorias.Any())
+                            {
+                                <p class="text-danger mt-2">Cadastre uma categoria com descrição "Transferência"</p>
+                            }
+                        }
                     </div>
                 </div>
             </div>

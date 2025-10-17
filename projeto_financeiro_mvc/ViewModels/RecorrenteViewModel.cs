@@ -17,5 +17,8 @@ namespace projeto_financeiro_mvc.ViewModels
         [ValidateNever]
         [JsonIgnore]
         public List<ContaModel> Contas { get; set; }
+        [ValidateNever]
+        [JsonIgnore]
+        public List<CategoriaModel> Categorias { get; set; }
     }
 }

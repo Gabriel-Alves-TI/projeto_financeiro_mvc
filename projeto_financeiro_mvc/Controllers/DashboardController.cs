@@ -33,8 +33,9 @@ namespace projeto_financeiro_mvc.Controllers
             }
 
             var lancamentos = _context.Lancamentos
-                .Where(l => l.UsuarioId == usuario.Id && l.GrupoFamiliarId == usuario.GrupoFamiliarId && l.Categoria != "Saldo Inicial")
                 .Include(lanc => lanc.Conta)
+                .Include(lanc => lanc.Categoria)
+                .Where(l => l.UsuarioId == usuario.Id && l.GrupoFamiliarId == usuario.GrupoFamiliarId && l.Categoria.Descricao != "Saldo Inicial")
                 .OrderBy(lanc => lanc.Data)
                 .ToList();
             

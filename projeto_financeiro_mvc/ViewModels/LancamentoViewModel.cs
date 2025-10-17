@@ -16,7 +16,10 @@ namespace projeto_financeiro_mvc.ViewModels
         [ValidateNever]
         [JsonIgnore]
         public List<ContaModel> Contas { get; set; }
-    };
+        [ValidateNever]
+        [JsonIgnore]
+        public List<CategoriaModel> Categorias { get; set; }
+    }
 
     public class Lancamentos
     {
@@ -38,6 +41,7 @@ namespace projeto_financeiro_mvc.ViewModels
     {
         public List<Lancamentos> Movimentos { get; set; } = [];
         public List<ContaModel> Contas { get; set; }
+        public List<CategoriaModel> Categorias {get;set;}
 
         // Filtros
         public string? Tipo { get; set; }
