@@ -78,7 +78,7 @@
                 </div>
                 @{
                     var lancamentos = Model?.Lancamentos
-                        .Where(l => l.Tipo == TipoLancamento.Despesa && l.Pago == true && l.Categoria.Descricao != "SaldoInicial")
+                        .Where(l => l.Tipo == TipoLancamento.Despesa && l.Pago == true && (l.Categoria == null || l.Categoria.Descricao != "Saldo Inicial"))
                         .Select(l => new { l.Tipo, l.Data, l.Valor })
                         .ToList();
 
@@ -97,7 +97,7 @@
                     }
 
                     var lancDespesaMesAnterior = Model?.Lancamentos
-                        .Where(l => l.Data.Month == mesAnterior && l.Tipo == TipoLancamento.Despesa && l.Pago == true && l.Categoria.Descricao != "SaldoInicial")
+                        .Where(l => l.Tipo == TipoLancamento.Despesa && l.Pago == true && (l.Categoria == null || l.Categoria.Descricao != "Saldo Inicial"))
                         .Select(l => new { l.Data, l.Tipo, l.Valor })
                         .ToList();
                     
@@ -276,11 +276,11 @@
     // Gráfico Gastos por Categoria
     var despesasLancamentos = Model.Lancamentos
         .Where(l => l.Tipo == TipoLancamento.Despesa && l.Pago == true)
-        .Select(l => new { Categoria = l.Categoria.Descricao, Valor = l.Valor});
+        .Select(l => new { Categoria = l.Categoria != null ? l.Categoria.Descricao : "Sem categoria", Valor = l.Valor});
     
     var despesasRecorrentes = Model.Recorrentes
         .Where(r => r.Tipo == TipoLancamento.Despesa && r.Pago == true)
-        .Select(r => new { Categoria = r.Categoria.Descricao, Valor = r.Valor});
+        .Select(r => new { Categoria = r.Categoria != null ? r.Categoria.Descricao : "Sem categoria", Valor = r.Valor});
 
     var despesas = despesasLancamentos.Concat(despesasRecorrentes);
 

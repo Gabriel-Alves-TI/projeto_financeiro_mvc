@@ -35,13 +35,14 @@ namespace projeto_financeiro_mvc.Controllers
             var lancamentos = _context.Lancamentos
                 .Include(lanc => lanc.Conta)
                 .Include(lanc => lanc.Categoria)
-                .Where(l => l.UsuarioId == usuario.Id && l.GrupoFamiliarId == usuario.GrupoFamiliarId && l.Categoria.Descricao != "Saldo Inicial")
+                .Where(l => l.UsuarioId == usuario.Id && l.GrupoFamiliarId == usuario.GrupoFamiliarId && l.Categoria != null && l.Categoria.Descricao != "Saldo Inicial")
                 .OrderBy(lanc => lanc.Data)
                 .ToList();
             
             var recorrentes = _context.Recorrentes
-                .Where(l => l.UsuarioId == usuario.Id && l.GrupoFamiliarId == usuario.GrupoFamiliarId)
+                .Include(c => c.Categoria)
                 .Include(r => r.Conta)
+                .Where(l => l.UsuarioId == usuario.Id && l.GrupoFamiliarId == usuario.GrupoFamiliarId)
                 .OrderBy(r => r.Data)
                 .ToList();
 
