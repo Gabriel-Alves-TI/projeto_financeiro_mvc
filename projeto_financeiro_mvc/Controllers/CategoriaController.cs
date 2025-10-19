@@ -35,11 +35,19 @@ namespace projeto_financeiro_mvc.Controllers
                 .Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId)
                 .ToList();
 
+            ViewBag.NomeUsuario = usuario.Nome;
             return View(categorias);
         }
 
         public IActionResult Cadastrar()
         {
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            ViewBag.NomeUsuario = usuario.Nome;
             return View();
         }
 
@@ -77,6 +85,12 @@ namespace projeto_financeiro_mvc.Controllers
 
         public IActionResult Editar(int id)
         {
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
             var categoria = _context.Categorias.FirstOrDefault(c => c.Id == id);
             if (categoria == null)
             {
@@ -90,12 +104,19 @@ namespace projeto_financeiro_mvc.Controllers
                 Descricao = categoria.Descricao
             };
 
+            ViewBag.NomeUsuario = usuario.Nome;
             return View(categoriaDto);
         }
 
         [HttpPost]
         public IActionResult Editar(CategoriaDTO categoriaDto)
         {
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
             var categoria = _context.Categorias.FirstOrDefault(c => c.Id == categoriaDto.Id);
             if (categoria == null)
             {
@@ -114,6 +135,12 @@ namespace projeto_financeiro_mvc.Controllers
 
         public IActionResult Excluir(int id)
         {
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
             var categoria = _context.Categorias.FirstOrDefault(c => c.Id == id);
             if (categoria == null)
             {
@@ -127,12 +154,19 @@ namespace projeto_financeiro_mvc.Controllers
                 Descricao = categoria.Descricao
             };
 
+            ViewBag.NomeUsuario = usuario.Nome;
             return View(categoriaDto);
         }
 
         [HttpPost]
         public IActionResult Excluir(CategoriaDTO categoriaDto)
         {
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
             var categoria = _context.Categorias.FirstOrDefault(c => c.Id == categoriaDto.Id);
             if (categoria == null)
             {

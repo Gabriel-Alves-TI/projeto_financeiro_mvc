@@ -32,15 +32,15 @@
             <form asp-controller="Login" asp-action="Login" method="post" id="formLogin">
                 <div class="mb-3">
                     <label for="exampleInputEmail1" class="form-label text-white">E-mail</label>
-                    <input type="email" class="form-control" asp-for="Email">
+                    <input type="email" class="form-control" asp-for="Email" id="email">
                 </div>
                 <div class="mb-3">
                     <label for="exampleInputPassword1" class="form-label text-white">Senha</label>
-                    <input type="password" class="form-control" asp-for="Senha">
+                    <input type="password" class="form-control" asp-for="Senha" id="senha">
                 </div>
                 <div class="d-flex justify-content-end gap-3 mt-4">
-                    <button type="submit" class="btn btn-secondary" style="width: 100px;">Entrar</button>
-                    <a type="button" asp-action="Registrar" asp-controller="Login" class="btn btn-secondary" style="width: 100px;">Cadastrar</a>
+                    <button type="submit" class="btn btn-secondary" style="width: 100px;" id="btnEntrar">Entrar</button>
+                    <a type="button" asp-action="Registrar" asp-controller="Login" class="btn btn-secondary" style="width: 100px;" id="btnCadastrar">Cadastrar</a>
                 </div>
                 <div class="d-flex justify-content-end mt-2">
                     <a asp-controller="Login" asp-action="RecuperarSenha">Esqueceu sua senha?</a>
@@ -49,7 +49,7 @@
         </div>
     </div>
 
-    <div class="d-flex bg-white">
+    <div class="d-flex bg-white" id="imagem-login">
         <div class="d-flex align-items-center justify-content-center">
             <img src="/img/img-login.jpg" alt="" class="w-50">
         </div>

@@ -11,21 +11,66 @@
 </head>
 <body class="container-fluid p-1 d-flex flex-wrap">
     <header class="w-100 d-flex align-items-center justify-content-between px-3" style="height: 60px; overflow: hidden; background-image: linear-gradient(rgb(214, 214, 213), rgb(255, 255, 255));">
-        <h1 class="mb-0 text-primary">Controle Financeiro</h1>
+        <h1 class="mb-0 text-primary" id="nome-sistema">Controle Financeiro</h1>
         <div class="row g-2 align-items-center p-2">
             <div class="col-auto p-2">
-                <h4 class="text-center text-dark my-0">Olá, @ViewBag.NomeUsuario</h4>
+                <h4 class="text-center text-dark my-0" id="nome-usuario">Olá, @ViewBag.NomeUsuario</h4>
             </div>
-            <div class="col-auto p-2">
+            <div class="col-auto p-2 hide" id="sair-sistema">
                 <a class="text-primary"
             asp-controller="Login" asp-action="Logout">
                     <i class="bi bi-box-arrow-left fs-3"></i> Sair
                 </a>
             </div>            
         </div>
+        <div class="d-none" id="btn-menu">
+            <i class="bi bi-list text-primary fs-3"></i>
+        </div>
     </header>
 
-    <nav class="col-12 col-md-3 col-lg-2 bg-white me-md-0 mb-1 p-1 mt-2" style="min-height: calc(100vh - 144px);">
+    <div class="overlay d-none" id="overlay"></div>
+
+    <nav class="d-none" id="nav-mobile">
+        <ul class="list-group border border-2 menu">
+            <li class="list-group-item p-0 bg-white border border-1">
+                <a class="d-block text-primary py-2 px-3"
+                asp-controller="Dashboard" asp-action="Index">
+                    <i class="bi bi-columns-gap me-2"></i> Dashboard
+                </a>
+            </li>
+            <li class="list-group-item p-0 bg-white border border-1" id="metas">
+                <a class="d-block text-primary py-2 px-3">
+                    <i class="bi bi-graph-up-arrow me-2"></i> Metas
+                </a>
+            </li>
+            <li class="list-group-item p-0 bg-white border border-1">
+                <a asp-controller="Lancamento" asp-action="Index" class="d-block text-primary py-2 px-3">
+                    <i class="bi bi-cash-coin me-2"></i>
+                    Lançamentos
+                </a>
+            </li>
+            <li class="list-group-item p-0 bg-white border border-1">
+                <a asp-controller="Categoria" asp-action="Index" class="d-block text-primary py-2 px-3">
+                    <i class="bi bi-tags me-2"></i>
+                    Categorias
+                </a>
+            </li>
+            <li class="list-group-item p-0 bg-white border border-1">
+                <a class="d-block text-primary py-2 px-3" asp-controller="Extrato" asp-action="Index">
+                    <i class="bi bi-file-earmark-text me-2"></i>
+                    Extrato
+                </a>
+            </li>
+            <li class="list-group-item p-0 bg-white border border-1">
+                <a class="d-block text-primary py-2 px-3" asp-controller="Conta" asp-action="ListarContas">
+                    <i class="bi bi-coin me-2"></i>
+                    Contas
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <nav class="col-12 col-md-3 col-lg-2 bg-white me-md-0 mb-1 p-1 mt-2" style="min-height: calc(100vh - 144px);" id="nav-menu">
         <div class="w-100 position-relative mt-2">
             <ul class="list-group border border-2 menu">
                 <li class="list-group-item p-0 bg-white border border-1">
@@ -98,7 +143,7 @@
         </div>
     </nav>
 
-    <main class="col bg-light-subtle mx-2 mb-1 mt-2 d-flex flex-column overflow-auto" style="max-height: calc(100vh - 144px);">
+    <main class="col col-12 col-md bg-light-subtle mx-2 mb-1 mt-2 d-flex flex-column overflow-auto" style="max-height: calc(100vh - 144px);">
         @RenderBody()
     </main>
 

@@ -16,12 +16,12 @@
                     <label for="Banco" class="col-form-label fs-4 text-primary labels">Descrição:</label>
                 </div>
                 <div class="col-auto form-control">
-                    <input type="text" asp-for="Descricao" class="border-1 w-100 fs-5" placeholder="Digite a descrição da nova categoria" >
+                    <input type="text" asp-for="Descricao" class="border-1 w-100 fs-5" id="descricao" placeholder="Digite a descrição da nova categoria" >
                 </div>
             </div>
             <div class="d-flex justify-content-between align-items-center w-100 p-2 mt-4">
-                <button class="btn btn-success rounded rounded-3">Confirmar</button>
-                <a class="btn btn-danger rounded rounded-3" asp-controller="Categoria" asp-action="Index">Cancelar</a>
+                <button class="btn btn-success rounded rounded-3" id="btnConfirmarCategoria">Confirmar</button>
+                <a class="btn btn-danger rounded rounded-3" asp-controller="Categoria" asp-action="Index" id="btnCancelarCategoria">Cancelar</a>
             </div>
         </form>            
     </div>

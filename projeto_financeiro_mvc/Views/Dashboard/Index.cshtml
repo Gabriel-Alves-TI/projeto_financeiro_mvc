@@ -172,11 +172,11 @@
     </div>
 </div>
 
-<div class="d-flex w-100 mt-2 mb-4">
-    <div class="container border border-2 w-50 mx-4 p-2 border-primary rounded rounded-3">
+<div class="d-flex w-100 mt-2 mb-4" id="boxMetas-Vencimentos">
+    <div class="container border border-2 w-50 mx-4 p-2 border-primary rounded rounded-3" id="boxmetas">
         <h5 class="title p-1 text-primary"><i class="bi bi-bullseye text-info fs-4 me-2"></i>Metas Financeiras</h5>
 
-        <div class="container" id="list-ultLancamentos">
+        <div class="container">
             <div class="mb-2">
                 <h6 class="text-dark">Reserva de Emergência</h6>
                 <div class="progress mb-1">
@@ -196,7 +196,7 @@
 
     </div>
 
-    <div class="container border border-2 w-50 mx-4 p-2 border-primary rounded rounded-3">
+    <div class="container border border-2 w-50 mx-4 p-2 border-primary rounded rounded-3" id="boxVencimentos">
         <h5 class="title p-1 text-dark"><i class="bi bi-calendar me-2"></i>Próximos vencimentos</h5>
 
         <div class="container mt-2" id="list-ultLancamentos">
@@ -248,8 +248,8 @@
     </div>
 </div>
 
-<div class="d-flex w-100 mb-4">
-    <div class="container border border-2 w-50 mx-4 p-2 border-primary rounded rounded-3">
+<div class="d-flex w-100 mb-4" id="boxGraficos">
+    <div class="container border border-2 w-50 mx-4 p-2 border-primary rounded rounded-3" id="boxGraficoCategoria">
         <h5 class="title p-1 text-primary">Gastos por Categoria</h5>
         <div class="d-flex p-4 text-start w-100">
             <div class="card p-3 w-100" style="max-height: min-content;">
@@ -260,7 +260,7 @@
         </div>
     </div>
 
-    <div class="container border border-2 w-50 mx-4 p-2 border-primary rounded rounded-3">
+    <div class="container border border-2 w-50 mx-4 p-2 border-primary rounded rounded-3" id="boxGraficoBalanco">
         <h5 class="title p-1 text-primary">Balanço semanal</h5>
         <div class="d-flex p-4 text-start w-100">
             <div class="card p-3 w-100" style="max-height: min-content;">
@@ -325,6 +325,8 @@
                 ]
             },
             options: {
+                responsive: true,
+                maintainAspectRatio: false,
                 scales: {
                     y: {
                         beginAtZero: true,
@@ -357,7 +359,9 @@
                             '#ffcd56',
                             '#4bc0c0',
                             '#9966ff',
-                            '#ff9f40'
+                            '#ff9f40',
+                            '#ff00ff',
+                            '#008080'
                         ],
                         borderWidth: 1
                     }
@@ -366,6 +370,7 @@
             options: {
                 indexAxis: 'y', // <-- Isso inverte
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
                     legend: { position: 'top' },
                     title: {

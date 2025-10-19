@@ -53,6 +53,13 @@ namespace projeto_financeiro_mvc.Controllers
 
         public IActionResult Cadastrar()
         {
+            var usuario = _sessaoInterface.BuscarSessao();
+            if (usuario == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            ViewBag.NomeUsuario = usuario.Nome;
             return View();
         }
 

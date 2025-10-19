@@ -52,3 +52,24 @@ document.addEventListener("DOMContentLoaded", function () {
         return new bootstrap.Tooltip(tooltipTriggerEl)
     })
 });
+
+
+
+const btnMenu = document.getElementById('btn-menu');
+const navMenuMobile = document.getElementById('nav-mobile');
+const overlay = document.getElementById('overlay');
+
+btnMenu.addEventListener('click', () => {
+    overlay.classList.toggle('d-none');
+    navMenuMobile.classList.toggle('d-none');
+})
+
+document.addEventListener('click', (e) => {
+    const clicouNoMenu = navMenuMobile.contains(e.target);
+    const clicouFora = btnMenu.contains(e.target);
+
+    if (!clicouNoMenu && !clicouFora) {
+        overlay.classList.add('d-none');
+        navMenuMobile.classList.add('d-none');
+    }
+})
