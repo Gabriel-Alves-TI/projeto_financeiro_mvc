@@ -33,6 +33,7 @@ namespace projeto_financeiro_mvc.Controllers
 
             var categorias = _context.Categorias
                 .Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId)
+                .OrderBy(c => c.Descricao)
                 .ToList();
 
             ViewBag.NomeUsuario = usuario.Nome;
