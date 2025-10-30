@@ -105,7 +105,7 @@ namespace projeto_financeiro_mvc.Controllers
                     {
                         Descricao = viewModel.Recorrente.Descricao,
                         Valor = viewModel.Recorrente.Valor,
-                        CategoriaId = viewModel.Recorrente.CategoriaId,
+                        CategoriaId = viewModel.Recorrente.CategoriaId ?? 0,
                         Tipo = viewModel.Recorrente.Tipo,
                         Data = viewModel.Recorrente.Data,
                         Previsao = viewModel.Recorrente.Previsao,
@@ -136,7 +136,7 @@ namespace projeto_financeiro_mvc.Controllers
                         {
                             Descricao = $"{viewModel.Recorrente.Descricao} - Recorrente({i}/{viewModel.Recorrente.Parcelas})",
                             Valor = viewModel.Recorrente.Valor,
-                            CategoriaId = viewModel.Recorrente.CategoriaId,
+                            CategoriaId = viewModel.Recorrente.CategoriaId ?? 0,
                             Tipo = viewModel.Recorrente.Tipo,
                             Data = dataParcela,
                             Previsao = viewModel.Recorrente.Previsao,

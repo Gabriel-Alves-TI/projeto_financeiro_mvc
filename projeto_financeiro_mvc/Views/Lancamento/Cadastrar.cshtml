@@ -68,7 +68,7 @@
                             <label asp-for="Lancamento.CategoriaId" class="col-form-label fs-5 text-primary labels">Categoria:</label>
                         </div>
                         <div class="col-auto">
-                            <select class="form-select bg-white text-primary border border-dark border-1" asp-for="Lancamento.CategoriaId" name="Lancamento.Categoria" id="selectCategoria">
+                            <select class="form-select bg-white text-primary border border-dark border-1" asp-for="Lancamento.CategoriaId" id="selectCategoria">
                                 <option value="">Selecione...</option>
                                 @{
                                     foreach(var categoria in Model.Categorias)

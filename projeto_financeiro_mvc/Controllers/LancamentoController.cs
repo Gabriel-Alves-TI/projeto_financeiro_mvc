@@ -179,6 +179,7 @@ namespace projeto_financeiro_mvc.Controllers
 
             var categorias = _context.Categorias   
                 .Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId)
+                .OrderBy(c => c.Descricao)
                 .ToList();
 
             Console.WriteLine("ContaId recebido: " + viewModel.Lancamento.ContaId);
@@ -276,7 +277,7 @@ namespace projeto_financeiro_mvc.Controllers
                     {
                         Descricao = viewModel.Lancamento.Descricao,
                         Valor = viewModel.Lancamento.Valor,
-                        CategoriaId = viewModel.Lancamento.CategoriaId,
+                        CategoriaId = viewModel.Lancamento.CategoriaId ?? 0,
                         Tipo = viewModel.Lancamento.Tipo,
                         Data = viewModel.Lancamento.Data,
                         Previsao = viewModel.Lancamento.Previsao,
@@ -347,6 +348,7 @@ namespace projeto_financeiro_mvc.Controllers
             }
 
             var lancamento = _context.Lancamentos
+                .Include(l => l.Categoria)
                 .Where(l => l.UsuarioId == usuario.Id && l.GrupoFamiliarId == usuario.GrupoFamiliarId)
                 .FirstOrDefault(l => l.UsuarioId == usuario.Id && l.GrupoFamiliarId == usuario.GrupoFamiliarId && l.Id == id);
             if (lancamento == null)
