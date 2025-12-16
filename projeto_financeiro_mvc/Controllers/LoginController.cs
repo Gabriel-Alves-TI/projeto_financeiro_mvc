@@ -44,12 +44,12 @@ namespace projeto_financeiro_mvc.Controllers
 
                 if (usuario.Status)
                 {
-                    Console.WriteLine(usuario.Mensagem);
+                    TempData["MensagemSucesso"] = usuario.Mensagem;
                     return RedirectToAction("Index", "Dashboard");
                 }
                 else
                 {
-                    Console.WriteLine(usuario.Mensagem);
+                    TempData["MensagemErro"] = usuario.Mensagem;
                     return View("Index", usuarioLoginDto);
                 }
             }
