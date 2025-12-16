@@ -36,6 +36,8 @@ namespace projeto_financeiro_mvc.Controllers
 
             var contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList();
 
+            var categorias = _context.Categorias.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList();
+
             var movimentos = new List<ExtratoViewModel>();
 
             if (contaId.HasValue)
@@ -128,19 +130,64 @@ namespace projeto_financeiro_mvc.Controllers
                 movimentos = movimentos
                     .Where(m => m.Data >= dataInicial.Value && m.Data <= dataFinal.Value)
                     .ToList();
+
+                var viewModel = new ListExtratoViewModel
+                {
+                    Movimentos = movimentos.OrderByDescending(m => m.Data).ToList(),
+
+                    DataInicial = dataInicial,
+                    DataFinal = dataFinal,
+                    Categorias = categorias,
+                    Contas = contas
+                };
+
+                ViewBag.NomeUsuario = usuario.Nome;
+                return View(viewModel);
             }
- 
-            var viewModel = new ListExtratoViewModel
+            else
             {
-                Movimentos = movimentos.OrderByDescending(m => m.Data).ToList(),
+                var viewModel = new ListExtratoViewModel
+                {
+                    Movimentos = movimentos.OrderByDescending(m => m.Data).ToList(),
 
-                DataInicial = dataInicial,
-                DataFinal = dataFinal,
-                Contas = contas
-            };
+                    DataInicial = dataInicial,
+                    DataFinal = dataFinal,
+                    Categorias = categorias,
+                    Contas = contas
+                };
 
-            ViewBag.NomeUsuario = usuario.Nome;
-            return View(viewModel);
+                ViewBag.NomeUsuario = usuario.Nome;
+                return View(viewModel);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Filtrar(
+            DateTime? dataInicial,
+            DateTime? dataFinal,
+            string? tipo,
+            string? categoria,
+            string? descricao,
+            double? valor,
+            int? contaId
+        )
+        {
+            if (!contaId.HasValue)
+            {
+                TempData["MensagemErro"] = "Selecione uma conta primeiro.";
+                return RedirectToAction("Index");
+            }
+
+            return RedirectToAction("Index", new
+            {
+                dataInicial,
+                dataFinal,
+                tipo,
+                categoria,
+                descricao,
+                valor,
+                contaId
+            });
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

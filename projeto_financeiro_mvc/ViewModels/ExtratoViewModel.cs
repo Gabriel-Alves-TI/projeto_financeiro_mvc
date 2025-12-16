@@ -23,6 +23,7 @@ namespace projeto_financeiro_mvc.ViewModels
     {
         public List<ExtratoViewModel> Movimentos { get; set; } = [];
         public List<ContaModel> Contas { get; set; }
+        public List<CategoriaModel> Categorias { get; set; }
 
         // Filtros
         public string? Tipo { get; set; }
