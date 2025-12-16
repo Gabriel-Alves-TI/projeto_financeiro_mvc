@@ -99,30 +99,22 @@ namespace projeto_financeiro_mvc.Controllers
                 //     return View(viewModel);
                 // }
 
-                if (viewModel.Recorrente.IsRecorrente == false && viewModel.Recorrente.Parcelas == 1)
+                if (viewModel.Recorrente.IsRecorrente == true && viewModel.Recorrente.Parcelas == 1)
                 {
-                    var recorrente = new RecorrenteModel()
+                    var modelo = new RecorrenteViewModel
                     {
-                        Descricao = viewModel.Recorrente.Descricao,
-                        Valor = viewModel.Recorrente.Valor,
-                        CategoriaId = viewModel.Recorrente.CategoriaId ?? 0,
-                        Tipo = viewModel.Recorrente.Tipo,
-                        Data = viewModel.Recorrente.Data,
-                        Previsao = viewModel.Recorrente.Previsao,
-                        Parcelas = viewModel.Recorrente.Parcelas,
-                        Pago = false,
-                        IsRecorrente = viewModel.Recorrente.IsRecorrente,
-                        ContaId = viewModel.Recorrente.ContaId,
-
-                        UsuarioId = usuario.Id,
-                        GrupoFamiliarId = usuario.GrupoFamiliarId
+                        Recorrente = new RecorrenteDTO()
+                        {
+                            Data = DateTime.Today,
+                            Previsao = DateTime.Today,
+                            IsRecorrente = true,
+                        },
+                        Contas = _context.Contas.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList(),
+                        Categorias = _context.Categorias.Where(c => c.UsuarioId == usuario.Id && c.GrupoFamiliarId == usuario.GrupoFamiliarId).ToList()
                     };
 
-                    _context.Recorrentes.Add(recorrente);
-                    _context.SaveChanges();
-
-                    TempData["MensagemSucesso"] = "Lançamento único efetuado com sucesso!";
-                    return RedirectToAction("Index", "Lancamento");
+                    ModelState.AddModelError("", "Não é possível fazer o lançamento de uma única parcela!");
+                    return View(modelo);
                 }
 
                 var listaLancamentos = new List<RecorrenteModel>();

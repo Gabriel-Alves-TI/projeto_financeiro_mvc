@@ -11,8 +11,6 @@
     <div class="card mb-3 rounded-3 border-warning">
         <form asp-controller="Recorrente" asp-action="Cadastrar" method="post">
             <div class="card-body">
-                @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
-
                 <div class="d-flex justify-content-between">
                     <div class="d-flex justify-content-end bg-white w-100 border border-primary border-1 rounded-bottom rounded-3">
                         <div class="row g-1 align-items-center p-1">
@@ -93,7 +91,7 @@
                             <label asp-for="Recorrente.CategoriaId" class="col-form-label fs-5 text-primary labels">Categoria:</label>
                         </div>
                         <div class="col-auto">
-                            <select class="form-select bg-white text-primary border border-dark border-1" asp-for="Recorrente.CategoriaId" name="Recorrente.Categoria" id="selectCategoria">
+                            <select class="form-select bg-white text-primary border border-dark border-1" asp-for="Recorrente.CategoriaId" id="selectCategoria">
                                 <option selected>Selecione...</option>
                                 
                                 @{

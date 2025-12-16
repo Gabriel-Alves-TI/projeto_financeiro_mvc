@@ -44,7 +44,6 @@ namespace projeto_financeiro_mvc.Controllers
 
                 if (usuario.Status)
                 {
-                    TempData["MensagemSucesso"] = usuario.Mensagem;
                     return RedirectToAction("Index", "Dashboard");
                 }
                 else
