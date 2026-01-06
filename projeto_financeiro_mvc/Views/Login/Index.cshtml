@@ -28,7 +28,7 @@
             </div>
 
             <h1 class="mb-4 text-center">Controle Financeiro</h1>
-            <h3 class="mb-4 text-center text-white">Olá, seja bem-vindo(a)!</h3>
+            <h3 class="mb-4 text-center">Olá, seja bem-vindo(a)!</h3>
             <form asp-controller="Login" asp-action="Login" method="post" id="formLogin">
                 <div class="mb-3">
                     <label for="exampleInputEmail1" class="form-label text-white">E-mail</label>
@@ -43,7 +43,7 @@
                     <a type="button" asp-action="Registrar" asp-controller="Login" class="btn btn-secondary" style="width: 100px;" id="btnCadastrar">Cadastrar</a>
                 </div>
                 <div class="d-flex justify-content-end mt-2">
-                    <a asp-controller="Login" asp-action="RecuperarSenha">Esqueceu sua senha?</a>
+                    <a class="text-primary-emphasis" asp-controller="Login" asp-action="RecuperarSenha">Esqueceu sua senha?</a>
                 </div>  
             </form>
         </div>

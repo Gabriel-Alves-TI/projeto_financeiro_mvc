@@ -1,0 +1,64 @@
+@model projeto_financeiro_mvc.ViewModels.UsuarioViewModel;
+@{
+    ViewData["Title"] = "Temas";
+}
+
+<h1 class="d-flex justify-content-center text-primary fw-bold mt-2" id="titulo">@ViewData["Title"]</h1>
+
+<div class="container border border-primary border-2 rounded rounded-3 w-100 py-2 mb-4">
+    <form asp-controller="Usuario" asp-action="ChangeTheme">
+        <input type="hidden" asp-for="UsuarioId">
+
+        @{
+            var themeImages = new Dictionary<Theme, string>
+            {
+                { Theme.Vapor, "/img/theme_vapor.png" },
+                { Theme.Brite, "/img/theme_brite.png" },
+                { Theme.Cerulean, "/img/theme_cerulean.png" },
+                { Theme.Cosmo, "/img/theme_cosmo.png" },
+                { Theme.Cyborg, "/img/theme_cyborg.png" },
+                { Theme.Darkly, "/img/theme_darkly.png" },
+                { Theme.Morph, "/img/theme_morph.png" },
+                { Theme.Sketchy, "/img/theme_sketchy.png" }
+            };
+        }
+        <div class="d-flex justify-content-around flex-wrap gap-4 p-2">
+            @foreach (var theme in Model.ThemesDisponiveis)
+            {
+                <div class="card border border-primary" style="width: 25rem;">
+                    <div class="d-flex justify-content-center align-items-center p-1">
+                        <img src="@themeImages[theme]"
+                            style="width: 24rem;"
+                            class="card-img-top"
+                            alt="Theme @theme">
+                    </div>
+
+                    <div class="card-footer d-flex justify-content-between fw-bold fs-5">
+                        <div class="card-text">@theme</div>
+
+                        <div class="form-check">
+                            <input type="radio"
+                                class="form-check-input"
+                                name="Theme"
+                                id="theme_@((int)theme)"
+                                value="@theme"
+                                @(Model.Theme == theme ? "checked" : "") />
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="d-flex justify-content-end gap-4 mt-4">
+            <button type="submit" class="btn btn-success">Salvar</button>
+            <a type="button" class="btn btn-danger" asp-controller="Usuario" asp-action="Preferences">Voltar</a>
+        </div>
+    </form>
+</div>
+<script>
+    document.querySelectorAll('input[name="Theme"]').forEach(radio => {
+        radio.addEventListener("change", () => {
+            localStorage.setItem("theme", radio.value);
+        });
+    });
+</script>

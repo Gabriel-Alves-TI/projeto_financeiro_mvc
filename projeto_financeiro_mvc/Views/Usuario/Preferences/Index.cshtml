@@ -1,0 +1,55 @@
+@{
+    ViewData["Title"] = "Preferências";
+}
+
+<h1 class="d-flex justify-content-center text-primary fw-bold mt-2" id="titulo">@ViewData["Title"]</h1>
+
+<div class="container d-flex justify-content-center mt-2">
+    @if (TempData["MensagemSucesso"] != null)
+    {
+        <div class="alert alert-success text-white" role="alert">
+            @TempData["MensagemSucesso"]
+        </div>
+    }
+
+    @if (TempData["MensagemErro"] != null)
+    {
+        <div class="alert alert-danger text-light" role="alert">
+            @TempData["MensagemErro"]
+        </div>
+    }
+</div>
+
+<div class="container border border-primary border-2 rounded rounded-3 w-50">
+    <div class="d-flex my-2 justify-content-around flex-wrap">
+        <a asp-controller="Usuario" asp-action="Theme">
+            <div class="card border border-primary" style="width: 18rem;">
+                <div class="d-flex justify-content-center align-items-center">
+                    <img src="/img/theme.png" style="width: 4rem;" class="card-img-top" alt="Themes">
+                </div>
+                <div class="card-body">
+                    <p class="card-text text-center">Vapor, Brite, Cerulean, Cosmo, Cyborg, Darkly, Morph, Sketchy</p>
+                </div>
+                <div class="card-footer text-primary fw-bold fs-5">Temas</div>
+            </div>
+        </a>
+        @* <div class="card" style="width: 18rem;">
+            <img src="..." class="card-img-top" alt="...">
+            <div class="card-body">
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
+            </div>
+        </div>
+        <div class="card" style="width: 18rem;">
+            <img src="..." class="card-img-top" alt="...">
+            <div class="card-body">
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
+            </div>
+        </div>
+        <div class="card" style="width: 18rem;">
+            <img src="..." class="card-img-top" alt="...">
+            <div class="card-body">
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
+            </div>
+        </div> *@
+    </div>
+</div>

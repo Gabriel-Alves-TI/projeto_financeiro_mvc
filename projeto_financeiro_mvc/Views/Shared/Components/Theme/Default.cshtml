@@ -1,0 +1,36 @@
+@model projeto_financeiro_mvc.Models.Enums.Theme
+
+@{
+    if (Model == Theme.Brite)
+    {
+        <link rel="stylesheet" href="~/css/brite.css" />
+    }
+    else if (Model == Theme.Cerulean)
+    {
+        <link rel="stylesheet" href="~/css/cerulean.css" />
+    }
+    else if (Model == Theme.Cosmo)
+    {
+        <link rel="stylesheet" href="~/css/cosmo.css" />
+    }
+    else if (Model == Theme.Cyborg)
+    {
+        <link rel="stylesheet" href="~/css/cyborg.css" />
+    }
+    else if (Model == Theme.Darkly)
+    {
+        <link rel="stylesheet" href="~/css/darkly.css" />
+    }
+    else if (Model == Theme.Morph)
+    {
+        <link rel="stylesheet" href="~/css/morph.css" />
+    }
+    else if (Model == Theme.Sketchy)
+    {
+        <link rel="stylesheet" href="~/css/sketchy.css" />
+    }
+    else // Default
+    {
+        <link rel="stylesheet" href="~/css/vapor.css" />
+    }
+}

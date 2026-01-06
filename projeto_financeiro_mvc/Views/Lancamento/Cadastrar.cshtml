@@ -43,7 +43,7 @@
                             <label for="selectTipo" asp-for="Lancamento.Tipo" class="col-form-label fs-5 text-primary labels">Tipo:</label>
                         </div>
                         <div class="col-auto">
-                            <select class="form-select border-2 bg-white text-primary" asp-for="Lancamento.Tipo" name="Lancamento.Tipo" id="selectTipo">
+                            <select class="form-select border-2" asp-for="Lancamento.Tipo" name="Lancamento.Tipo" id="selectTipo">
                                 <option value="0" selected>Receita</option>
                                 <option value="1">Despesa</option>
                             </select>
@@ -68,7 +68,7 @@
                             <label asp-for="Lancamento.CategoriaId" class="col-form-label fs-5 text-primary labels">Categoria:</label>
                         </div>
                         <div class="col-auto">
-                            <select class="form-select bg-white text-primary border border-dark border-1" asp-for="Lancamento.CategoriaId" id="selectCategoria">
+                            <select class="form-select border border-dark border-1" asp-for="Lancamento.CategoriaId" id="selectCategoria">
                                 <option value="">Selecione...</option>
                                 @{
                                     foreach(var categoria in Model.Categorias)
@@ -111,7 +111,7 @@
                             <label asp-for="Lancamento.ContaId" class="col-form-label fs-5 text-primary labels">Conta:</label>
                         </div>
                         <div class="col-auto">
-                            <select class="form-select bg-white text-primary border border-dark border-1" asp-for="Lancamento.ContaId" id="conta">
+                            <select class="form-select border border-dark border-1" asp-for="Lancamento.ContaId" id="conta">
                                 <option value="">Selecione...</option>
                                 @foreach (var conta in (Model.Contas))
                                 {

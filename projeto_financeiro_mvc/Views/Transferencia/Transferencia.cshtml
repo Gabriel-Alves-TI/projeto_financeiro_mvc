@@ -35,7 +35,7 @@
                             <label asp-for="Transferencia.ContaOrigemId" class="col-form-label fs-5 text-primary labels">Conta Origem:</label>
                         </div>
                         <div class="col-auto">
-                            <select class="form-select border-2 bg-white text-primary" asp-for="Transferencia.ContaOrigemId" id="contaOrigem">
+                            <select class="form-select border-2" asp-for="Transferencia.ContaOrigemId" id="contaOrigem">
                                 @if (Model.Contas != null)
                                 {
                                     foreach(var conta in (Model.Contas))
@@ -49,7 +49,7 @@
                             <label asp-for="Transferencia.ContaDestinoId" class="col-form-label fs-5 text-primary">Conta Destino:</label>
                         </div>
                         <div class="col-auto">
-                            <select class="form-select border-2 bg-white text-primary" asp-for="Transferencia.ContaDestinoId" id="contaDestino">
+                            <select class="form-select border-2" asp-for="Transferencia.ContaDestinoId" id="contaDestino">
                                 @if (Model.Contas != null)
                                 {
                                     foreach(var conta in (Model.Contas))
@@ -89,7 +89,7 @@
                             <label asp-for="Transferencia.CategoriaId" class="col-form-label fs-5 text-primary labels">Categoria:</label>
                         </div>
                         <div class="col-auto">
-                            <select class="form-select bg-white text-primary border border-dark border-1" asp-for="Transferencia.CategoriaId" id="selectCategoria">
+                            <select class="form-select border border-dark border-1" asp-for="Transferencia.CategoriaId" id="selectCategoria">
 
                                 @{
                                 
