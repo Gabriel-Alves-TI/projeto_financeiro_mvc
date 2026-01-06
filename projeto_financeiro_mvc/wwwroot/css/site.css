@@ -9,7 +9,7 @@ a {
     text-decoration: none;
 }
 
-li.list-group-item a:hover {
+/* li.list-group-item a:hover {
     background-color: blueviolet !important;
     color: white !important;
     cursor: pointer;
@@ -17,7 +17,7 @@ li.list-group-item a:hover {
 
 li.list-group-item a:hover {
     color: white;
-}
+} */
 
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
@@ -31,7 +31,7 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 /* Spinner */
-.loading-wave {
+/* .loading-wave {
   width: 300px;
   height: 100px;
   display: flex;
@@ -58,7 +58,7 @@ input[type="number"]::-webkit-inner-spin-button {
 
 .loading-bar:nth-child(4) {
   animation-delay: 0.3s;
-}
+} */
 
 #metas {
   background-color: rgb(199, 197, 197) !important;
@@ -289,9 +289,9 @@ input[type="number"]::-webkit-inner-spin-button {
         font-size: 20px;
     }
 
-    #nome-usuario {
+    /* #nome-usuario {
         font-size: 15px;
-    }
+    } */
 
     #sair-sistema {
         font-size: 15px;
