@@ -1,13 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Mail;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
 using projeto_financeiro_mvc.Data;
 using projeto_financeiro_mvc.DTOs;
 using projeto_financeiro_mvc.Models;
+using projeto_financeiro_mvc.Services.IdentityService;
 using projeto_financeiro_mvc.Services.SenhaService;
 using projeto_financeiro_mvc.Services.SessaoService;
 
@@ -31,7 +30,10 @@ namespace projeto_financeiro_mvc.Services.LoginService
 
             try
             {
-                var usuario = _context.Usuarios.FirstOrDefault(u => u.Email == usuarioLoginDto.Email);
+                var usuario = _context.Usuarios
+                    .Include(u => u.Preferences)
+                    .FirstOrDefault(u => u.Email == usuarioLoginDto.Email);
+
                 if (usuario == null)
                 {
                     response.Mensagem = "Credenciais Inválidas!";
@@ -49,6 +51,7 @@ namespace projeto_financeiro_mvc.Services.LoginService
                 //Criar uma sessão
                 _sessaoInterface.CriarSessao(usuario);
 
+                response.Dados = usuario;
                 response.Mensagem = "Usuário logado com sucesso!";
                 return response;
             }
