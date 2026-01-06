@@ -2,12 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using projeto_financeiro_mvc.Data;
 using projeto_financeiro_mvc.DTOs;
 using projeto_financeiro_mvc.Services.EmailService;
+using projeto_financeiro_mvc.Services.IdentityService;
 using projeto_financeiro_mvc.Services.LoginService;
 using projeto_financeiro_mvc.Services.SessaoService;
 using projeto_financeiro_mvc.ViewModels;
@@ -20,13 +24,15 @@ namespace projeto_financeiro_mvc.Controllers
         private readonly ILoginInterface _loginInterface;
         private readonly ISessaoInterface _sessaoInterface;
         private readonly IEmailInterface _emailInterface;
+        private readonly IIdentityInterface _identityInterface;
 
-        public LoginController(AppDbContext context, ILoginInterface loginInterface, ISessaoInterface sessaoInterface, IEmailInterface emailInterface)
+        public LoginController(AppDbContext context, ILoginInterface loginInterface, ISessaoInterface sessaoInterface, IEmailInterface emailInterface, IIdentityInterface identityInterface)
         {
             _context = context;
             _loginInterface = loginInterface;
             _sessaoInterface = sessaoInterface;
             _emailInterface = emailInterface;
+            _identityInterface = identityInterface;
         }
 
         [HttpGet]
@@ -38,12 +44,31 @@ namespace projeto_financeiro_mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(UsuarioLoginDTO usuarioLoginDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return View("Index", usuarioLoginDto);
+            }
+
             if (ModelState.IsValid)
             {
                 var usuario = await _loginInterface.Login(usuarioLoginDto);
 
                 if (usuario.Status)
                 {
+                    var claims = _identityInterface.CreateClaims(usuario.Dados);
+
+                    var identity = new ClaimsIdentity(
+                        claims,
+                        CookieAuthenticationDefaults.AuthenticationScheme
+                    );
+
+                    var principal = new ClaimsPrincipal(identity);
+
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        principal
+                    );
+
                     return RedirectToAction("Index", "Dashboard");
                 }
                 else
