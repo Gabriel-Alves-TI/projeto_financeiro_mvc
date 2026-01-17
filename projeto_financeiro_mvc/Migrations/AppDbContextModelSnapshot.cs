@@ -449,7 +449,27 @@ namespace projeto_financeiro_mvc.Migrations
                         .WithMany("Usuarios")
                         .HasForeignKey("GrupoFamiliarId");
 
+                    b.OwnsOne("projeto_financeiro_mvc.Models.Preferences", "Preferences", b1 =>
+                        {
+                            b1.Property<int>("UsuarioModelId")
+                                .HasColumnType("int");
+
+                            b1.Property<int?>("Theme")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int")
+                                .HasDefaultValue(0);
+
+                            b1.HasKey("UsuarioModelId");
+
+                            b1.ToTable("Usuarios");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UsuarioModelId");
+                        });
+
                     b.Navigation("GrupoFamiliar");
+
+                    b.Navigation("Preferences");
                 });
 
             modelBuilder.Entity("projeto_financeiro_mvc.Models.ContaModel", b =>

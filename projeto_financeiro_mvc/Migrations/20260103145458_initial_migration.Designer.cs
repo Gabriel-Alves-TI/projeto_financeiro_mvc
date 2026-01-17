@@ -12,8 +12,8 @@ using projeto_financeiro_mvc.Data;
 namespace projeto_financeiro_mvc.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251013014248_fkCategoria")]
-    partial class fkCategoria
+    [Migration("20260103145458_initial_migration")]
+    partial class initial_migration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,7 +37,17 @@ namespace projeto_financeiro_mvc.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("GrupoFamiliarId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("GrupoFamiliarId");
+
+                    b.HasIndex("UsuarioId");
 
                     b.ToTable("Categorias");
                 });
@@ -305,6 +315,23 @@ namespace projeto_financeiro_mvc.Migrations
                     b.ToTable("Usuarios");
                 });
 
+            modelBuilder.Entity("projeto_financeiro_mvc.Models.CategoriaModel", b =>
+                {
+                    b.HasOne("projeto_financeiro_mvc.Models.GrupoFamiliarModel", "GrupoFamiliar")
+                        .WithMany()
+                        .HasForeignKey("GrupoFamiliarId");
+
+                    b.HasOne("projeto_financeiro_mvc.Models.UsuarioModel", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("GrupoFamiliar");
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("projeto_financeiro_mvc.Models.ContaModel", b =>
                 {
                     b.HasOne("projeto_financeiro_mvc.Models.GrupoFamiliarModel", "GrupoFamiliar")
@@ -425,7 +452,27 @@ namespace projeto_financeiro_mvc.Migrations
                         .WithMany("Usuarios")
                         .HasForeignKey("GrupoFamiliarId");
 
+                    b.OwnsOne("projeto_financeiro_mvc.Models.Preferences", "Preferences", b1 =>
+                        {
+                            b1.Property<int>("UsuarioModelId")
+                                .HasColumnType("int");
+
+                            b1.Property<int?>("Theme")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int")
+                                .HasDefaultValue(0);
+
+                            b1.HasKey("UsuarioModelId");
+
+                            b1.ToTable("Usuarios");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UsuarioModelId");
+                        });
+
                     b.Navigation("GrupoFamiliar");
+
+                    b.Navigation("Preferences");
                 });
 
             modelBuilder.Entity("projeto_financeiro_mvc.Models.ContaModel", b =>
