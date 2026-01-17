@@ -4,10 +4,13 @@ using Microsoft.Extensions.DependencyInjection;
 using projeto_financeiro_mvc.Data;
 using projeto_financeiro_mvc.Models;
 using projeto_financeiro_mvc.Services.EmailService;
+using projeto_financeiro_mvc.Services.IdentityService;
 using projeto_financeiro_mvc.Services.LoginService;
 using projeto_financeiro_mvc.Services.SenhaService;
 using projeto_financeiro_mvc.Services.SessaoService;
+using projeto_financeiro_mvc.Services.ThemeService;
 using System.Globalization;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +36,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ILoginInterface, LoginService>();
 builder.Services.AddScoped<ISenhaInterface, SenhaService>();
 builder.Services.AddScoped<ISessaoInterface, SessaoService>();
+builder.Services.AddScoped<IThemeInterface, ThemeService>();
+builder.Services.AddScoped<IIdentityInterface, IdentityService>();
 
 builder.Services.AddSession(options =>
 {
@@ -45,12 +50,23 @@ builder.Services.Configure<EmailSettings>(
 
 builder.Services.AddScoped<IEmailInterface, EmailService>();
 
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Login";
+        options.LogoutPath = "/Login/Logout";
+        options.AccessDeniedPath = "/Login/AcessoNegado";
+
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        options.SlidingExpiration = true;
+    });
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.Migrate();
+    // db.Database.Migrate();
 }
 
 // Configure the HTTP request pipeline.
@@ -66,6 +82,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseSession();
