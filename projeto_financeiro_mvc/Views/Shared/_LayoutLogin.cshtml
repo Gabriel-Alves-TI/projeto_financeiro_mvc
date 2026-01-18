@@ -9,6 +9,7 @@
         document.write(
             `<link rel="stylesheet" href="/css/${theme.toLowerCase()}.css">`
         );
+
     </script>
     @* <link id="theme_layout" rel="stylesheet" href="~/css/bootstrap.css" asp-append-version="true" /> *@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
@@ -33,6 +34,43 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            const imgLogin = document.getElementById("img-login");
+
+            if (!imgLogin) {
+                console.log("img-login não encontrada");
+                return;
+            }
+
+            const theme = localStorage.getItem("theme") || "Vapor";
+            console.log("Theme:", theme);
+
+            if (theme === "Brite") {
+                imgLogin.src = "/img/brite/img-login_brite.png";
+            }
+            else if (theme === "Cerulean") {
+                imgLogin.src = "/img/cerulean/img-login_cerulean.png";
+            }
+            else if (theme === "Cosmo") {
+                imgLogin.src = "/img/cosmo/img-login_cosmo.png";
+            }
+            else if (theme === "Cyborg") {
+                imgLogin.src = "/img/cyborg/img-login_cyborg.png";
+            }
+            else if (theme === "Darkly") {
+                imgLogin.src = "/img/darkly/img-login_darkly.png";
+            }
+            else if (theme === "Sketchy") {
+                imgLogin.src = "/img/sketchy/img_login_sketchy.png";
+            }
+            else
+            {
+                imgLogin.src = "/img/img-login.jpg";
+            }
+        });
+    </script>
 </body>
 </html>
 <div id="spinnerCarregando" class="d-none position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-flex justify-content-center align-items-center" style="z-index: 2000;">

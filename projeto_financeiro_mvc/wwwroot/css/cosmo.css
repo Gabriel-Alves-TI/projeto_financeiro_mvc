@@ -278,8 +278,6 @@ li.list-group-item a:hover {
     cursor: pointer;
 }
 
-
-
 @media (min-width: 1200px) {
   h1, .h1 {
     font-size: 2.5rem;
