@@ -12,8 +12,8 @@ COPY projeto_financeiro_mvc/ ./
 # Publica
 RUN dotnet publish projeto_financeiro_mvc.csproj -c Release -o /app/publish /p:UseAppHost=false
 
-# Runtime (AGORA COM SDK)
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS runtime
+# Runtime
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish .
 
