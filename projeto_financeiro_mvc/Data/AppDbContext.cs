@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using projeto_financeiro_mvc.Models;
+using projeto_financeiro_mvc.Models.Enums;
 
 namespace projeto_financeiro_mvc.Data
 {
@@ -36,6 +37,13 @@ namespace projeto_financeiro_mvc.Data
                 .WithMany()
                 .HasForeignKey(t => t.ContaDestinoId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<UsuarioModel>()
+                .OwnsOne(u => u.Preferences, pref =>
+                {
+                    pref.Property(p => p.Theme)
+                        .HasDefaultValue(Theme.Vapor);
+                });
         }
     }
 }
