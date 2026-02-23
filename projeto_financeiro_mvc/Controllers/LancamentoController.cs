@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Logging;
+using OFXParser.Entities;
 using projeto_financeiro_mvc.Data;
 using projeto_financeiro_mvc.DTOs;
 using projeto_financeiro_mvc.Models;
@@ -25,6 +26,7 @@ namespace projeto_financeiro_mvc.Controllers
             _context = context;
             _sessaoInterface = sessaoInterface;
         }
+        
         [HttpGet]
         public IActionResult Index(DateTime? dataInicial, DateTime? dataFinal, string? tipo, string? descricao, string? categoria, int? contaId, double? valor)
         {
@@ -249,7 +251,7 @@ namespace projeto_financeiro_mvc.Controllers
                     {
                         Descricao = viewModel.Lancamento.Descricao,
                         Valor = viewModel.Lancamento.Valor,
-                        CategoriaId = viewModel.Lancamento.CategoriaId,
+                        CategoriaId = viewModel.Lancamento.CategoriaId ?? null,
                         Tipo = viewModel.Lancamento.Tipo,
                         Data = viewModel.Lancamento.Data,
                         Previsao = viewModel.Lancamento.Previsao,

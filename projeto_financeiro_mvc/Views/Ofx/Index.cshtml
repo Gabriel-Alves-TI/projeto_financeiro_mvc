@@ -1,0 +1,22 @@
+@{
+    ViewData["Title"] = "Importação Arquivo OFX";
+}
+
+<h1 class="d-flex justify-content-center text-primary fw-bold mt-2" id="titulo">@ViewData["Title"]</h1>
+
+<div class="container-fluid border border-2 border-primary rounded rounded-3 w-100">
+    <form asp-controller="Ofx" asp-action="Upload" method="post" enctype="multipart/form-data">
+        <div class="w-75 p-1">
+            <label for="arquivo" class="fw-bold p-2">Escolha um arquivo no formato .ofx para importar:</label>
+            <div class="d-flex p-1">   
+                <input type="file" class="form-control form-control-sm" name="arquivo">
+                <button type="submit" class="btn btn-sm btn-success ms-2">Importar</button>
+            </div>
+        </div>
+    </form>
+    <hr class="text-primary">
+    <div class="my-2">
+        <label for="arquivo" class="fw-bold p-2">Arquivo:</label>
+        <a type="button" asp-controller="Ofx" asp-action="ReadOfx" class="btn btn-sm btn-info rounded rounded-3"><i class="bi bi-file-earmark-check-fill me-1"></i>Ler OFX</a>
+    </div>
+</div>

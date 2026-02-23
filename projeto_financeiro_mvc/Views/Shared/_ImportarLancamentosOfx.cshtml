@@ -1,0 +1,159 @@
+@using projeto_financeiro_mvc.ViewModels
+@model projeto_financeiro_mvc.ViewModels.ListOfxViewModel
+@{
+    ViewData["Title"] = "Transações arquivo OFX";
+}
+
+<h1 class="d-flex justify-content-center text-primary fw-bold mt-2" id="titulo">@ViewData["Title"]</h1>
+
+<div class="d-flex align-items-center justify-content-center flex-column border border-primary border-2 rounded rounded-4 mx-4 mt-2 p-2">
+    <form class="container" asp-controller="Lancamento" asp-action="ImportarLancamentos" method="post">
+        <div class="w-25">
+            <label class="col-form-label fs-5 labels text-primary" for="">Contas</label>
+            <select class="form-select form-select-sm" aria-label="Small select example" name="ContaId">
+                @{
+                    foreach (var conta in Model.Contas)
+                    {
+                        <option value="@conta.Id">@conta.Banco</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="d-flex align-items-center justify-content-center flex-column w-100">
+            @{
+                for(int i = 0; i < Model.LancamentosOfx.Count; i++)
+                {
+                    if (Model.LancamentosOfx[@i].Tipo == TipoLancamento.Despesa)
+                    {
+                        <input type="hidden" name="LancamentosOfx[@i].Tipo" value="@Model.LancamentosOfx[i].Tipo">
+                        <input type="hidden" name="LancamentosOfx[@i].Parcelas" value="@Model.LancamentosOfx[i].Parcelas">
+
+                        <div class="card rounded rounded-3 border-1 border-danger bg-danger bg-opacity-25  text-center mb-2 mt-2 w-100">
+                            <div class="card-header d-flex flex-column flex-grow-1 p-1">
+                                <h5 class="card-title text-card">@Model.LancamentosOfx[i].Descricao</h5>
+                                <input type="hidden" name="LancamentosOfx[@i].Descricao" value="@Model.LancamentosOfx[i].Descricao">
+                            </div>
+
+                            <div class="row g-2 align-items-center p-1">
+                                <div class="col-auto">
+                                    <label for="selectTipo" class="col-form-label fs-5 labels">Data:</label>
+                                </div>
+                                <div class="col-auto">
+                                    <span class="card-text text-dark-emphasis data-font" style="font-size: 12px;">@Model.LancamentosOfx[i].Data.ToString("dd/MM/yyyy")</span>
+                                    <input type="hidden" name="LancamentosOfx[@i].Data" value="@Model.LancamentosOfx[i].Data">
+                                </div>
+                                <div class="col-auto">
+                                    <label for="selectTipo" class="col-form-label fs-5 labels">Previsão:</label>
+                                </div>
+                                <div class="col-auto">
+                                    <span class="card-text text-dark-emphasis data-font" style="font-size: 12px;">@Model.LancamentosOfx[i].Previsao.ToString("dd/MM/yyyy")</span>
+                                    <input type="hidden" name="LancamentosOfx[@i].Previsao" value="@Model.LancamentosOfx[i].Previsao">
+                                </div>
+                            </div>
+
+                            <div class="row g-2 align-items-center p-1">
+                                <div class="col-auto">
+                                    <label for="selectTipo" class="col-form-label fs-5 labels">Categoria:</label>
+                                </div>
+                                <div class="col-auto">
+                                    <select class="form-select form-select-sm" aria-label="Small select example" asp-for="LancamentosOfx[@i].CategoriaId">
+                                        <option value="">Selecione...</option>
+                                        @{
+                                            foreach (var categoria in Model.Categorias)
+                                            {
+                                                <option value="@categoria.Id">@categoria.Descricao</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="row g-2 align-items-center p-1">
+                                <div class="col-auto">
+                                    <label for="selectTipo" class="col-form-label fs-5 labels">Valor:</label>
+                                </div>
+                                <div class="col-auto">
+                                    <p class="text-danger fs-6 fw-bold mb-0 me-1 valor-font"> R$ @Model.LancamentosOfx[i].Valor.ToString("N2")</p>
+                                    <input type="hidden" name="LancamentosOfx[@i].Valor" value="@Model.LancamentosOfx[i].Valor">
+                                </div>
+                            </div>
+                        
+                            @* <div class="d-flex align-items-center justify-content-end ms-2 border-start border-2 border-dark" style="cursor: pointer">
+                                <a asp-controller="Lancamento" asp-action="Editar" asp-route-id="@lanc.Id" class="text-center ms-2 me-3 fw-bold"><i class="bi bi-pencil-square text-warning"></i></a>
+                                <a asp-controller="Lancamento" asp-action="Excluir" asp-route-id="@lanc.Id" class="text-center me-2"><i class="bi bi-x-square-fill text-danger"></i></a>
+                            </div> *@
+                        </div>
+                    }
+                    else
+                    {
+                        <input type="hidden" name="LancamentosOfx[@i].Tipo" value="@Model.LancamentosOfx[i].Tipo">
+                        <input type="hidden" name="LancamentosOfx[@i].Parcelas" value="@Model.LancamentosOfx[i].Parcelas">
+
+
+                        <div class="card rounded rounded-3 border-1 border-success bg-success bg-opacity-25  text-center mb-2 mt-2 w-100">
+                            <div class="card-header d-flex flex-column flex-grow-1 p-1">
+                                <h5 class="card-title text-card">@Model.LancamentosOfx[i].Descricao</h5>
+                                <input type="hidden" name="LancamentosOfx[@i].Descricao" value="@Model.LancamentosOfx[i].Descricao">
+                            </div>
+                            
+                            <div class="row g-2 align-items-center p-1">
+                                <div class="col-auto">
+                                    <label for="selectTipo" class="col-form-label fs-5 labels">Data:</label>
+                                </div>
+                                <div class="col-auto">
+                                    <span class="card-text text-dark-emphasis data-font" style="font-size: 12px;">@Model.LancamentosOfx[i].Data.ToString("dd/MM/yyyy")</span>
+                                    <input type="hidden" name="LancamentosOfx[@i].Data" value="@Model.LancamentosOfx[i].Data">
+                                </div>
+                                <div class="col-auto">
+                                    <label for="selectTipo" class="col-form-label fs-5 labels">Previsão:</label>
+                                </div>
+                                <div class="col-auto">
+                                    <span class="card-text text-dark-emphasis data-font" style="font-size: 12px;">@Model.LancamentosOfx[i].Previsao.ToString("dd/MM/yyyy")</span>
+                                    <input type="hidden" name="LancamentosOfx[@i].Previsao" value="@Model.LancamentosOfx[i].Previsao">
+                                </div>
+                            </div>
+
+                            <div class="row g-2 align-items-center p-1">
+                                <div class="col-auto">
+                                    <label for="selectTipo" class="col-form-label fs-5 labels">Categoria:</label>
+                                </div>
+                                <div class="col-auto">
+                                    <select class="form-select form-select-sm" aria-label="Small select example" asp-for="LancamentosOfx[@i].CategoriaId">
+                                        <option value="">Selecione...</option>
+                                        @{
+                                            foreach (var categoria in Model.Categorias)
+                                            {
+                                                <option value="@categoria.Id">@categoria.Descricao</option>
+                                            }
+                                        }
+                                    </select>
+                                    @* <input type="hidden" name="LancamentosOfx[@i].CategoriaId?"> *@
+                                </div>
+                            </div>
+
+                            <div class="row g-2 align-items-center p-1">
+                                <div class="col-auto">
+                                    <label for="selectTipo" class="col-form-label fs-5 labels">Valor:</label>
+                                </div>
+                                <div class="col-auto">
+                                    <p class="text-success fs-6 fw-bold mb-0 me-1 valor-font"><i class="bi bi-plus"></i> R$@Model.LancamentosOfx[i].Valor.ToString("N2")</p>
+                                    <input type="hidden" name="LancamentosOfx[@i].Valor" value="@Model.LancamentosOfx[i].Valor">
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center justify-content-end ms-2 border-start border-2 border-dark" style="cursor: pointer">
+                                @* <a asp-controller="Lancamento" asp-action="Editar" asp-route-id="@lanc.Id" class="text-center ms-2 me-3 fw-bold"><i class="bi bi-pencil-square text-warning"></i></a>
+                                <a asp-controller="Lancamento" asp-action="Excluir" asp-route-id="@lanc.Id" class="text-center me-2"><i class="bi bi-x-square-fill text-danger"></i></a> *@
+                            </div>
+                        </div>
+                    }
+                }
+            }
+        </div>
+    
+        <div class="d-flex justify-content-end gap-2">
+            <button type="submit" class="btn btn-success" style="width: 100px;">Salvar</button>
+            <a type="button" asp-controller="Lancamento" asp-action="Index" class="btn btn-danger" style="width: 100px;">Cancelar</a>
+        </div>
+    </form>
+</div>

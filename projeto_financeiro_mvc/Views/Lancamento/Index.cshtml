@@ -27,7 +27,7 @@
             <a type="button" asp-controller="Lancamento" asp-action="Cadastrar" class="btn btn-primary rounded rounded-3 me-4 btnLancamento" style="width: 200px;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Novo lançamento Receita/Despesa"><i class="bi bi-plus-square me"></i><br>Novo Lançamento</a>
             <a type="button" asp-controller="Recorrente" asp-action="Cadastrar" class="btn btn-warning rounded rounded-3 me-4 btnLancamento" style="width: 200px;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Novo lançamento Recorrente (Conta fixa)"><i class="bi bi-repeat"></i><br>Recorrente</a>
             <a type="button" asp-controller="Transferencia" asp-action="Transferencia" class="btn btn-info rounded rounded-3 me-4 btnLancamento" style="width: 200px;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Transferência de valores entre contas (Pix, TED/DOC...)"><i class="bi bi-arrow-down-up"></i><br>Transferência</a>
-            <button type="button" class="btn btn-light rounded rounded-3 btnLancamento" style="width: 200px;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Exportar lançamentos em Excel"><i class="bi bi-download"></i><br>Exportar</button>
+            <a type="button" asp-controller="Ofx" asp-action="Index" class="btn btn-light rounded rounded-3 btnLancamento" style="width: 200px;" id="importarOfx"><i class="bi bi-download"></i><br>Importar OFX</a>
         </div>
     </div>
 
@@ -384,3 +384,5 @@
             </div>
         </div>
 </div>
+
+@Html.Partial("_ModalImportarOfx")
