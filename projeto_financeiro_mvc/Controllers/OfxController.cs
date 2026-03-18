@@ -40,7 +40,10 @@ namespace projeto_financeiro_mvc.Controllers
         public async Task<IActionResult> Upload(IFormFile arquivo)
         {
             if (arquivo == null || arquivo.Length == 0)
-                return BadRequest("Nenhum arquivo enviado.");
+            {
+                TempData["MensagemErro"] = "Selecione um arquivo para fazer o upload.";
+                return View("Index"); 
+            }
 
             var pasta = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
 
@@ -55,7 +58,7 @@ namespace projeto_financeiro_mvc.Controllers
             }
 
             TempData["MensagemSucesso"] = "Arquivo enviado com sucesso.";
-            return View("_ModalImportarOfx");
+            return View("Index");
         }
 
         public IActionResult ReadOfx()//Testar passando o arquivo
