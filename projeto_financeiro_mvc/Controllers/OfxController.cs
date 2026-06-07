@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.Extensions.Logging;
 using OFXParser.Entities;
 using projeto_financeiro_mvc.Data;
@@ -69,7 +71,36 @@ namespace projeto_financeiro_mvc.Controllers
                 return RedirectToAction("Index", "Login");
             }
             //Testar path passando o arquivo: @"wwwroot/uploads/{arquivo}";
-            var path = @"wwwroot/uploads/nubank-ofx.ofx";
+            string path = @"wwwroot/uploads";
+
+            FileInfo ultimoArquivoOfx = new DirectoryInfo(path)
+                                        .GetFiles()
+                                        .OrderByDescending(f => f.CreationTime)
+                                        .FirstOrDefault();
+            
+            Console.WriteLine(ultimoArquivoOfx);
+
+            string caminhoOriginal = ultimoArquivoOfx.FullName;
+
+            string conteudo = System.IO.File.ReadAllText(caminhoOriginal);
+
+            conteudo = conteudo
+                .Replace("&", "&amp;")
+                .Replace("'", "&apos;");
+
+            string caminhoCorrigido = Path.Combine(
+                Path.GetTempPath(),
+                $"ofx_corrigido_{Guid.NewGuid()}.ofx"
+            );
+
+            System.IO.File.WriteAllText(caminhoCorrigido, conteudo);
+
+            if (ultimoArquivoOfx == null)
+            {
+                TempData["MensagemErro"] = "Nenhum arquivo localizado.";
+                return RedirectToAction("Index");
+            }
+            
             FileStream fs = null;
             StreamReader sr = null;
 
@@ -83,8 +114,8 @@ namespace projeto_financeiro_mvc.Controllers
 
             try
             {
-                string pathOFX = path;
-                Extract ofxParsed = OFXParser.Parser.GenerateExtract(pathOFX);
+                // string pathOFX = ultimoArquivoOfx.ToString();
+                Extract ofxParsed = OFXParser.Parser.GenerateExtract(caminhoCorrigido);
 
                 var lancamentosOfx = new List<OfxViewModel>();
 
@@ -95,15 +126,15 @@ namespace projeto_financeiro_mvc.Controllers
                         string[] splitDescription = transaction.Description.Split("-");
 
 
-                        Console.WriteLine(splitDescription[0]);
-                        Console.WriteLine(transaction.Description);
+                        // Console.WriteLine(splitDescription[0]);
+                        // Console.WriteLine(transaction.Description);
                         // Console.WriteLine(transaction.TransactionValue);
                         // Console.WriteLine(transaction.Date);
 
                         string Description = string.Empty;
 
                         //splitDescription cria array de string, Count > 3 para evitar IndexOutOfRangeException ao acessar index 1;
-                        if (splitDescription.Count() > 3)
+                        if (splitDescription.Count() >= 2)
                         {
                             Description += splitDescription[0] + "-" + splitDescription[1];
                             Console.WriteLine(Description);
@@ -169,7 +200,8 @@ namespace projeto_financeiro_mvc.Controllers
                 }
             }
         }
-
+        
+        [RequestFormLimits(ValueCountLimit = 10000)]
         [HttpPost]
         public async Task<IActionResult> ImportarLancamentos(ListOfxViewModel model)
         {
@@ -178,15 +210,56 @@ namespace projeto_financeiro_mvc.Controllers
             {
                 return RedirectToAction("Index", "Login");
             }
+            
+            foreach (var erro in ModelState.Values.SelectMany(v => v.Errors))
+            {
+                Console.WriteLine("===> ModelState com erros: " + erro.ErrorMessage);
+            }
+            
+            if (!ModelState.IsValid)
+            {
+                Console.WriteLine("===> ModelState com erros:");
+                foreach (var erro in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    Console.WriteLine(erro.ErrorMessage);
+                }
+
+                model.Contas = _context.Contas.ToList();
+                model.Categorias = _context.Categorias.ToList();
+                return View("_ImportarLancamentosOfx", model);
+            }
+
+
+            if (model.Contas == null || model.Categorias == null)
+            {
+                return RedirectToAction("Index", "Lancamento");
+            }
+            
+            foreach (var lancamento in model.LancamentosOfx)
+            {
+                if (lancamento.CategoriaId == null)
+                {
+                    TempData["MensagemErro"] = $"Não é possível salvar sem uma Categoria selecionada ({lancamento.Descricao}).";
+                    return View("_ImportarLancamentosOfx", model);
+                }
+            }
 
             if (model.LancamentosOfx == null || !model.LancamentosOfx.Any())
             {
                 TempData["MensagemErro"] = "Não é possível importar uma lista de lançamentos vazia. Importe um novo arquivo e tente novamente.";
-
                 return RedirectToAction("_ImportarLancamentosOfx");
             }
 
             var conta = model.ContaId;
+
+            var contaDb = _context.Contas.FirstOrDefault(c => c.Id == model.ContaId);
+
+            if (contaDb == null)
+            {
+                Console.WriteLine("Está caindo aqui!");
+                TempData["MensagemErro"] = "Nenhuma conta localizada.";
+                return RedirectToAction("_ImportarLancamentosOfx");
+            }
 
             var movimentos = new List<LancamentoModel>();
 
@@ -205,7 +278,7 @@ namespace projeto_financeiro_mvc.Controllers
                     Data = item.Data,
                     Previsao = item.Previsao,
                     Parcelas = item.Parcelas,
-                    Pago = item.Pago,
+                    Pago = true,
                     ContaId = conta,
                     UsuarioId = usuario.Id,
                     GrupoFamiliarId = usuario.GrupoFamiliarId
@@ -213,12 +286,28 @@ namespace projeto_financeiro_mvc.Controllers
 
                 movimentos.Add(lancamento);
                 Console.WriteLine(lancamento.CategoriaId);
+
+                if (model.PagarTodos == true)
+                {
+                    if (lancamento.Tipo == TipoLancamento.Despesa)
+                    {
+                        contaDb.Saldo -= lancamento.Valor;
+                    }
+                    else if (lancamento.Tipo == TipoLancamento.Receita)
+                    {
+                        contaDb.Saldo += lancamento.Valor;
+                    }
+
+                    _context.Contas.Update(contaDb);
+                    await _context.SaveChangesAsync();
+                }
             }
 
             _context.Lancamentos.AddRange(movimentos);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index");
+            Console.WriteLine("Está vindo para o final do metodo");
+            return RedirectToAction("Index", "Lancamento");
         }
 
         private void ExcluirArquivos()

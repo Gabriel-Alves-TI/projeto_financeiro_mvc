@@ -23,8 +23,9 @@ namespace projeto_financeiro_mvc.ViewModels
     public class ListOfxViewModel
     {
         public List<OfxViewModel> LancamentosOfx { get; set; } = [];
-        public List<ContaModel> Contas {get;set;}
-        public List<CategoriaModel> Categorias {get;set;}
+        public List<ContaModel> Contas { get; set; } = [];
+        public List<CategoriaModel> Categorias { get; set; } = [];
         public int? ContaId { get; set;}
+        public bool PagarTodos { get; set; } = false;
     }
 }
