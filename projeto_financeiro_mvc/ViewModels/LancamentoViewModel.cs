@@ -42,6 +42,7 @@ namespace projeto_financeiro_mvc.ViewModels
         public List<Lancamentos> Movimentos { get; set; } = [];
         public List<ContaModel> Contas { get; set; }
         public List<CategoriaModel> Categorias {get;set;}
+        public double SaldoTotal {get;set;}
 
         // Filtros
         public string? Tipo { get; set; }

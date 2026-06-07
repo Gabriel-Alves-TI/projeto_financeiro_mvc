@@ -131,6 +131,13 @@ namespace projeto_financeiro_mvc.Controllers
 
             movimentos = movimentos.Where(l => l.Data >= dataInicial.Value && l.Data <= dataFinal.Value).ToList();
 
+            double saldoTotal = 0;
+
+            foreach (var conta in contas)
+            {
+                saldoTotal += conta.Saldo;
+            }
+
             var viewModel = new ListLancamentosViewModel
             {
                 Movimentos = movimentos.OrderByDescending(m => m.Data).ToList(),
@@ -138,7 +145,8 @@ namespace projeto_financeiro_mvc.Controllers
                 DataInicial = dataInicial,
                 DataFinal = dataFinal,
                 Contas = contas,
-                Categorias = categorias
+                Categorias = categorias,
+                SaldoTotal = saldoTotal
             };
 
             ViewBag.NomeUsuario = usuario.Nome;
@@ -279,7 +287,7 @@ namespace projeto_financeiro_mvc.Controllers
                     {
                         Descricao = viewModel.Lancamento.Descricao,
                         Valor = viewModel.Lancamento.Valor,
-                        CategoriaId = viewModel.Lancamento.CategoriaId ?? 0,
+                        CategoriaId = viewModel.Lancamento.CategoriaId ?? null,
                         Tipo = viewModel.Lancamento.Tipo,
                         Data = viewModel.Lancamento.Data,
                         Previsao = viewModel.Lancamento.Previsao,
@@ -311,7 +319,7 @@ namespace projeto_financeiro_mvc.Controllers
                         {
                             Descricao = $"{viewModel.Lancamento.Descricao} - Parcelamento({i}/{viewModel.Lancamento.Parcelas})",
                             Valor = valorParcela,
-                            CategoriaId = viewModel.Lancamento.CategoriaId,
+                            CategoriaId = viewModel.Lancamento.CategoriaId ?? null,
                             Tipo = viewModel.Lancamento.Tipo,
                             Data = dataParcela,
                             Previsao = viewModel.Lancamento.Previsao,
@@ -568,6 +576,15 @@ namespace projeto_financeiro_mvc.Controllers
             if (lancamentoDb == null)
             {
                 return NotFound();
+            }
+
+            if (lancamentoDb.CategoriaId == null)
+            {
+                _context.Lancamentos.Remove(lancamentoDb);
+                _context.SaveChanges();
+                
+                TempData["MensagemSucesso"] = "Lançamento excluído com sucesso!";
+                return RedirectToAction("Index");
             }
 
             if (string.Equals(lancamentoDb.Categoria.Descricao, "saldo inicial", StringComparison.OrdinalIgnoreCase))
