@@ -19,11 +19,13 @@ namespace projeto_financeiro_mvc.Controllers
     {
         private readonly AppDbContext _context;
         private readonly ISessaoInterface _sessaoInterface;
+        private readonly IWebHostEnvironment _environment;
 
-        public OfxController(AppDbContext context, ISessaoInterface sessaoInterface)
+        public OfxController(AppDbContext context, ISessaoInterface sessaoInterface,IWebHostEnvironment environment)
         {
             _context = context;
             _sessaoInterface = sessaoInterface;
+            _environment = environment;
         }
 
         public IActionResult Index()
@@ -71,7 +73,10 @@ namespace projeto_financeiro_mvc.Controllers
                 return RedirectToAction("Index", "Login");
             }
             //Testar path passando o arquivo: @"wwwroot/uploads/{arquivo}";
-            string path = @"wwwroot/uploads";
+            string path = Path.Combine(
+                _environment.WebRootPath,
+                "uploads"
+            );
 
             FileInfo ultimoArquivoOfx = new DirectoryInfo(path)
                                         .GetFiles()
