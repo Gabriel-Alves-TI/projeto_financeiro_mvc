@@ -49,7 +49,11 @@ namespace projeto_financeiro_mvc.Controllers
                 return View("Index"); 
             }
 
-            var pasta = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
+            var pasta = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "wwwroot",
+                "uploads"
+            );
 
             if (!Directory.Exists(pasta))
                 Directory.CreateDirectory(pasta);
@@ -317,7 +321,10 @@ namespace projeto_financeiro_mvc.Controllers
 
         private void ExcluirArquivos()
         {
-            string path = @"wwwroot\uploads\";
+            string path = Path.Combine(
+                _environment.WebRootPath,
+                "uploads"
+            );
 
             string[] filesXml = Directory.GetFiles(path, "*.xml");
 
